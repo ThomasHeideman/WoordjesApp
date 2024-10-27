@@ -1,0 +1,119 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+
+/* :root {
+    --variable: value;
+  } */
+
+* {
+  box-sizing: border-box;
+}
+html {
+  font-size: 16px;
+}
+
+body {
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-family: 'Nunito', sans-serif;
+  background-color: #fffef4;
+  margin: 0;
+  padding: 1rem;
+}
+
+#app {
+  max-width: 960px;
+  margin: 0 auto;
+  background-color: #fff;
+  padding: 1rem;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  text-align: center;
+}
+
+.select-list,
+.select-direction,
+.select-set-size {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 600;
+  font-size: 1.125rem;
+  gap: 1rem;
+}
+
+.select-list select,
+.select-direction select,
+.select-set-size select {
+  font-family: 'Nunito' !important;
+  font-weight: 600;
+}
+button.start-btn {
+  background: #bb3c63;
+  border-radius: 0.25rem;
+  padding: 0.5rem 1rem;
+  color: #fff;
+  font-weight: bold;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 4px, rgba(0, 0, 0, 0.23) 0px 3px 4px;
+}
+button.start-btn:hover {
+  background: #c25073;
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+}
+
+.quiz-container {
+  margin-top: 1.5rem;
+}
+
+.options button {
+  display: block;
+  width: 100%;
+  margin: 5px 0;
+  padding: 10px;
+  background-color: #eee;
+  border: none;
+  cursor: pointer;
+}
+
+.options button:hover {
+  background-color: #ddd;
+}
+
+.progress {
+  width: 100%;
+  background-color: #ddd;
+  margin-top: 20px;
+}
+
+.progress-bar {
+  width: 0;
+  height: 20px;
+  background-color: #3cba75;
+}
+
+.result {
+  text-align: center;
+  font-size: 18px;
+}
+
+.feedback {
+  text-align: center;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+#custom-set-size {
+  margin-top: 10px;
+  display: block;
+  text-align: center;
+}

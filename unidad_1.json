@@ -1,0 +1,479 @@
+{
+    "spaans": [
+        {
+            "woord": "goedemorgen, goedendag",
+            "vertaling": "buenos días",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "goedemiddag",
+            "vertaling": "buenas tardes",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "goedenavond, goedenacht",
+            "vertaling": "buenas noches",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "de woordenschat",
+            "vertaling": "el vocabulario",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "de grammatica",
+            "vertaling": "la gramática",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "hoe oud ben je?",
+            "vertaling": "¿cuántos años tienes?",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "ik ben 11, 12, 13 jaar",
+            "vertaling": "tengo once, doce, trece años",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "hoe heet je?",
+            "vertaling": "¿cómo te llamas?",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "ik heet",
+            "vertaling": "me llamo",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "de, het",
+            "vertaling": "el, la, los, las",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "een, enkele",
+            "vertaling": "un, una, unos, unas",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "het huiswerk",
+            "vertaling": "los deberes",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "het hoofdstuk",
+            "vertaling": "la unidad",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "het potlood",
+            "vertaling": "el lápiz",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "de liniaal",
+            "vertaling": "la regla",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "de rugzak",
+            "vertaling": "la mochila",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "de bordenwisser",
+            "vertaling": "el borrador",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "de tafel",
+            "vertaling": "la mesa",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "het schoolbord",
+            "vertaling": "la pizarra",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "de balpen",
+            "vertaling": "el bolígrafo",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "het woordenboek",
+            "vertaling": "el diccionario",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "de stoel",
+            "vertaling": "la silla",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "het boek",
+            "vertaling": "el libro",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "de computer",
+            "vertaling": "el ordenador",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "de oefening",
+            "vertaling": "el ejercicio",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "het schrift",
+            "vertaling": "el cuaderno",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "de puntenslijper",
+            "vertaling": "el sacapuntas",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "de schaar",
+            "vertaling": "las tijeras",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "de gum",
+            "vertaling": "la goma de borrar",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "de uitdrukking",
+            "vertaling": "la expresión",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "alsjeblieft/ alstublieft",
+            "vertaling": "por favor",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "het horloge",
+            "vertaling": "el reloj",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "het spijt me",
+            "vertaling": "lo siento",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "nee",
+            "vertaling": "no",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "ja, wel",
+            "vertaling": "sí",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "Wat is je naam?",
+            "vertaling": "¿cuál es tu nombre?",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "mijn naam is",
+            "vertaling": "mi nombre es",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "wie ben jij?",
+            "vertaling": "¿quién eres?",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "ik ben",
+            "vertaling": "soy",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "het Spaans",
+            "vertaling": "el español",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "ik kom uit Nederland",
+            "vertaling": "soy de Holanda",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "de vraag",
+            "vertaling": "la pregunta",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "het antwoord",
+            "vertaling": "la respuesta",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "natuurlijk",
+            "vertaling": "claro",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "hallo!",
+            "vertaling": "¡hola!",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "goed (bijwoord)",
+            "vertaling": "bien",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "goed (bijvoeglijk naamwoord)",
+            "vertaling": "bueno",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "hoe gaat het?",
+            "vertaling": "¿qué tal?",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "de cultuur",
+            "vertaling": "la cultura",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "het alfabet",
+            "vertaling": "el abecedario, el alfabeto",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "met",
+            "vertaling": "con",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "zonder",
+            "vertaling": "sin",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "en",
+            "vertaling": "y",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "maar",
+            "vertaling": "pero",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "de pagina",
+            "vertaling": "la página",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "het gesprek",
+            "vertaling": "el diálogo",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "het team",
+            "vertaling": "el equipo",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "de klasgenoot",
+            "vertaling": "el compañero",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "de klasgenote",
+            "vertaling": "la compañera",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "de landkaart, de plattegrond",
+            "vertaling": "el mapa",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "de stad",
+            "vertaling": "la ciudad",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "de taal",
+            "vertaling": "la lengua",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "de hoofdstad",
+            "vertaling": "la capital",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "het centrum, het midden",
+            "vertaling": "el centro",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "het land",
+            "vertaling": "el país",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "bijvoorbeeld",
+            "vertaling": "por ejemplo",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "het oosten",
+            "vertaling": "el este",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "het zuiden",
+            "vertaling": "el sur",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "het noorden",
+            "vertaling": "el norte",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "het westen",
+            "vertaling": "el oeste",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "de zee",
+            "vertaling": "el mar",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "het jaar",
+            "vertaling": "el año",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "het huis",
+            "vertaling": "la casa",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "de auto",
+            "vertaling": "el coche",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "de vader",
+            "vertaling": "el padre",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "de moeder",
+            "vertaling": "la madre",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "de ouders",
+            "vertaling": "los padres",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "de broer",
+            "vertaling": "el hermano",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "de zus",
+            "vertaling": "la hermana",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "de leerling",
+            "vertaling": "el alumno",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "de leerlinge",
+            "vertaling": "la alumna",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "de student",
+            "vertaling": "el estudiante",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "de studente",
+            "vertaling": "la estudiante",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "de ober",
+            "vertaling": "el camarero",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "de serveerster",
+            "vertaling": "la camarera",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "heten",
+            "vertaling": "llamarse",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "luisteren",
+            "vertaling": "escuchar",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "spreken",
+            "vertaling": "hablar",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "vragen",
+            "vertaling": "preguntar",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "antwoorden",
+            "vertaling": "contestar",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "zijn",
+            "vertaling": "ser",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "lezen",
+            "vertaling": "leer",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "hebben (ook bij leeftijd)",
+            "vertaling": "tener",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "leren",
+            "vertaling": "aprender",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        },
+        {
+            "woord": "schrijven",
+            "vertaling": "escribir",
+            "afbeelding": "url_naar_afbeelding.jpg"
+        }
+    ]
+}
