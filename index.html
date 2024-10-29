@@ -38,7 +38,7 @@
         justify-content: center;
         min-height: 100vh;
         font-family: 'Nunito', sans-serif;
-        background-color: #fffef4;
+        background-color: #3b2e8c;
         margin: 0;
         padding: 1rem;
       }
@@ -48,12 +48,21 @@
         max-width: 960px;
         margin: 0 auto;
         background-color: #fff;
-        padding: 2rem 1rem 1rem;
+        padding: 2rem;
+        border-radius: 0.5rem;
         box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
       }
 
       h1 {
         text-align: center;
+      }
+
+      .highscore-container {
+        margin-bottom: 1rem;
+        text-align: center;
+        font-family: 'Nunito', sans-serif;
+        font-weight: 600;
+        font-size: 1rem;
       }
 
       .select-list,
@@ -74,9 +83,11 @@
       .select-set-size select {
         font-family: 'Nunito' !important;
         font-weight: 600;
+        width: 40%;
+        font-size: 1rem;
       }
       button.start-btn {
-        background: #bb3c63;
+        background: #f24464;
         border-radius: 0.25rem;
         padding: 0.5rem 1rem;
         color: #fff;
@@ -88,7 +99,7 @@
           rgba(0, 0, 0, 0.23) 0px 3px 4px;
       }
       button.start-btn:hover {
-        background: #c25073;
+        background: #f35774;
         box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px,
           rgba(0, 0, 0, 0.24) 0px 1px 2px;
       }
@@ -114,6 +125,13 @@
         margin-top: 1.5rem;
       }
 
+      .score-container {
+        text-align: center;
+        font-size: 1rem;
+        margin-bottom: 1rem;
+        font-weight: 600;
+      }
+
       .question {
         font-size: 1.25rem;
       }
@@ -135,7 +153,7 @@
       }
 
       .options button.correct {
-        background-color: #3cba75 !important;
+        background-color: #61b68a !important;
         color: #fff !important;
       }
 
@@ -144,7 +162,7 @@
       }
 
       .options button.wrong {
-        background-color: #bb3c63 !important;
+        background-color: #a63841 !important;
         color: #fff !important;
       }
 
@@ -154,12 +172,12 @@
 
       .options button.correct-answer {
         background-color: #fff;
-        border: 2px solid #3cba75;
-        color: #3cba75;
+        border: 2px solid #61b68a;
+        color: #61b68a;
       }
 
       .options button.correct-answer i {
-        color: #3cba75;
+        color: #61b68a;
         visibility: visible;
       }
 
@@ -172,28 +190,26 @@
         background-color: #ddd;
       }
 
-      .progress {
+      .progress,
+      .set-progress {
         width: 100%;
         background-color: #ddd;
-        margin-top: 20px;
+        margin: 0.125rem 0 0.5rem;
+        border-radius: 0.25rem;
+        height: 0.5rem;
+        overflow: hidden;
       }
 
       .progress-bar {
         width: 0;
-        height: 20px;
-        background-color: #3cba75;
-      }
-
-      .set-progress {
-        width: 100%;
-        background-color: #ddd;
-        margin-top: 10px;
+        height: 0.5rem;
+        background-color: #81c5a1;
       }
 
       .set-progress-bar {
         width: 0;
-        height: 20px;
-        background-color: #bb3c63;
+        height: 0.5rem;
+        background-color: #81c5a1;
       }
 
       .result {
@@ -218,12 +234,16 @@
   <body>
     <div id="app" class="app">
       <h1>Woordenschat Oefenen</h1>
+      <div class="highscore-container" id="highscore-container">
+        <p id="highscore-spaans-nederlands">Highscore Spaans-Nederlands: 0</p>
+        <p id="highscore-nederlands-spaans">Highscore Nederlands-Spaans: 0</p>
+      </div>
       <div class="select-direction">
         <label for="direction-select">Kies de oefenrichting:</label>
         <select id="direction-select">
           let oefenrichting = 'spaans🇪🇸-nederlands';
-          <option value="spaans-nederlands">Spaans - Nederlands</option>
-          <option value="nederlands-spaans">Nederlands - Spaans</option>
+          <option value="spaans-nederlands">Spaans 🇪🇸 - Nederlands 🇳🇱</option>
+          <option value="nederlands-spaans">Nederlands 🇳🇱 - Spaans 🇪🇸</option>
         </select>
       </div>
       <div class="select-list">
@@ -256,6 +276,10 @@
         <i class="fa-solid fa-rotate-left"></i>Terug naar start
       </button>
       <div id="quiz-container" class="quiz-container" style="display: none">
+        <div class="score-container">
+          <p id="score">Goed: 0 | Fout: 0</p>
+          <p id="highscore">Highscore: 0</p>
+        </div>
         <div class="question"></div>
         <div class="options"></div>
         <div class="feedback"></div>
@@ -285,10 +309,15 @@
       let woordenlijst = [];
       let currentIndex = 0;
       let score = 0;
+      let foutenCount = 0;
       let setIndex = 0;
       let fouten = {};
       let oefenrichting = 'spaans-nederlands';
       let setSize = 10;
+      let highscoreSpaansNederlands =
+        localStorage.getItem('highscore-spaans-nederlands') || 0;
+      let highscoreNederlandsSpaans =
+        localStorage.getItem('highscore-nederlands-spaans') || 0;
 
       // HTML-elementen selecteren
       const listSelectEl = document.getElementById('list-select');
@@ -306,6 +335,21 @@
       const progressInfoEl = document.querySelector('.progress-info');
       const setProgressInfoEl = document.querySelector('.set-progress-info');
       const resultEl = document.querySelector('.result');
+      const scoreEl = document.getElementById('score');
+      const highscoreEl = document.getElementById('highscore');
+      const highscoreSpaansNederlandsEl = document.getElementById(
+        'highscore-spaans-nederlands'
+      );
+      const highscoreNederlandsSpaansEl = document.getElementById(
+        'highscore-nederlands-spaans'
+      );
+      const highscoreContainerEl = document.getElementById(
+        'highscore-container'
+      );
+
+      // Update highscore display
+      highscoreSpaansNederlandsEl.textContent = `Highscore Spaans-Nederlands: ${highscoreSpaansNederlands}`;
+      highscoreNederlandsSpaansEl.textContent = `Highscore Nederlands-Spaans: ${highscoreNederlandsSpaans}`;
 
       setSizeSelectEl.addEventListener('change', () => {
         if (setSizeSelectEl.value === 'custom') {
@@ -325,6 +369,7 @@
             : parseInt(setSizeSelectEl.value);
         const selectedList = listSelectEl.value;
         let fetchPromises;
+        highscoreContainerEl.style.display = 'none';
         if (selectedList === 'all') {
           fetchPromises = lists[selectedList].map(url =>
             fetch(url).then(response => response.json())
@@ -358,12 +403,14 @@
         directionSelectEl.parentElement.style.display = 'flex';
         setSizeSelectEl.parentElement.style.display = 'flex';
         customSetSizeEl.style.display = 'none';
+        highscoreContainerEl.style.display = 'block';
       });
 
       function startQuiz() {
         currentIndex = 0;
         setIndex = 0;
         score = 0;
+        foutenCount = 0;
         fouten = {};
         quizContainerEl.style.display = 'block';
         startButtonEl.style.display = 'none';
@@ -372,6 +419,12 @@
         directionSelectEl.parentElement.style.display = 'none';
         setSizeSelectEl.parentElement.style.display = 'none';
         resultEl.textContent = '';
+        highscoreEl.textContent = `Highscore: ${
+          oefenrichting === 'spaans-nederlands'
+            ? highscoreSpaansNederlands
+            : highscoreNederlandsSpaans
+        }`;
+        updateScoreDisplay();
         loadQuestionSet();
       }
 
@@ -439,13 +492,15 @@
         if (selectedOption === correctAnswer) {
           button.classList.add('correct');
           button.querySelector('i').classList.add('fa-solid', 'fa-check');
-          button.style.backgroundColor = '#3cba75';
+          button.style.backgroundColor = '#61B68A';
           button.style.color = '#fff';
+          score++;
         } else {
           button.classList.add('wrong');
           button.querySelector('i').classList.add('fa-solid', 'fa-xmark');
-          button.style.backgroundColor = '#bb3c63';
+          button.style.backgroundColor = '#A63841';
           button.style.color = '#fff';
+          foutenCount++;
 
           // Markeer ook het juiste antwoord
           optionsEl.querySelectorAll('button').forEach(optButton => {
@@ -455,12 +510,13 @@
                 .querySelector('i')
                 .classList.add('fa-solid', 'fa-check');
               optButton.style.backgroundColor = '#fff';
-              optButton.style.border = '2px solid #3cba75';
-              optButton.style.color = '#3cba75';
+              optButton.style.border = '2px solid #61B68A';
+              optButton.style.color = '#61B68A';
             }
           });
         }
         currentIndex++;
+        updateScoreDisplay();
         setTimeout(() => {
           feedbackEl.textContent = '';
           loadQuestion(
@@ -468,6 +524,10 @@
             Math.min((setIndex + 1) * setSize, woordenlijst.length)
           );
         }, 1000);
+      }
+
+      function updateScoreDisplay() {
+        scoreEl.textContent = `Goed: ${score} | Fout: ${foutenCount}`;
       }
 
       // Voortgangsbalk bijwerken
@@ -486,6 +546,26 @@
       function showResult() {
         resultEl.textContent = `Je hebt ${score} van de ${woordenlijst.length} goed!`;
         quizContainerEl.style.display = 'none';
+        if (
+          oefenrichting === 'spaans-nederlands' &&
+          score > highscoreSpaansNederlands
+        ) {
+          highscoreSpaansNederlands = score;
+          localStorage.setItem('highscore-spaans-nederlands', score);
+        } else if (
+          oefenrichting === 'nederlands-spaans' &&
+          score > highscoreNederlandsSpaans
+        ) {
+          highscoreNederlandsSpaans = score;
+          localStorage.setItem('highscore-nederlands-spaans', score);
+        }
+        highscoreEl.textContent = `Highscore: ${
+          oefenrichting === 'spaans-nederlands'
+            ? highscoreSpaansNederlands
+            : highscoreNederlandsSpaans
+        }`;
+        highscoreSpaansNederlandsEl.textContent = `Highscore Spaans-Nederlands: ${highscoreSpaansNederlands}`;
+        highscoreNederlandsSpaansEl.textContent = `Highscore Nederlands-Spaans: ${highscoreNederlandsSpaans}`;
         if (Object.keys(fouten).length > 0) {
           resultEl.textContent += `
 Er zijn ${Object.keys(fouten).length} woorden fout beantwoord.`;
@@ -499,6 +579,7 @@ Er zijn ${Object.keys(fouten).length} woorden fout beantwoord.`;
             });
             setIndex = 0;
             score = 0;
+            foutenCount = 0;
             quizContainerEl.style.display = 'block';
             resultEl.textContent = '';
             loadQuestionSet();
