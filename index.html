@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="style.css" />
+    <!-- <link rel="stylesheet" href="style.css" /> -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -18,14 +18,210 @@
       href="src/favicon-32x32.png"
     />
 
+    <style>
+      /* :root {
+    --variable: value;
+  } */
+
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        font-size: 16px;
+      }
+
+      body {
+        color: #333;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        font-family: 'Nunito', sans-serif;
+        background-color: #fffef4;
+        margin: 0;
+        padding: 1rem;
+      }
+
+      .app {
+        width: 600px;
+        max-width: 960px;
+        margin: 0 auto;
+        background-color: #fff;
+        padding: 2rem 1rem 1rem;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        text-align: center;
+      }
+
+      .select-list,
+      .select-direction,
+      .select-set-size {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+        text-align: center;
+        font-family: 'Nunito', sans-serif;
+        font-weight: 600;
+        font-size: 1.125rem;
+        gap: 1rem;
+      }
+
+      .select-list select,
+      .select-direction select,
+      .select-set-size select {
+        font-family: 'Nunito' !important;
+        font-weight: 600;
+      }
+      button.start-btn {
+        background: #bb3c63;
+        border-radius: 0.25rem;
+        padding: 0.5rem 1rem;
+        color: #fff;
+        font-weight: bold;
+        font-size: 1rem;
+        border: none;
+        cursor: pointer;
+        box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 4px,
+          rgba(0, 0, 0, 0.23) 0px 3px 4px;
+      }
+      button.start-btn:hover {
+        background: #c25073;
+        box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px,
+          rgba(0, 0, 0, 0.24) 0px 1px 2px;
+      }
+
+      .app {
+        position: relative;
+      }
+      .back-btn {
+        /* position: absolute;
+        top: 1rem;
+        left: 1rem; */
+        height: 2rem;
+        border-radius: 1rem;
+        padding: 0 1rem;
+        border: none;
+        box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 4px,
+          rgba(0, 0, 0, 0.23) 0px 3px 4px;
+        gap: 0.5rem;
+        display: flex;
+        align-items: center;
+      }
+      .quiz-container {
+        margin-top: 1.5rem;
+      }
+
+      .question {
+        font-size: 1.25rem;
+      }
+      .question strong {
+        font-weight: 800;
+      }
+      .options button {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        margin: 5px 0;
+        padding: 10px;
+        background-color: #eee;
+        border: none;
+        cursor: pointer;
+        color: #474747;
+        font-size: 1.125rem;
+        font-weight: 600;
+      }
+
+      .options button.correct {
+        background-color: #3cba75 !important;
+        color: #fff !important;
+      }
+
+      .options button.correct i {
+        color: #fff;
+      }
+
+      .options button.wrong {
+        background-color: #bb3c63 !important;
+        color: #fff !important;
+      }
+
+      .options button.wrong i {
+        color: #fff;
+      }
+
+      .options button.correct-answer {
+        background-color: #fff;
+        border: 2px solid #3cba75;
+        color: #3cba75;
+      }
+
+      .options button.correct-answer i {
+        color: #3cba75;
+        visibility: visible;
+      }
+
+      .options button i {
+        margin-right: 10px;
+        width: 12px;
+      }
+
+      .options button:hover {
+        background-color: #ddd;
+      }
+
+      .progress {
+        width: 100%;
+        background-color: #ddd;
+        margin-top: 20px;
+      }
+
+      .progress-bar {
+        width: 0;
+        height: 20px;
+        background-color: #3cba75;
+      }
+
+      .set-progress {
+        width: 100%;
+        background-color: #ddd;
+        margin-top: 10px;
+      }
+
+      .set-progress-bar {
+        width: 0;
+        height: 20px;
+        background-color: #bb3c63;
+      }
+
+      .result {
+        text-align: center;
+        font-size: 18px;
+      }
+
+      .feedback {
+        text-align: center;
+        font-size: 16px;
+        margin-top: 10px;
+      }
+
+      #custom-set-size {
+        margin-top: 10px;
+        display: block;
+        text-align: center;
+      }
+    </style>
     <title>Woordenschat Oefenen</title>
   </head>
   <body>
-    <div id="app">
+    <div id="app" class="app">
       <h1>Woordenschat Oefenen</h1>
       <div class="select-direction">
         <label for="direction-select">Kies de oefenrichting:</label>
         <select id="direction-select">
+          let oefenrichting = 'spaans🇪🇸-nederlands';
           <option value="spaans-nederlands">Spaans - Nederlands</option>
           <option value="nederlands-spaans">Nederlands - Spaans</option>
         </select>
@@ -57,7 +253,7 @@
       </div>
       <button id="start-button" class="start-btn">Start Oefenen</button>
       <button id="back-button" class="back-btn" style="display: none">
-        Terug naar Startscherm
+        <i class="fa-solid fa-rotate-left"></i>Terug naar start
       </button>
       <div id="quiz-container" class="quiz-container" style="display: none">
         <div class="question"></div>
@@ -67,6 +263,10 @@
         <div class="progress">
           <div class="progress-bar"></div>
         </div>
+        <div class="set-progress-info"></div>
+        <div class="set-progress">
+          <div class="set-progress-bar"></div>
+        </div>
       </div>
       <div class="result"></div>
     </div>
@@ -74,6 +274,253 @@
       src="https://kit.fontawesome.com/f347a2f41e.js"
       crossorigin="anonymous"
     ></script>
-    <script src="script.js"></script>
+    <script>
+      const lists = {
+        unidad_1: 'unidad_1.json',
+        unidad_2: 'unidad_2.json',
+        los_numeros: 'los_numeros_0_100.json',
+        all: ['unidad_1.json', 'unidad_2.json', 'los_numeros_0_100.json'],
+      };
+
+      let woordenlijst = [];
+      let currentIndex = 0;
+      let score = 0;
+      let setIndex = 0;
+      let fouten = {};
+      let oefenrichting = 'spaans-nederlands';
+      let setSize = 10;
+
+      // HTML-elementen selecteren
+      const listSelectEl = document.getElementById('list-select');
+      const directionSelectEl = document.getElementById('direction-select');
+      const setSizeSelectEl = document.getElementById('set-size-select');
+      const customSetSizeEl = document.getElementById('custom-set-size');
+      const startButtonEl = document.getElementById('start-button');
+      const backButtonEl = document.getElementById('back-button');
+      const quizContainerEl = document.getElementById('quiz-container');
+      const questionEl = document.querySelector('.question');
+      const optionsEl = document.querySelector('.options');
+      const feedbackEl = document.querySelector('.feedback');
+      const progressBarEl = document.querySelector('.progress-bar');
+      const setProgressBarEl = document.querySelector('.set-progress-bar');
+      const progressInfoEl = document.querySelector('.progress-info');
+      const setProgressInfoEl = document.querySelector('.set-progress-info');
+      const resultEl = document.querySelector('.result');
+
+      setSizeSelectEl.addEventListener('change', () => {
+        if (setSizeSelectEl.value === 'custom') {
+          customSetSizeEl.style.display = 'block';
+        } else {
+          customSetSizeEl.style.display = 'none';
+        }
+      });
+
+      startButtonEl.addEventListener('click', () => {
+        oefenrichting = directionSelectEl.value;
+        setSize =
+          setSizeSelectEl.value === 'custom'
+            ? parseInt(customSetSizeEl.value)
+            : setSizeSelectEl.value === 'all'
+            ? null
+            : parseInt(setSizeSelectEl.value);
+        const selectedList = listSelectEl.value;
+        let fetchPromises;
+        if (selectedList === 'all') {
+          fetchPromises = lists[selectedList].map(url =>
+            fetch(url).then(response => response.json())
+          );
+          Promise.all(fetchPromises)
+            .then(dataArrays => {
+              woordenlijst = [].concat(...dataArrays.map(data => data.spaans));
+              startQuiz();
+            })
+            .catch(error =>
+              console.error('Fout bij het laden van woordenlijsten:', error)
+            );
+        } else {
+          fetch(lists[selectedList])
+            .then(response => response.json())
+            .then(data => {
+              woordenlijst = data.spaans;
+              startQuiz();
+            })
+            .catch(error =>
+              console.error('Fout bij het laden van woordenlijst:', error)
+            );
+        }
+      });
+
+      backButtonEl.addEventListener('click', () => {
+        quizContainerEl.style.display = 'none';
+        backButtonEl.style.display = 'none';
+        startButtonEl.style.display = 'block';
+        listSelectEl.parentElement.style.display = 'flex';
+        directionSelectEl.parentElement.style.display = 'flex';
+        setSizeSelectEl.parentElement.style.display = 'flex';
+        customSetSizeEl.style.display = 'none';
+      });
+
+      function startQuiz() {
+        currentIndex = 0;
+        setIndex = 0;
+        score = 0;
+        fouten = {};
+        quizContainerEl.style.display = 'block';
+        startButtonEl.style.display = 'none';
+        backButtonEl.style.display = 'flex';
+        listSelectEl.parentElement.style.display = 'none';
+        directionSelectEl.parentElement.style.display = 'none';
+        setSizeSelectEl.parentElement.style.display = 'none';
+        resultEl.textContent = '';
+        loadQuestionSet();
+      }
+
+      // Functie om een set van woorden te laden
+      function loadQuestionSet() {
+        if (setIndex * setSize >= woordenlijst.length) {
+          showResult();
+          return;
+        }
+
+        const start = setIndex * setSize;
+        const end = setSize
+          ? Math.min(start + setSize, woordenlijst.length)
+          : woordenlijst.length;
+        currentIndex = start;
+        loadQuestion(start, end);
+      }
+
+      // Functie om een nieuwe vraag te laden
+      function loadQuestion(start, end) {
+        if (currentIndex >= end) {
+          setIndex++;
+          loadQuestionSet();
+          return;
+        }
+
+        const currentWord = woordenlijst[currentIndex];
+        const vraag =
+          oefenrichting === 'spaans-nederlands'
+            ? currentWord.woord
+            : currentWord.vertaling;
+        const correctAntwoord =
+          oefenrichting === 'spaans-nederlands'
+            ? currentWord.vertaling
+            : currentWord.woord;
+
+        // Vraag instellen
+        questionEl.innerHTML = `Wat is de vertaling van: <strong class='word'>${vraag}?</strong>`;
+
+        // Opties instellen (multiple choice)
+        const options = shuffleOptions(correctAntwoord, woordenlijst);
+        optionsEl.innerHTML = '';
+        options.forEach(option => {
+          const button = document.createElement('button');
+          button.innerHTML = `<i class="fa"></i> ${option}`;
+          button.addEventListener('click', () =>
+            checkAnswer(button, option, correctAntwoord)
+          );
+          optionsEl.appendChild(button);
+        });
+
+        // Voortgang bijwerken
+        updateProgressBar(start, end);
+        updateSetProgressBar();
+        progressInfoEl.textContent = `Vraag ${currentIndex - start + 1} van ${
+          end - start
+        } binnen de huidige set`;
+        setProgressInfoEl.textContent = `Progressie van sets: ${
+          setIndex + 1
+        } van ${Math.ceil(woordenlijst.length / setSize)}`;
+      }
+
+      // Antwoord controleren
+      function checkAnswer(button, selectedOption, correctAnswer) {
+        if (selectedOption === correctAnswer) {
+          button.classList.add('correct');
+          button.querySelector('i').classList.add('fa-solid', 'fa-check');
+          button.style.backgroundColor = '#3cba75';
+          button.style.color = '#fff';
+        } else {
+          button.classList.add('wrong');
+          button.querySelector('i').classList.add('fa-solid', 'fa-xmark');
+          button.style.backgroundColor = '#bb3c63';
+          button.style.color = '#fff';
+
+          // Markeer ook het juiste antwoord
+          optionsEl.querySelectorAll('button').forEach(optButton => {
+            if (optButton.textContent.trim() === correctAnswer) {
+              optButton.classList.add('correct-answer');
+              optButton
+                .querySelector('i')
+                .classList.add('fa-solid', 'fa-check');
+              optButton.style.backgroundColor = '#fff';
+              optButton.style.border = '2px solid #3cba75';
+              optButton.style.color = '#3cba75';
+            }
+          });
+        }
+        currentIndex++;
+        setTimeout(() => {
+          feedbackEl.textContent = '';
+          loadQuestion(
+            setIndex * setSize,
+            Math.min((setIndex + 1) * setSize, woordenlijst.length)
+          );
+        }, 1000);
+      }
+
+      // Voortgangsbalk bijwerken
+      function updateProgressBar(start, end) {
+        const progress = ((currentIndex - start) / (end - start)) * 100;
+        progressBarEl.style.width = `${progress}%`;
+      }
+
+      function updateSetProgressBar() {
+        const setProgress =
+          ((setIndex + 1) / Math.ceil(woordenlijst.length / setSize)) * 100;
+        setProgressBarEl.style.width = `${setProgress}%`;
+      }
+
+      // Resultaten tonen
+      function showResult() {
+        resultEl.textContent = `Je hebt ${score} van de ${woordenlijst.length} goed!`;
+        quizContainerEl.style.display = 'none';
+        if (Object.keys(fouten).length > 0) {
+          resultEl.textContent += `
+Er zijn ${Object.keys(fouten).length} woorden fout beantwoord.`;
+          const foutenButton = document.createElement('button');
+          foutenButton.textContent = 'Oefen foute antwoorden';
+          foutenButton.addEventListener('click', () => {
+            woordenlijst = Object.keys(fouten).map(key => {
+              return woordenlijst.find(
+                word => word.woord === key || word.vertaling === key
+              );
+            });
+            setIndex = 0;
+            score = 0;
+            quizContainerEl.style.display = 'block';
+            resultEl.textContent = '';
+            loadQuestionSet();
+          });
+          resultEl.appendChild(foutenButton);
+        }
+      }
+
+      // Opties random schudden (inclusief juiste antwoord)
+      function shuffleOptions(correctAnswer, words) {
+        let options = [correctAnswer];
+        while (options.length < 4) {
+          const randomWord =
+            oefenrichting === 'spaans-nederlands'
+              ? words[Math.floor(Math.random() * words.length)].vertaling
+              : words[Math.floor(Math.random() * words.length)].woord;
+          if (!options.includes(randomWord)) {
+            options.push(randomWord);
+          }
+        }
+        return options.sort(() => Math.random() - 0.5);
+      }
+    </script>
   </body>
 </html>
