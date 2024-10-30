@@ -19,10 +19,6 @@
     />
 
     <style>
-      /* :root {
-    --variable: value;
-  } */
-
       * {
         box-sizing: border-box;
       }
@@ -108,9 +104,6 @@
         position: relative;
       }
       .back-btn {
-        /* position: absolute;
-        top: 1rem;
-        left: 1rem; */
         height: 2rem;
         border-radius: 1rem;
         padding: 0 1rem;
@@ -132,24 +125,37 @@
         font-weight: 600;
       }
 
+      .question-container {
+        display: none;
+      }
+
       .question {
         font-size: 1.25rem;
       }
       .question strong {
         font-weight: 800;
       }
+      .options {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-top: 1rem;
+      }
       .options button {
         display: flex;
         align-items: center;
-        width: 100%;
-        margin: 5px 0;
+        justify-content: center;
         padding: 10px;
-        background-color: #eee;
+        background-color: #f4f4f4;
         border: none;
         cursor: pointer;
         color: #474747;
         font-size: 1.125rem;
         font-weight: 600;
+        height: 6rem;
+        border-radius: 0.25rem;
+        border: 1px solid #ddd;
+        text-indent: -1rem;
       }
 
       .options button.correct {
@@ -184,6 +190,8 @@
       .options button i {
         margin-right: 10px;
         width: 12px;
+        position: relative;
+        left: -1rem;
       }
 
       .options button:hover {
@@ -223,6 +231,12 @@
         margin-top: 10px;
       }
 
+      .motivational-message {
+        text-align: center;
+        font-size: 16px;
+        margin-top: 20px;
+      }
+
       #custom-set-size {
         margin-top: 10px;
         display: block;
@@ -241,7 +255,6 @@
       <div class="select-direction">
         <label for="direction-select">Kies de oefenrichting:</label>
         <select id="direction-select">
-          let oefenrichting = 'spaans🇪🇸-nederlands';
           <option value="spaans-nederlands">Spaans 🇪🇸 - Nederlands 🇳🇱</option>
           <option value="nederlands-spaans">Nederlands 🇳🇱 - Spaans 🇪🇸</option>
         </select>
@@ -280,8 +293,11 @@
           <p id="score">Goed: 0 | Fout: 0</p>
           <p id="highscore">Highscore: 0</p>
         </div>
-        <div class="question"></div>
-        <div class="options"></div>
+        <div id="question-container" class="question-container">
+          <div class="question"></div>
+          <div class="options"></div>
+        </div>
+        <div class="motivational-message" id="motivational-message"></div>
         <div class="feedback"></div>
         <div class="progress-info"></div>
         <div class="progress">
@@ -311,13 +327,14 @@
       let score = 0;
       let foutenCount = 0;
       let setIndex = 0;
-      let fouten = {};
+      let fouten = [];
       let oefenrichting = 'spaans-nederlands';
       let setSize = 10;
       let highscoreSpaansNederlands =
         localStorage.getItem('highscore-spaans-nederlands') || 0;
       let highscoreNederlandsSpaans =
         localStorage.getItem('highscore-nederlands-spaans') || 0;
+      let currentWord = null;
 
       // HTML-elementen selecteren
       const listSelectEl = document.getElementById('list-select');
@@ -327,6 +344,7 @@
       const startButtonEl = document.getElementById('start-button');
       const backButtonEl = document.getElementById('back-button');
       const quizContainerEl = document.getElementById('quiz-container');
+      const questionContainerEl = document.getElementById('question-container');
       const questionEl = document.querySelector('.question');
       const optionsEl = document.querySelector('.options');
       const feedbackEl = document.querySelector('.feedback');
@@ -345,6 +363,9 @@
       );
       const highscoreContainerEl = document.getElementById(
         'highscore-container'
+      );
+      const motivationalMessageEl = document.getElementById(
+        'motivational-message'
       );
 
       // Update highscore display
@@ -411,7 +432,9 @@
         setIndex = 0;
         score = 0;
         foutenCount = 0;
-        fouten = {};
+        fouten = [];
+        motivationalMessageEl.textContent = '';
+        questionContainerEl.style.display = 'block';
         quizContainerEl.style.display = 'block';
         startButtonEl.style.display = 'none';
         backButtonEl.style.display = 'flex';
@@ -427,14 +450,16 @@
         updateScoreDisplay();
         loadQuestionSet();
       }
-
-      // Functie om een set van woorden te laden
+      // Load question set
       function loadQuestionSet() {
         if (setIndex * setSize >= woordenlijst.length) {
           showResult();
           return;
         }
 
+        motivationalMessageEl.textContent = `Laten we beginnen - Level ${
+          setIndex + 1
+        }`;
         const start = setIndex * setSize;
         const end = setSize
           ? Math.min(start + setSize, woordenlijst.length)
@@ -442,16 +467,21 @@
         currentIndex = start;
         loadQuestion(start, end);
       }
-
-      // Functie om een nieuwe vraag te laden
-      function loadQuestion(start, end) {
+      //  Load question
+      function loadQuestion(start, end, callback) {
+        console.log('Loading question:', { start, end, currentIndex });
         if (currentIndex >= end) {
-          setIndex++;
-          loadQuestionSet();
+          console.log('We hebben het einde van de set bereikt');
+          if (callback) {
+            fouten = []; // Leeg de foutenlijst na de herhalingsronde
+            callback();
+          } else {
+            showSetResult();
+          }
           return;
         }
 
-        const currentWord = woordenlijst[currentIndex];
+        currentWord = woordenlijst[currentIndex];
         const vraag =
           oefenrichting === 'spaans-nederlands'
             ? currentWord.woord
@@ -461,22 +491,20 @@
             ? currentWord.vertaling
             : currentWord.woord;
 
-        // Vraag instellen
-        questionEl.innerHTML = `Wat is de vertaling van: <strong class='word'>${vraag}?</strong>`;
+        questionEl.innerHTML = `Wat is de vertaling van: <strong class='word' style='color: #F24464';>${vraag}</strong> ?`;
 
-        // Opties instellen (multiple choice)
         const options = shuffleOptions(correctAntwoord, woordenlijst);
         optionsEl.innerHTML = '';
-        options.forEach(option => {
+        options.forEach((option, index) => {
           const button = document.createElement('button');
+          button.className = `answer${index + 1}`;
           button.innerHTML = `<i class="fa"></i> ${option}`;
           button.addEventListener('click', () =>
-            checkAnswer(button, option, correctAntwoord)
+            checkAnswer(button, option, correctAntwoord, start, end, callback)
           );
           optionsEl.appendChild(button);
         });
 
-        // Voortgang bijwerken
         updateProgressBar(start, end);
         updateSetProgressBar();
         progressInfoEl.textContent = `Vraag ${currentIndex - start + 1} van ${
@@ -486,51 +514,145 @@
           setIndex + 1
         } van ${Math.ceil(woordenlijst.length / setSize)}`;
       }
-
-      // Antwoord controleren
-      function checkAnswer(button, selectedOption, correctAnswer) {
-        if (selectedOption === correctAnswer) {
-          button.classList.add('correct');
-          button.querySelector('i').classList.add('fa-solid', 'fa-check');
-          button.style.backgroundColor = '#61B68A';
-          button.style.color = '#fff';
-          score++;
-        } else {
-          button.classList.add('wrong');
-          button.querySelector('i').classList.add('fa-solid', 'fa-xmark');
-          button.style.backgroundColor = '#A63841';
-          button.style.color = '#fff';
-          foutenCount++;
-
-          // Markeer ook het juiste antwoord
-          optionsEl.querySelectorAll('button').forEach(optButton => {
-            if (optButton.textContent.trim() === correctAnswer) {
-              optButton.classList.add('correct-answer');
-              optButton
-                .querySelector('i')
-                .classList.add('fa-solid', 'fa-check');
-              optButton.style.backgroundColor = '#fff';
-              optButton.style.border = '2px solid #61B68A';
-              optButton.style.color = '#61B68A';
+      // Check answer
+      function checkAnswer(
+        button,
+        selectedOption,
+        correctAnswer,
+        start,
+        end,
+        callback
+      ) {
+        try {
+          console.log('Checking answer:', { selectedOption, correctAnswer });
+          const isCorrect = selectedOption === correctAnswer;
+          if (isCorrect) {
+            button.classList.add('correct');
+            button.querySelector('i').classList.add('fa-solid', 'fa-check');
+            button.style.backgroundColor = '#61B68A';
+            button.style.color = '#fff';
+            score++;
+          } else {
+            button.classList.add('wrong');
+            button.querySelector('i').classList.add('fa-solid', 'fa-xmark');
+            button.style.backgroundColor = '#A63841';
+            button.style.color = '#fff';
+            foutenCount++;
+            if (!fouten.some(word => word.woord === currentWord.woord)) {
+              fouten.push(currentWord);
             }
-          });
-        }
-        currentIndex++;
-        updateScoreDisplay();
-        setTimeout(() => {
-          feedbackEl.textContent = '';
-          loadQuestion(
-            setIndex * setSize,
-            Math.min((setIndex + 1) * setSize, woordenlijst.length)
+
+            // Markeer ook het juiste antwoord
+            optionsEl.querySelectorAll('button').forEach(optButton => {
+              if (optButton.textContent.trim() === correctAnswer) {
+                optButton.classList.add('correct-answer');
+                optButton
+                  .querySelector('i')
+                  .classList.add('fa-solid', 'fa-check');
+                optButton.style.backgroundColor = '#fff';
+                optButton.style.border = '2px solid #61B68A';
+                optButton.style.color = '#61B68A';
+              }
+            });
+          }
+          currentIndex++;
+          setTimeout(() => {
+            feedbackEl.textContent = '';
+            if (currentIndex >= end) {
+              console.log('We hebben het einde van de set bereikt');
+              if (callback) {
+                fouten = []; // Leeg de foutenlijst na de herhalingsronde
+                callback();
+              } else {
+                showSetResult();
+              }
+            } else {
+              loadQuestion(start, end, callback);
+            }
+          }, 1000);
+          updateScoreDisplay();
+        } catch (error) {
+          console.error(
+            'Er is een fout opgetreden bij het afhandelen van het antwoord:',
+            error
           );
-        }, 1000);
+        }
       }
 
+      // Show set result
+      function showSetResult() {
+        questionContainerEl.style.display = 'none';
+        let message = '';
+        if (score < 5) {
+          message =
+            'Nog niet helemaal onder de knie, maar je bent goed op weg!';
+        } else if (score < 8) {
+          message = 'Goed bezig, ga zo door!';
+        } else {
+          message = 'Wow, fantastisch gedaan!';
+        }
+
+        motivationalMessageEl.innerHTML = `${message} <br/>`;
+        if (fouten.length > 0) {
+          motivationalMessageEl.innerHTML +=
+            '<button id="repeat-errors" class="start-btn">Laten we de fouten nog eens herhalen.</button>';
+          document
+            .getElementById('repeat-errors')
+            .addEventListener('click', () => {
+              startRepeatErrors(() => {
+                fouten = []; // Leeg de foutenlijst na succesvolle herhaling
+              });
+            });
+        } else {
+          motivationalMessageEl.innerHTML +=
+            '<button id="next-level" class="start-btn">Nu gaan we door naar Level ' +
+            (setIndex + 2) +
+            '.</button>';
+          document
+            .getElementById('next-level')
+            .addEventListener('click', function () {
+              try {
+                console.log('Next level button clicked');
+                setIndex++;
+                currentIndex = setIndex * setSize;
+                questionContainerEl.style.display = 'block';
+                motivationalMessageEl.textContent = '';
+                loadQuestionSet();
+              } catch (error) {
+                console.error('Er is een fout opgetreden:', error);
+              }
+            });
+        }
+      }
+
+      // Start repeat errors
+      function startRepeatErrors(callback) {
+        try {
+          console.log('Starting repeat errors');
+          if (fouten.length === 0) {
+            console.warn('Geen fouten om te herhalen.');
+            return; // Stop als er geen fouten zijn
+          }
+          woordenlijst = fouten.slice(); // Gebruik een kopie van de foutenlijst
+          currentIndex = 0;
+          score = 0;
+          foutenCount = 0;
+          motivationalMessageEl.textContent = '';
+          questionContainerEl.style.display = 'block';
+          console.log('Woordenlijst voor herhaling:', woordenlijst);
+          loadQuestion(0, woordenlijst.length, callback);
+        } catch (error) {
+          console.error(
+            'Er is een fout opgetreden bij het herhalen van fouten:',
+            error
+          );
+        }
+      }
+      // Update score display
       function updateScoreDisplay() {
         scoreEl.textContent = `Goed: ${score} | Fout: ${foutenCount}`;
       }
 
-      // Voortgangsbalk bijwerken
       function updateProgressBar(start, end) {
         const progress = ((currentIndex - start) / (end - start)) * 100;
         progressBarEl.style.width = `${progress}%`;
@@ -542,53 +664,33 @@
         setProgressBarEl.style.width = `${setProgress}%`;
       }
 
-      // Resultaten tonen
       function showResult() {
-        resultEl.textContent = `Je hebt ${score} van de ${woordenlijst.length} goed!`;
-        quizContainerEl.style.display = 'none';
-        if (
-          oefenrichting === 'spaans-nederlands' &&
-          score > highscoreSpaansNederlands
-        ) {
-          highscoreSpaansNederlands = score;
-          localStorage.setItem('highscore-spaans-nederlands', score);
-        } else if (
-          oefenrichting === 'nederlands-spaans' &&
-          score > highscoreNederlandsSpaans
-        ) {
-          highscoreNederlandsSpaans = score;
-          localStorage.setItem('highscore-nederlands-spaans', score);
-        }
-        highscoreEl.textContent = `Highscore: ${
-          oefenrichting === 'spaans-nederlands'
-            ? highscoreSpaansNederlands
-            : highscoreNederlandsSpaans
-        }`;
-        highscoreSpaansNederlandsEl.textContent = `Highscore Spaans-Nederlands: ${highscoreSpaansNederlands}`;
-        highscoreNederlandsSpaansEl.textContent = `Highscore Nederlands-Spaans: ${highscoreNederlandsSpaans}`;
-        if (Object.keys(fouten).length > 0) {
-          resultEl.textContent += `
-Er zijn ${Object.keys(fouten).length} woorden fout beantwoord.`;
-          const foutenButton = document.createElement('button');
-          foutenButton.textContent = 'Oefen foute antwoorden';
-          foutenButton.addEventListener('click', () => {
-            woordenlijst = Object.keys(fouten).map(key => {
-              return woordenlijst.find(
-                word => word.woord === key || word.vertaling === key
-              );
-            });
-            setIndex = 0;
-            score = 0;
-            foutenCount = 0;
-            quizContainerEl.style.display = 'block';
-            resultEl.textContent = '';
-            loadQuestionSet();
-          });
-          resultEl.appendChild(foutenButton);
+        try {
+          resultEl.textContent = `Je hebt ${score} van de ${woordenlijst.length} goed!`;
+          quizContainerEl.style.display = 'none';
+          if (
+            score >
+            (oefenrichting === 'spaans-nederlands'
+              ? highscoreSpaansNederlands
+              : highscoreNederlandsSpaans)
+          ) {
+            if (oefenrichting === 'spaans-nederlands') {
+              highscoreSpaansNederlands = score;
+              localStorage.setItem('highscore-spaans-nederlands', score);
+            } else {
+              highscoreNederlandsSpaans = score;
+              localStorage.setItem('highscore-nederlands-spaans', score);
+            }
+            highscoreEl.textContent = `Nieuwe highscore: ${score}`;
+          }
+        } catch (error) {
+          console.error(
+            'Er is een fout opgetreden bij het tonen van het resultaat:',
+            error
+          );
         }
       }
 
-      // Opties random schudden (inclusief juiste antwoord)
       function shuffleOptions(correctAnswer, words) {
         let options = [correctAnswer];
         while (options.length < 4) {
