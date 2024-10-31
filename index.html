@@ -391,13 +391,28 @@
         const selectedList = listSelectEl.value;
         let fetchPromises;
         highscoreContainerEl.style.display = 'none';
+
         if (selectedList === 'all') {
           fetchPromises = lists[selectedList].map(url =>
-            fetch(url).then(response => response.json())
+            fetch(url)
+              .then(response => response.json())
+              .catch(error => {
+                console.error(
+                  `Fout bij het laden van woordenlijst ${url}:`,
+                  error
+                );
+              })
           );
           Promise.all(fetchPromises)
             .then(dataArrays => {
-              woordenlijst = [].concat(...dataArrays.map(data => data.spaans));
+              woordenlijst = [].concat(
+                ...dataArrays.map(data => data?.spaans ?? [])
+              );
+              if (woordenlijst.length === 0) {
+                console.error('Geen woorden gevonden om te oefenen.');
+                return;
+              }
+              console.log('Woordenlijst geladen:', woordenlijst);
               startQuiz();
             })
             .catch(error =>
@@ -407,7 +422,12 @@
           fetch(lists[selectedList])
             .then(response => response.json())
             .then(data => {
-              woordenlijst = data.spaans;
+              woordenlijst = data.spaans ?? [];
+              if (woordenlijst.length === 0) {
+                console.error('Geen woorden gevonden om te oefenen.');
+                return;
+              }
+              console.log('Woordenlijst geladen:', woordenlijst);
               startQuiz();
             })
             .catch(error =>
@@ -425,9 +445,21 @@
         setSizeSelectEl.parentElement.style.display = 'flex';
         customSetSizeEl.style.display = 'none';
         highscoreContainerEl.style.display = 'block';
+
+        // Reset alle belangrijke variabelen naar hun beginwaarden
+        currentIndex = 0;
+        setIndex = 0;
+        score = 0;
+        foutenCount = 0;
+        fouten = [];
+        woordenlijst = [];
       });
 
       function startQuiz() {
+        if (woordenlijst.length === 0) {
+          console.error('Woordenlijst is leeg, kan de quiz niet starten.');
+          return;
+        }
         currentIndex = 0;
         setIndex = 0;
         score = 0;
@@ -450,6 +482,7 @@
         updateScoreDisplay();
         loadQuestionSet();
       }
+
       // Load question set
       function loadQuestionSet() {
         if (setIndex * setSize >= woordenlijst.length) {
@@ -467,15 +500,18 @@
         currentIndex = start;
         loadQuestion(start, end);
       }
-      //  Load question
+      // Load question
       function loadQuestion(start, end, callback) {
         console.log('Loading question:', { start, end, currentIndex });
         if (currentIndex >= end) {
           console.log('We hebben het einde van de set bereikt');
           if (callback) {
+            console.log('Herhalingsronde afgerond. Callback uitvoeren...');
             fouten = []; // Leeg de foutenlijst na de herhalingsronde
+            debugger; // Voeg debugger statement toe
             callback();
           } else {
+            console.log('Set resultaat tonen...');
             showSetResult();
           }
           return;
@@ -562,6 +598,7 @@
               console.log('We hebben het einde van de set bereikt');
               if (callback) {
                 fouten = []; // Leeg de foutenlijst na de herhalingsronde
+                debugger; // Voeg debugger statement toe
                 callback();
               } else {
                 showSetResult();
@@ -578,7 +615,6 @@
           );
         }
       }
-
       // Show set result
       function showSetResult() {
         questionContainerEl.style.display = 'none';
@@ -593,6 +629,7 @@
         }
 
         motivationalMessageEl.innerHTML = `${message} <br/>`;
+
         if (fouten.length > 0) {
           motivationalMessageEl.innerHTML +=
             '<button id="repeat-errors" class="start-btn">Laten we de fouten nog eens herhalen.</button>';
@@ -601,6 +638,7 @@
             .addEventListener('click', () => {
               startRepeatErrors(() => {
                 fouten = []; // Leeg de foutenlijst na succesvolle herhaling
+                showSetResult(); // Na succesvolle herhaling, opnieuw showSetResult() aanroepen
               });
             });
         } else {
@@ -624,22 +662,19 @@
             });
         }
       }
-
       // Start repeat errors
       function startRepeatErrors(callback) {
         try {
           console.log('Starting repeat errors');
-          if (fouten.length === 0) {
-            console.warn('Geen fouten om te herhalen.');
-            return; // Stop als er geen fouten zijn
-          }
-          woordenlijst = fouten.slice(); // Gebruik een kopie van de foutenlijst
+          woordenlijst = fouten.slice();
+          fouten = [];
           currentIndex = 0;
           score = 0;
           foutenCount = 0;
           motivationalMessageEl.textContent = '';
           questionContainerEl.style.display = 'block';
           console.log('Woordenlijst voor herhaling:', woordenlijst);
+          debugger; // Voeg debugger statement toe
           loadQuestion(0, woordenlijst.length, callback);
         } catch (error) {
           console.error(
