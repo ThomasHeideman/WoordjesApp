@@ -31,7 +31,13 @@ body {
 h1 {
   text-align: center;
 }
-
+.emoji {
+  font-family: 'Noto Color Emoji', sans-serif;
+}
+button .emoji {
+  margin-left: 0.5rem;
+  font-size: 1rem;
+}
 .highscore-container {
   margin-bottom: 1rem;
   text-align: center;
@@ -80,15 +86,27 @@ button.start-btn:hover {
 .app {
   position: relative;
 }
-.back-btn {
-  height: 2rem;
-  border-radius: 1rem;
-  padding: 0 1rem;
-  border: none;
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 4px, rgba(0, 0, 0, 0.23) 0px 3px 4px;
-  gap: 0.5rem;
+
+.controls {
   display: flex;
-  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+.back-btn {
+  border-radius: 0.25rem;
+  padding: 0.5rem;
+  color: #444;
+  font-weight: bold;
+  font-size: 0.875rem;
+  border: none;
+  cursor: pointer;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 4px, rgba(0, 0, 0, 0.23) 0px 3px 4px;
+  order: 2;
+  margin-left: auto;
+}
+.back-btn:hover {
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
 }
 .quiz-container {
   margin-top: 1.5rem;
@@ -209,8 +227,8 @@ button.start-btn:hover {
 
 .motivational-message {
   text-align: center;
-  font-size: 16px;
-  margin-top: 20px;
+  font-size: 1.5rem;
+  margin-top: 1rem;
 }
 
 #custom-set-size {

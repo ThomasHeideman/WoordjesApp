@@ -12,6 +12,7 @@ let currentIndex = 0;
 let score = 0;
 let foutenCount = 0;
 let setIndex = 0;
+let levelIndex = 0;
 let fouten = [];
 let nieuweFouten = [];
 let isRepeatRound = false;
@@ -28,6 +29,7 @@ let currentWord = null;
 const listSelectEl = document.getElementById('list-select');
 const directionSelectEl = document.getElementById('direction-select');
 const startButtonEl = document.getElementById('start-button');
+const controlsEl = document.getElementById('controls');
 const backButtonEl = document.getElementById('back-button');
 const quizContainerEl = document.getElementById('quiz-container');
 const questionContainerEl = document.getElementById('question-container');
@@ -106,7 +108,7 @@ startButtonEl.addEventListener('click', () => {
 
 backButtonEl.addEventListener('click', () => {
   quizContainerEl.style.display = 'none';
-  backButtonEl.style.display = 'none';
+
   startButtonEl.style.display = 'block';
   listSelectEl.parentElement.style.display = 'flex';
   directionSelectEl.parentElement.style.display = 'flex';
@@ -136,8 +138,8 @@ function startQuiz() {
   motivationalMessageEl.textContent = '';
   questionContainerEl.style.display = 'block';
   quizContainerEl.style.display = 'block';
+  controlsEl.style.display = 'block'; // Toon de controls-div
   startButtonEl.style.display = 'none';
-  backButtonEl.style.display = 'flex';
   listSelectEl.parentElement.style.display = 'none';
   directionSelectEl.parentElement.style.display = 'none';
   resultEl.textContent = '';
@@ -150,17 +152,37 @@ function startQuiz() {
   loadQuestionSet(); // Hier geen parameter nodig, de standaardwaarde is 0
 }
 
+// Terugknop
+backButtonEl.addEventListener('click', () => {
+  quizContainerEl.style.display = 'none';
+  controlsEl.style.display = 'none'; // Verberg de controls-div op het startscherm
+  startButtonEl.style.display = 'block';
+  listSelectEl.parentElement.style.display = 'flex';
+  directionSelectEl.parentElement.style.display = 'flex';
+  highscoreContainerEl.style.display = 'block';
+
+  // Reset alle belangrijke variabelen naar hun beginwaarden
+  currentIndex = 0;
+  setIndex = 0;
+  score = 0;
+  foutenCount = 0;
+  fouten = [];
+  woordenlijst = [];
+});
 // Load question set
-function loadQuestionSet(newSetIndex = 0) {
-  // Standaardwaarde van 0
-  if (newSetIndex * setSize >= woordenlijst.length) {
+function loadQuestionSet() {
+  const totalSetsInLevel = Math.ceil(woordenlijst.length / setSize);
+
+  if (setIndex >= totalSetsInLevel) {
+    // Level volledig afgerond
     showResult();
+    levelIndex++;
+    setIndex = 0; // Reset de setIndex voor het nieuwe level
     return;
   }
 
-  setIndex = newSetIndex; // Update de setIndex met de nieuwe waarde
   motivationalMessageEl.textContent = `Laten we beginnen - Level ${
-    setIndex + 1
+    levelIndex + 1
   }`;
   const start = setIndex * setSize;
   const end = Math.min(start + setSize, woordenlijst.length);
@@ -298,49 +320,55 @@ function checkAnswer(
 function showSetResult() {
   questionContainerEl.style.display = 'none';
   let message = '';
-  if (score < 5) {
-    message = 'Nog niet helemaal onder de knie, maar je bent goed op weg!';
-  } else if (score < 8) {
-    message = 'Goed bezig, ga zo door!';
-  } else {
-    message = 'Wow, fantastisch gedaan!';
-  }
 
+  // Stel een motiverend bericht in op basis van de score
+  if (score < 5) {
+    message = `Nog niet helemaal onder de knie, maar je bent goed op weg! <span class="emoji">🫶</span>`;
+  } else if (score < 8) {
+    message = `Goed bezig, ga zo door! <span class="emoji">👍</span>`;
+  } else {
+    message = `Wow, fantastisch gedaan! <span class="emoji">💯</span>`;
+  }
   motivationalMessageEl.innerHTML = `${message} <br/>`;
 
-  // Controleer of er fouten zijn en of we in een herhaalronde zitten
+  // Logica voor het tonen van de juiste knoppen
   if (fouten.length > 0 || nieuweFouten.length > 0) {
-    console.log(
-      'Foutenlijst bevat nog fouten of nieuwe fouten, start opnieuw:',
-      fouten
-    );
-    fouten = nieuweFouten.length > 0 ? nieuweFouten.slice() : fouten; // Stel fouten in op nieuwe fouten indien beschikbaar
-    nieuweFouten = []; // Leeg nieuweFouten
-    motivationalMessageEl.innerHTML +=
-      '<button id="repeat-errors" class="start-btn">Laten we de fouten nog eens herhalen.</button>';
-    document.getElementById('repeat-errors').addEventListener('click', () => {
+    document.getElementById('repeat-errors').style.display = 'block';
+    document.getElementById('next-level').style.display = 'none';
+
+    // Voeg event listener toe aan de repeat-errors knop
+    document.getElementById('repeat-errors').onclick = () => {
+      document.getElementById('repeat-errors').style.display = 'none';
       startRepeatErrors(() => {
         if (fouten.length > 0) {
-          console.log('Niet alle fouten zijn herhaald, opnieuw herhalen.');
           startRepeatErrors(() => {
-            fouten = []; // Leeg de foutenlijst pas nadat alle fouten correct zijn beantwoord
-            showSetResult(); // Na succesvolle herhaling, opnieuw showSetResult() aanroepen
-            console.log(
-              'Alle fouten herhaald, showSetResult opnieuw aangeroepen'
-            );
+            fouten = [];
+            showSetResult();
           });
         } else {
-          fouten = []; // Leeg de foutenlijst na succesvolle herhaling
+          fouten = [];
           showSetResult();
         }
       });
-    });
+    };
   } else {
-    motivationalMessageEl.innerHTML +=
-      '<button id="next-level" class="start-btn">Volgende Level</button>';
-    document.getElementById('next-level').addEventListener('click', () => {
-      loadQuestionSet(setIndex + 1); // Verhoog setIndex bij het aanroepen
-    });
+    document.getElementById('repeat-errors').style.display = 'none';
+    document.getElementById('next-level').style.display = 'block';
+
+    // Voeg event listener toe aan de next-level knop
+    document.getElementById('next-level').onclick = () => {
+      document.getElementById('next-level').style.display = 'none';
+      try {
+        setIndex++; // Verhoog pas hier de setIndex na een volledig afgerond level
+        currentIndex = setIndex * setSize;
+        questionContainerEl.style.display = 'block';
+        quizContainerEl.style.display = 'block';
+        motivationalMessageEl.textContent = '';
+        loadQuestionSet();
+      } catch (error) {
+        console.error('Er is een fout opgetreden:', error);
+      }
+    };
   }
 }
 
