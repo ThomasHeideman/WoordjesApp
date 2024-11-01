@@ -17,7 +17,7 @@ let nieuweFouten = [];
 let isRepeatRound = false;
 
 let oefenrichting = 'spaans-nederlands';
-let setSize = 2; // Altijd 10 woorden per set
+let setSize = 10; // Altijd 10 woorden per set
 let highscoreSpaansNederlands =
   localStorage.getItem('highscore-spaans-nederlands') || 0;
 let highscoreNederlandsSpaans =
