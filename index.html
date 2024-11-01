@@ -4,10 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="style.css" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;0,800;1,200..1000&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&family=Nunito:ital,wght@0,200..1000;0,800;1,200..1000&display=swap"
       rel="stylesheet"
     />
 
@@ -69,10 +70,26 @@
       </div>
       <div class="result"></div>
       <div id="controls" class="controls" style="display: none">
-        <button id="back-button" class="back-btn">
-          <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>Terug naar
-          start
-        </button>
+        <div id="controls" class="controls">
+          <button id="back-button" class="back-btn">
+            <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>Terug naar
+            start
+          </button>
+          <button
+            id="repeat-errors"
+            class="start-btn repeat-btn btn"
+            style="display: none"
+          >
+            Probeer het nog eens!<span class="emoji">👊</span>
+          </button>
+          <button
+            id="next-level"
+            class="start-btn nextlvl-btn btn"
+            style="display: none"
+          >
+            Naar het volgende level!<span class="emoji">🎉</span>
+          </button>
+        </div>
       </div>
     </div>
     <script

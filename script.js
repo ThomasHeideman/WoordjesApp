@@ -323,67 +323,52 @@ function showSetResult() {
 
   // Stel een motiverend bericht in op basis van de score
   if (score < 5) {
-    message = 'Nog niet helemaal onder de knie, maar je bent goed op weg!';
+    message = `Nog niet helemaal onder de knie, maar je bent goed op weg! <span class="emoji">🫶</span>`;
   } else if (score < 8) {
-    message = 'Goed bezig, ga zo door!';
+    message = `Goed bezig, ga zo door! <span class="emoji">👍</span>`;
   } else {
-    message = 'Wow, fantastisch gedaan!';
+    message = `Wow, fantastisch gedaan! <span class="emoji">💯</span>`;
   }
-
   motivationalMessageEl.innerHTML = `${message} <br/>`;
 
-  // Controleer of er nog fouten zijn of nieuwe fouten zijn opgetreden
+  // Logica voor het tonen van de juiste knoppen
   if (fouten.length > 0 || nieuweFouten.length > 0) {
-    motivationalMessageEl.innerHTML +=
-      '<button id="repeat-errors" class="start-btn">Laten we de fouten nog eens herhalen.</button>';
+    document.getElementById('repeat-errors').style.display = 'block';
+    document.getElementById('next-level').style.display = 'none';
 
-    document.getElementById('repeat-errors').addEventListener('click', () => {
+    // Voeg event listener toe aan de repeat-errors knop
+    document.getElementById('repeat-errors').onclick = () => {
+      document.getElementById('repeat-errors').style.display = 'none';
       startRepeatErrors(() => {
         if (fouten.length > 0) {
           startRepeatErrors(() => {
             fouten = [];
-            nieuweFouten = [];
             showSetResult();
           });
         } else {
           fouten = [];
-          nieuweFouten = [];
           showSetResult();
         }
       });
-    });
+    };
   } else {
-    // Als er geen fouten meer zijn, ga naar de volgende set of het volgende level
-    const totalSetsInLevel = Math.ceil(woordenlijst.length / setSize);
+    document.getElementById('repeat-errors').style.display = 'none';
+    document.getElementById('next-level').style.display = 'block';
 
-    if (setIndex + 1 < totalSetsInLevel) {
-      // Er zijn nog meer sets in het huidige level
-      motivationalMessageEl.innerHTML +=
-        '<button id="next-set" class="start-btn">Ga door naar de volgende set in dit level.</button>';
-
-      document.getElementById('next-set').addEventListener('click', () => {
-        setIndex++;
+    // Voeg event listener toe aan de next-level knop
+    document.getElementById('next-level').onclick = () => {
+      document.getElementById('next-level').style.display = 'none';
+      try {
+        setIndex++; // Verhoog pas hier de setIndex na een volledig afgerond level
         currentIndex = setIndex * setSize;
         questionContainerEl.style.display = 'block';
         quizContainerEl.style.display = 'block';
         motivationalMessageEl.textContent = '';
         loadQuestionSet();
-      });
-    } else {
-      // Level afgerond, ga naar het volgende level
-      motivationalMessageEl.innerHTML +=
-        '<button id="next-level" class="start-btn">Nu gaan we door naar het volgende level.</button>';
-
-      document.getElementById('next-level').addEventListener('click', () => {
-        levelIndex++; // Verhoog levelIndex voor het nieuwe level
-        setIndex = 0; // Reset de setIndex naar 0
-        currentIndex = 0; // Reset de currentIndex voor het nieuwe level
-        questionContainerEl.style.display = 'block';
-        quizContainerEl.style.display = 'block';
-        motivationalMessageEl.textContent = '';
-        loadQuestionSet();
-      });
-    }
+      } catch (error) {
+        console.error('Er is een fout opgetreden:', error);
+      }
+    };
   }
 }
 
