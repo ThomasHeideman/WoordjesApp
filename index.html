@@ -46,11 +46,10 @@
       </div>
 
       <button id="start-button" class="start-btn">Start Oefenen</button>
-      <button id="back-button" class="back-btn" style="display: none">
-        <i class="fa-solid fa-rotate-left"></i>Terug naar start
-      </button>
+
       <div id="quiz-container" class="quiz-container" style="display: none">
         <div class="score-container">
+          <div class="motivational-message" id="motivational-message"></div>
           <p id="score">Goed: 0 | Fout: 0</p>
           <p id="highscore">Highscore: 0</p>
         </div>
@@ -58,7 +57,6 @@
           <div class="question"></div>
           <div class="options"></div>
         </div>
-        <div class="motivational-message" id="motivational-message"></div>
         <div class="feedback"></div>
         <div class="progress-info"></div>
         <div class="progress">
@@ -70,6 +68,12 @@
         </div>
       </div>
       <div class="result"></div>
+      <div id="controls" class="controls" style="display: none">
+        <button id="back-button" class="back-btn">
+          <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>Terug naar
+          start
+        </button>
+      </div>
     </div>
     <script
       src="https://kit.fontawesome.com/f347a2f41e.js"
