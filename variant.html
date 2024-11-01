@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- <link rel="stylesheet" href="style.css" /> -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;0,800;1,200..1000&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="icon"
+      type="../src/image/png"
+      sizes="32x32"
+      href="src/favicon-32x32.png"
+    />
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        font-size: 16px;
+      }
+
+      body {
+        color: #333;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        font-family: 'Nunito', sans-serif;
+        background-color: #3b2e8c;
+        margin: 0;
+        padding: 1rem;
+      }
+
+      .app {
+        width: 600px;
+        max-width: 960px;
+        margin: 0 auto;
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 0.5rem;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        text-align: center;
+      }
+
+      .highscore-container {
+        margin-bottom: 1rem;
+        text-align: center;
+        font-family: 'Nunito', sans-serif;
+        font-weight: 600;
+        font-size: 1rem;
+      }
+
+      .select-list,
+      .select-direction,
+      .select-set-size {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+        text-align: center;
+        font-family: 'Nunito', sans-serif;
+        font-weight: 600;
+        font-size: 1.125rem;
+        gap: 1rem;
+      }
+
+      .select-list select,
+      .select-direction select,
+      .select-set-size select {
+        font-family: 'Nunito' !important;
+        font-weight: 600;
+        width: 40%;
+        font-size: 1rem;
+      }
+      button.start-btn {
+        background: #f24464;
+        border-radius: 0.25rem;
+        padding: 0.5rem 1rem;
+        color: #fff;
+        font-weight: bold;
+        font-size: 1rem;
+        border: none;
+        cursor: pointer;
+        box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 4px,
+          rgba(0, 0, 0, 0.23) 0px 3px 4px;
+      }
+      button.start-btn:hover {
+        background: #f35774;
+        box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px,
+          rgba(0, 0, 0, 0.24) 0px 1px 2px;
+      }
+
+      .app {
+        position: relative;
+      }
+      .back-btn {
+        height: 2rem;
+        border-radius: 1rem;
+        padding: 0 1rem;
+        border: none;
+        box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 4px,
+          rgba(0, 0, 0, 0.23) 0px 3px 4px;
+        gap: 0.5rem;
+        display: flex;
+        align-items: center;
+      }
+      .quiz-container {
+        margin-top: 1.5rem;
+      }
+
+      .score-container {
+        text-align: center;
+        font-size: 1rem;
+        margin-bottom: 1rem;
+        font-weight: 600;
+      }
+
+      .question-container {
+        display: none;
+      }
+
+      .question {
+        font-size: 1.25rem;
+      }
+      .question strong {
+        font-weight: 800;
+      }
+      .options {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+      .options button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
+        background-color: #f4f4f4;
+        border: none;
+        cursor: pointer;
+        color: #474747;
+        font-size: 1.125rem;
+        font-weight: 600;
+        height: 6rem;
+        border-radius: 0.25rem;
+        border: 1px solid #ddd;
+        text-indent: -1rem;
+      }
+
+      .options button.correct {
+        background-color: #61b68a !important;
+        color: #fff !important;
+      }
+
+      .options button.correct i {
+        color: #fff;
+      }
+
+      .options button.wrong {
+        background-color: #a63841 !important;
+        color: #fff !important;
+      }
+
+      .options button.wrong i {
+        color: #fff;
+      }
+
+      .options button.correct-answer {
+        background-color: #fff;
+        border: 2px solid #61b68a;
+        color: #61b68a;
+      }
+
+      .options button.correct-answer i {
+        color: #61b68a;
+        visibility: visible;
+      }
+
+      .options button i {
+        margin-right: 10px;
+        width: 12px;
+        position: relative;
+        left: -1rem;
+      }
+
+      .options button:hover {
+        background-color: #ddd;
+      }
+
+      .progress,
+      .set-progress {
+        width: 100%;
+        background-color: #ddd;
+        margin: 0.125rem 0 0.5rem;
+        border-radius: 0.25rem;
+        height: 0.5rem;
+        overflow: hidden;
+      }
+
+      .progress-bar {
+        width: 0;
+        height: 0.5rem;
+        background-color: #81c5a1;
+      }
+
+      .set-progress-bar {
+        width: 0;
+        height: 0.5rem;
+        background-color: #81c5a1;
+      }
+
+      .result {
+        text-align: center;
+        font-size: 18px;
+      }
+
+      .feedback {
+        text-align: center;
+        font-size: 16px;
+        margin-top: 10px;
+      }
+
+      .motivational-message {
+        text-align: center;
+        font-size: 16px;
+        margin-top: 20px;
+      }
+
+      #custom-set-size {
+        margin-top: 10px;
+        display: block;
+        text-align: center;
+      }
+    </style>
+    <title>Woordenschat Oefenen</title>
+  </head>
+  <body>
+    <div id="app" class="app">
+      <h1>Woordenschat Oefenen</h1>
+      <div class="highscore-container" id="highscore-container">
+        <p id="highscore-spaans-nederlands">Highscore Spaans-Nederlands: 0</p>
+        <p id="highscore-nederlands-spaans">Highscore Nederlands-Spaans: 0</p>
+      </div>
+      <div class="select-direction">
+        <label for="direction-select">Kies de oefenrichting:</label>
+        <select id="direction-select">
+          <option value="spaans-nederlands">Spaans 🇪🇸 - Nederlands 🇳🇱</option>
+          <option value="nederlands-spaans">Nederlands 🇳🇱 - Spaans 🇪🇸</option>
+        </select>
+      </div>
+      <div class="select-list">
+        <label for="list-select">Kies een lijst:</label>
+        <select id="list-select">
+          <option value="unidad_1">Unidad 1</option>
+          <option value="unidad_2">Unidad 2</option>
+          <option value="los_numeros">Los Números 0-100</option>
+          <option value="all">Alle Woorden</option>
+        </select>
+      </div>
+      <div class="select-set-size">
+        <label for="set-size-select">Kies het aantal woorden per set:</label>
+        <select id="set-size-select">
+          <option value="10">10 Woorden</option>
+          <option value="25">25 Woorden</option>
+          <option value="all">Alle Woorden</option>
+          <option value="custom">Aangepast aantal</option>
+        </select>
+        <input
+          type="number"
+          id="custom-set-size"
+          placeholder="Aantal woorden"
+          min="1"
+          style="display: none"
+        />
+      </div>
+      <button id="start-button" class="start-btn">Start Oefenen</button>
+      <button id="back-button" class="back-btn" style="display: none">
+        <i class="fa-solid fa-rotate-left"></i>Terug naar start
+      </button>
+      <div id="quiz-container" class="quiz-container" style="display: none">
+        <div class="score-container">
+          <p id="score">Goed: 0 | Fout: 0</p>
+          <p id="highscore">Highscore: 0</p>
+        </div>
+        <div id="question-container" class="question-container">
+          <div class="question"></div>
+          <div class="options"></div>
+        </div>
+        <div class="motivational-message" id="motivational-message"></div>
+        <div class="feedback"></div>
+        <div class="progress-info"></div>
+        <div class="progress">
+          <div class="progress-bar"></div>
+        </div>
+        <div class="set-progress-info"></div>
+        <div class="set-progress">
+          <div class="set-progress-bar"></div>
+        </div>
+      </div>
+      <div class="result"></div>
+    </div>
+    <script
+      src="https://kit.fontawesome.com/f347a2f41e.js"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      const lists = {
+        unidad_1: 'unidad_1.json',
+        unidad_2: 'unidad_2.json',
+        los_numeros: 'los_numeros_0_100.json',
+        all: ['unidad_1.json', 'unidad_2.json', 'los_numeros_0_100.json'],
+      };
+
+      let woordenlijst = [];
+      let currentIndex = 0;
+      let score = 0;
+      let foutenCount = 0;
+      let setIndex = 0;
+      let fouten = [];
+      let oefenrichting = 'spaans-nederlands';
+      let setSize = 10;
+      let highscoreSpaansNederlands =
+        localStorage.getItem('highscore-spaans-nederlands') || 0;
+      let highscoreNederlandsSpaans =
+        localStorage.getItem('highscore-nederlands-spaans') || 0;
+      let currentWord = null;
+
+      // HTML-elementen selecteren
+      const listSelectEl = document.getElementById('list-select');
+      const directionSelectEl = document.getElementById('direction-select');
+      const setSizeSelectEl = document.getElementById('set-size-select');
+      const customSetSizeEl = document.getElementById('custom-set-size');
+      const startButtonEl = document.getElementById('start-button');
+      const backButtonEl = document.getElementById('back-button');
+      const quizContainerEl = document.getElementById('quiz-container');
+      const questionContainerEl = document.getElementById('question-container');
+      const questionEl = document.querySelector('.question');
+      const optionsEl = document.querySelector('.options');
+      const feedbackEl = document.querySelector('.feedback');
+      const progressBarEl = document.querySelector('.progress-bar');
+      const setProgressBarEl = document.querySelector('.set-progress-bar');
+      const progressInfoEl = document.querySelector('.progress-info');
+      const setProgressInfoEl = document.querySelector('.set-progress-info');
+      const resultEl = document.querySelector('.result');
+      const scoreEl = document.getElementById('score');
+      const highscoreEl = document.getElementById('highscore');
+      const highscoreSpaansNederlandsEl = document.getElementById(
+        'highscore-spaans-nederlands'
+      );
+      const highscoreNederlandsSpaansEl = document.getElementById(
+        'highscore-nederlands-spaans'
+      );
+      const highscoreContainerEl = document.getElementById(
+        'highscore-container'
+      );
+      const motivationalMessageEl = document.getElementById(
+        'motivational-message'
+      );
+
+      // Update highscore display
+      highscoreSpaansNederlandsEl.textContent = `Highscore Spaans-Nederlands: ${highscoreSpaansNederlands}`;
+      highscoreNederlandsSpaansEl.textContent = `Highscore Nederlands-Spaans: ${highscoreNederlandsSpaans}`;
+
+      setSizeSelectEl.addEventListener('change', () => {
+        if (setSizeSelectEl.value === 'custom') {
+          customSetSizeEl.style.display = 'block';
+        } else {
+          customSetSizeEl.style.display = 'none';
+        }
+      });
+
+      startButtonEl.addEventListener('click', () => {
+        oefenrichting = directionSelectEl.value;
+        setSize =
+          setSizeSelectEl.value === 'custom'
+            ? parseInt(customSetSizeEl.value)
+            : setSizeSelectEl.value === 'all'
+            ? null
+            : parseInt(setSizeSelectEl.value);
+        const selectedList = listSelectEl.value;
+        let fetchPromises;
+        highscoreContainerEl.style.display = 'none';
+
+        if (selectedList === 'all') {
+          fetchPromises = lists[selectedList].map(url =>
+            fetch(url)
+              .then(response => response.json())
+              .catch(error => {
+                console.error(
+                  `Fout bij het laden van woordenlijst ${url}:`,
+                  error
+                );
+              })
+          );
+          Promise.all(fetchPromises)
+            .then(dataArrays => {
+              woordenlijst = [].concat(
+                ...dataArrays.map(data => data?.spaans ?? [])
+              );
+              if (woordenlijst.length === 0) {
+                console.error('Geen woorden gevonden om te oefenen.');
+                return;
+              }
+              console.log('Woordenlijst geladen:', woordenlijst);
+              startQuiz();
+            })
+            .catch(error =>
+              console.error('Fout bij het laden van woordenlijsten:', error)
+            );
+        } else {
+          fetch(lists[selectedList])
+            .then(response => response.json())
+            .then(data => {
+              woordenlijst = data.spaans ?? [];
+              if (woordenlijst.length === 0) {
+                console.error('Geen woorden gevonden om te oefenen.');
+                return;
+              }
+              console.log('Woordenlijst geladen:', woordenlijst);
+              startQuiz();
+            })
+            .catch(error =>
+              console.error('Fout bij het laden van woordenlijst:', error)
+            );
+        }
+      });
+
+      backButtonEl.addEventListener('click', () => {
+        quizContainerEl.style.display = 'none';
+        backButtonEl.style.display = 'none';
+        startButtonEl.style.display = 'block';
+        listSelectEl.parentElement.style.display = 'flex';
+        directionSelectEl.parentElement.style.display = 'flex';
+        setSizeSelectEl.parentElement.style.display = 'flex';
+        customSetSizeEl.style.display = 'none';
+        highscoreContainerEl.style.display = 'block';
+
+        // Reset alle belangrijke variabelen naar hun beginwaarden
+        currentIndex = 0;
+        setIndex = 0;
+        score = 0;
+        foutenCount = 0;
+        fouten = [];
+        woordenlijst = [];
+      });
+
+      function startQuiz() {
+        if (woordenlijst.length === 0) {
+          console.error('Woordenlijst is leeg, kan de quiz niet starten.');
+          return;
+        }
+        currentIndex = 0;
+        setIndex = 0;
+        score = 0;
+        foutenCount = 0;
+        fouten = [];
+        motivationalMessageEl.textContent = '';
+        questionContainerEl.style.display = 'block';
+        quizContainerEl.style.display = 'block';
+        startButtonEl.style.display = 'none';
+        backButtonEl.style.display = 'flex';
+        listSelectEl.parentElement.style.display = 'none';
+        directionSelectEl.parentElement.style.display = 'none';
+        setSizeSelectEl.parentElement.style.display = 'none';
+        resultEl.textContent = '';
+        highscoreEl.textContent = `Highscore: ${
+          oefenrichting === 'spaans-nederlands'
+            ? highscoreSpaansNederlands
+            : highscoreNederlandsSpaans
+        }`;
+        updateScoreDisplay();
+        loadQuestionSet();
+      }
+
+      // Load question set
+      function loadQuestionSet() {
+        if (setIndex * setSize >= woordenlijst.length) {
+          showResult();
+          return;
+        }
+
+        motivationalMessageEl.textContent = `Laten we beginnen - Level ${
+          setIndex + 1
+        }`;
+        const start = setIndex * setSize;
+        const end = setSize
+          ? Math.min(start + setSize, woordenlijst.length)
+          : woordenlijst.length;
+        currentIndex = start;
+        loadQuestion(start, end);
+      }
+      // Load question
+      function loadQuestion(start, end, callback) {
+        console.log('Loading question:', { start, end, currentIndex });
+        if (currentIndex >= end) {
+          console.log('We hebben het einde van de set bereikt');
+          if (callback) {
+            console.log('Herhalingsronde afgerond. Callback uitvoeren...');
+            fouten = []; // Leeg de foutenlijst na de herhalingsronde
+            callback();
+          } else {
+            console.log('Set resultaat tonen...');
+            showSetResult();
+          }
+          return;
+        }
+
+        currentWord = woordenlijst[currentIndex];
+        const vraag =
+          oefenrichting === 'spaans-nederlands'
+            ? currentWord.woord
+            : currentWord.vertaling;
+        const correctAntwoord =
+          oefenrichting === 'spaans-nederlands'
+            ? currentWord.vertaling
+            : currentWord.woord;
+
+        questionEl.innerHTML = `Wat is de vertaling van: <strong class='word' style='color: #F24464';>${vraag}</strong> ?`;
+
+        const options = shuffleOptions(correctAntwoord, woordenlijst);
+        optionsEl.innerHTML = '';
+        options.forEach((option, index) => {
+          const button = document.createElement('button');
+          button.className = `answer${index + 1}`;
+          button.innerHTML = `<i class="fa"></i> ${option}`;
+          button.addEventListener('click', () =>
+            checkAnswer(button, option, correctAntwoord, start, end, callback)
+          );
+          optionsEl.appendChild(button);
+        });
+
+        updateProgressBar(start, end);
+        updateSetProgressBar();
+        progressInfoEl.textContent = `Vraag ${currentIndex - start + 1} van ${
+          end - start
+        } binnen de huidige set`;
+        setProgressInfoEl.textContent = `Progressie van sets: ${
+          setIndex + 1
+        } van ${Math.ceil(woordenlijst.length / setSize)}`;
+      }
+      // Check answer
+      function checkAnswer(
+        button,
+        selectedOption,
+        correctAnswer,
+        start,
+        end,
+        callback
+      ) {
+        try {
+          console.log('Checking answer:', { selectedOption, correctAnswer });
+          const isCorrect = selectedOption === correctAnswer;
+          if (isCorrect) {
+            button.classList.add('correct');
+            button.querySelector('i').classList.add('fa-solid', 'fa-check');
+            button.style.backgroundColor = '#61B68A';
+            button.style.color = '#fff';
+            score++;
+          } else {
+            button.classList.add('wrong');
+            button.querySelector('i').classList.add('fa-solid', 'fa-xmark');
+            button.style.backgroundColor = '#A63841';
+            button.style.color = '#fff';
+            foutenCount++;
+            if (!fouten.some(word => word.woord === currentWord.woord)) {
+              fouten.push(currentWord);
+            }
+
+            // Markeer ook het juiste antwoord
+            optionsEl.querySelectorAll('button').forEach(optButton => {
+              if (optButton.textContent.trim() === correctAnswer) {
+                optButton.classList.add('correct-answer');
+                optButton
+                  .querySelector('i')
+                  .classList.add('fa-solid', 'fa-check');
+                optButton.style.backgroundColor = '#fff';
+                optButton.style.border = '2px solid #61B68A';
+                optButton.style.color = '#61B68A';
+              }
+            });
+          }
+          currentIndex++;
+          setTimeout(() => {
+            feedbackEl.textContent = '';
+            if (currentIndex >= end) {
+              console.log('We hebben het einde van de set bereikt');
+              if (callback) {
+                fouten = []; // Leeg de foutenlijst na de herhalingsronde
+                callback();
+              } else {
+                showSetResult();
+              }
+            } else {
+              loadQuestion(start, end, callback);
+            }
+          }, 1000);
+          updateScoreDisplay();
+        } catch (error) {
+          console.error(
+            'Er is een fout opgetreden bij het afhandelen van het antwoord:',
+            error
+          );
+        }
+      }
+
+      // Show set result
+      function showSetResult() {
+        questionContainerEl.style.display = 'none';
+        let message = '';
+        if (score < 5) {
+          message =
+            'Nog niet helemaal onder de knie, maar je bent goed op weg!';
+        } else if (score < 8) {
+          message = 'Goed bezig, ga zo door!';
+        } else {
+          message = 'Wow, fantastisch gedaan!';
+        }
+
+        motivationalMessageEl.innerHTML = `${message} <br/>`;
+
+        if (fouten.length > 0) {
+          motivationalMessageEl.innerHTML +=
+            '<button id="repeat-errors" class="start-btn">Laten we de fouten nog eens herhalen.</button>';
+          document
+            .getElementById('repeat-errors')
+            .addEventListener('click', () => {
+              startRepeatErrors(() => {
+                fouten = []; // Leeg de foutenlijst na succesvolle herhaling
+                showSetResult(); // Na succesvolle herhaling, opnieuw showSetResult() aanroepen
+              });
+            });
+        } else {
+          motivationalMessageEl.innerHTML +=
+            '<button id="next-level" class="start-btn">Nu gaan we door naar Level ' +
+            (setIndex + 2) +
+            '.</button>';
+          document
+            .getElementById('next-level')
+            .addEventListener('click', function () {
+              try {
+                console.log('Next level button clicked');
+                setIndex++;
+                currentIndex = setIndex * setSize;
+                questionContainerEl.style.display = 'block';
+                motivationalMessageEl.textContent = '';
+                loadQuestionSet();
+              } catch (error) {
+                console.error('Er is een fout opgetreden:', error);
+              }
+            });
+        }
+      }
+      // Start repeat errors
+      function startRepeatErrors(callback) {
+        try {
+          console.log('Starting repeat errors');
+          woordenlijst = fouten.slice();
+          fouten = [];
+          currentIndex = 0;
+          score = 0;
+          foutenCount = 0;
+          motivationalMessageEl.textContent = '';
+          questionContainerEl.style.display = 'block';
+          console.log('Woordenlijst voor herhaling:', woordenlijst);
+          loadQuestion(0, woordenlijst.length, callback);
+        } catch (error) {
+          console.error(
+            'Er is een fout opgetreden bij het herhalen van fouten:',
+            error
+          );
+        }
+      }
+      // Update score display
+      function updateScoreDisplay() {
+        scoreEl.textContent = `Goed: ${score} | Fout: ${foutenCount}`;
+      }
+
+      function updateProgressBar(start, end) {
+        const progress = ((currentIndex - start) / (end - start)) * 100;
+        progressBarEl.style.width = `${progress}%`;
+      }
+
+      function updateSetProgressBar() {
+        const setProgress =
+          ((setIndex + 1) / Math.ceil(woordenlijst.length / setSize)) * 100;
+        setProgressBarEl.style.width = `${setProgress}%`;
+      }
+
+      function showResult() {
+        try {
+          resultEl.textContent = `Je hebt ${score} van de ${woordenlijst.length} goed!`;
+          quizContainerEl.style.display = 'none';
+          if (
+            score >
+            (oefenrichting === 'spaans-nederlands'
+              ? highscoreSpaansNederlands
+              : highscoreNederlandsSpaans)
+          ) {
+            if (oefenrichting === 'spaans-nederlands') {
+              highscoreSpaansNederlands = score;
+              localStorage.setItem('highscore-spaans-nederlands', score);
+            } else {
+              highscoreNederlandsSpaans = score;
+              localStorage.setItem('highscore-nederlands-spaans', score);
+            }
+            highscoreEl.textContent = `Nieuwe highscore: ${score}`;
+          }
+        } catch (error) {
+          console.error(
+            'Er is een fout opgetreden bij het tonen van het resultaat:',
+            error
+          );
+        }
+      }
+
+      function shuffleOptions(correctAnswer, words) {
+        let options = [correctAnswer];
+        while (options.length < 4) {
+          const randomWord =
+            oefenrichting === 'spaans-nederlands'
+              ? words[Math.floor(Math.random() * words.length)].vertaling
+              : words[Math.floor(Math.random() * words.length)].woord;
+          if (!options.includes(randomWord)) {
+            options.push(randomWord);
+          }
+        }
+        return options.sort(() => Math.random() - 0.5);
+      }
+    </script>
+  </body>
+</html>

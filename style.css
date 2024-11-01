@@ -1,9 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
-
-/* :root {
-    --variable: value;
-  } */
-
 * {
   box-sizing: border-box;
 }
@@ -19,21 +13,31 @@ body {
   justify-content: center;
   min-height: 100vh;
   font-family: 'Nunito', sans-serif;
-  background-color: #fffef4;
+  background-color: #3b2e8c;
   margin: 0;
   padding: 1rem;
 }
 
-#app {
+.app {
+  width: 600px;
   max-width: 960px;
   margin: 0 auto;
   background-color: #fff;
-  padding: 1rem;
+  padding: 2rem;
+  border-radius: 0.5rem;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
   text-align: center;
+}
+
+.highscore-container {
+  margin-bottom: 1rem;
+  text-align: center;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
 }
 
 .select-list,
@@ -54,9 +58,11 @@ h1 {
 .select-set-size select {
   font-family: 'Nunito' !important;
   font-weight: 600;
+  width: 40%;
+  font-size: 1rem;
 }
 button.start-btn {
-  background: #bb3c63;
+  background: #f24464;
   border-radius: 0.25rem;
   padding: 0.5rem 1rem;
   color: #fff;
@@ -67,38 +73,127 @@ button.start-btn {
   box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 4px, rgba(0, 0, 0, 0.23) 0px 3px 4px;
 }
 button.start-btn:hover {
-  background: #c25073;
+  background: #f35774;
   box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
 }
 
+.app {
+  position: relative;
+}
+.back-btn {
+  height: 2rem;
+  border-radius: 1rem;
+  padding: 0 1rem;
+  border: none;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 4px, rgba(0, 0, 0, 0.23) 0px 3px 4px;
+  gap: 0.5rem;
+  display: flex;
+  align-items: center;
+}
 .quiz-container {
   margin-top: 1.5rem;
 }
 
+.score-container {
+  text-align: center;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.question-container {
+  display: none;
+}
+
+.question {
+  font-size: 1.25rem;
+}
+.question strong {
+  font-weight: 800;
+}
+.options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-top: 1rem;
+}
 .options button {
-  display: block;
-  width: 100%;
-  margin: 5px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 10px;
-  background-color: #eee;
+  background-color: #f4f4f4;
   border: none;
   cursor: pointer;
+  color: #474747;
+  font-size: 1.125rem;
+  font-weight: 600;
+  height: 6rem;
+  border-radius: 0.25rem;
+  border: 1px solid #ddd;
+  text-indent: -1rem;
+}
+
+.options button.correct {
+  background-color: #61b68a !important;
+  color: #fff !important;
+}
+
+.options button.correct i {
+  color: #fff;
+}
+
+.options button.wrong {
+  background-color: #a63841 !important;
+  color: #fff !important;
+}
+
+.options button.wrong i {
+  color: #fff;
+}
+
+.options button.correct-answer {
+  background-color: #fff;
+  border: 2px solid #61b68a;
+  color: #61b68a;
+}
+
+.options button.correct-answer i {
+  color: #61b68a;
+  visibility: visible;
+}
+
+.options button i {
+  margin-right: 10px;
+  width: 12px;
+  position: relative;
+  left: -1rem;
 }
 
 .options button:hover {
   background-color: #ddd;
 }
 
-.progress {
+.progress,
+.set-progress {
   width: 100%;
   background-color: #ddd;
-  margin-top: 20px;
+  margin: 0.125rem 0 0.5rem;
+  border-radius: 0.25rem;
+  height: 0.5rem;
+  overflow: hidden;
 }
 
 .progress-bar {
   width: 0;
-  height: 20px;
-  background-color: #3cba75;
+  height: 0.5rem;
+  background-color: #81c5a1;
+}
+
+.set-progress-bar {
+  width: 0;
+  height: 0.5rem;
+  background-color: #81c5a1;
 }
 
 .result {
@@ -110,6 +205,12 @@ button.start-btn:hover {
   text-align: center;
   font-size: 16px;
   margin-top: 10px;
+}
+
+.motivational-message {
+  text-align: center;
+  font-size: 16px;
+  margin-top: 20px;
 }
 
 #custom-set-size {
