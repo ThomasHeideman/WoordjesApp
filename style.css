@@ -16,8 +16,16 @@ body {
   align-items: center;
   justify-content: center;
   font-family: 'Nunito', sans-serif;
-  color: #333;
+  color: #1c1b22;
   background-color: #3b2e8c;
+  background-image: linear-gradient(
+    to bottom,
+    #231c54,
+    #292062,
+    #2f256f,
+    #35297e,
+    #3b2e8c
+  );
 }
 
 /* App-container */
@@ -36,10 +44,25 @@ body {
 h1 {
   text-align: center;
 }
+.score-board {
+  background-color: #63636e;
+  border-radius: 0.25rem;
+  display: flex;
+  justify-content: space-between;
+  padding: 0.25rem 0.5rem;
+  color: #fff;
+  border: 1px solid #42424b;
+  margin: 1rem 0;
+}
 
+.score,
+.highscore {
+  margin: 0;
+  font-size: 0.875rem;
+}
 .highscore-container,
 .score-container {
-  margin-bottom: 1rem;
+  margin: 0;
   text-align: center;
   font-family: 'Nunito', sans-serif;
   font-weight: 600;
@@ -47,7 +70,7 @@ h1 {
 }
 
 .motivational-message {
-  margin-top: 1rem;
+  margin: 1rem 0;
   text-align: center;
   font-size: 1.5rem;
 }
@@ -55,6 +78,9 @@ h1 {
 /* Emoji's */
 .emoji {
   font-family: 'Noto Color Emoji', sans-serif;
+}
+.emoji-small {
+  font-size: 0.75rem;
 }
 
 button .emoji {
@@ -95,6 +121,7 @@ button.back-btn {
   font-weight: bold;
   font-size: 1rem;
   box-shadow: rgba(0, 0, 0, 0.16) 0 3px 4px, rgba(0, 0, 0, 0.23) 0 3px 4px;
+  transition: 300ms ease-in-out;
 }
 
 button.start-btn {
@@ -138,11 +165,23 @@ button.back-btn:hover {
 }
 
 .question {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
   font-size: 1.25rem;
+  margin: 1.5rem 0;
 }
 
-.question strong {
-  font-weight: 800;
+.what-is {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #77767a;
+}
+.word {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #f24464;
 }
 
 /* Opties */
@@ -159,14 +198,15 @@ button.back-btn:hover {
   justify-content: center;
   padding: 0.625rem;
   height: 6rem;
-  background-color: #f4f4f4;
-  color: #474747;
+  background-color: #dcdcdf;
+  color: #605f64;
   font-size: 1.125rem;
   font-weight: 600;
-  border: 1px solid #ddd;
+  border: 1px solid #bababf;
   border-radius: 0.25rem;
   cursor: pointer;
   text-indent: -1rem;
+  transition: 200ms ease-in-out;
 }
 
 .options button i {
@@ -177,12 +217,13 @@ button.back-btn:hover {
 }
 
 .options button:hover {
-  background-color: #ddd;
+  background-color: #eeeeef;
+  border-color: #cbcbcf;
 }
 
 /* Kleurindicaties voor antwoorden */
 .options button.correct {
-  background-color: #61b68a !important;
+  background-color: #16aba7 !important;
   color: #fff !important;
 }
 
@@ -192,37 +233,39 @@ button.back-btn:hover {
 }
 
 .options button.wrong {
-  background-color: #a63841 !important;
+  background-color: #da3d5a !important;
   color: #fff !important;
 }
 
 .options button.correct-answer {
   background-color: #fff;
-  border: 2px solid #61b68a;
-  color: #61b68a;
+  border: 2px solid #16aba7;
+  color: #16aba7;
 }
 
 .options button.correct-answer i {
-  color: #61b68a;
+  color: #16aba7;
   visibility: visible;
 }
 
 /* Voortgangsbalken */
 .progress,
-.set-progress {
+.set-progress,
+.level-progress {
   width: 100%;
   height: 0.5rem;
-  background-color: #ddd;
+  background-color: #eeeeef;
   margin: 0.125rem 0 0.5rem;
   border-radius: 0.25rem;
   overflow: hidden;
 }
 
 .progress-bar,
-.set-progress-bar {
+.set-progress-bar,
+.level-progress-bar {
   width: 0;
   height: 100%;
-  background-color: #81c5a1;
+  background-color: #18beba;
 }
 
 /* Resultaten en feedback */
