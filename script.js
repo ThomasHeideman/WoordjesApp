@@ -114,7 +114,7 @@ async function startQuiz() {
     startButtonEl.style.display = 'none';
     listSelectEl.parentElement.style.display = 'none';
     directionSelectEl.parentElement.style.display = 'none';
-    controlsEl.style.display = 'block';
+    controlsEl.style.display = 'flex';
     quizContainerEl.style.display = 'block';
     resultEl.textContent = '';
     motivationalMessageEl.textContent = '';
@@ -200,15 +200,17 @@ function displayQuestion() {
 
   updateProgressBar();
   updateSetProgressBar();
-  progressInfoEl.textContent = `Level ${appState.currentLevel} - Vraag ${
+  progressInfoEl.innerHTML = `Vraag <strong style="color: #2f2570">${
     appState.currentWordIndex - appState.currentSetIndex * appState.setSize + 1
-  } van ${Math.min(
+  }</strong> van ${Math.min(
     appState.setSize,
     appState.words.length - appState.currentSetIndex * appState.setSize
   )}`;
-  setProgressInfoEl.textContent = `Progressie van sets: ${
-    appState.currentSetIndex + 1
-  } van ${Math.ceil(appState.words.length / appState.setSize)}`;
+  setProgressInfoEl.innerHTML = `Level <strong style="color: #2f2570">${
+    appState.currentLevel
+  }</strong> van ${Math.ceil(
+    appState.originalWords.length / appState.setSize
+  )}`;
 }
 
 function processAnswer(button, selectedOption, correctAnswer) {
