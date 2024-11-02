@@ -18,7 +18,7 @@ let appState = {
   foutenCount: 0,
   errors: [],
   oefenrichting: 'spaans-nederlands',
-  setSize: 2, // Altijd 10 woorden per set
+  setSize: 10, // Altijd 10 woorden per set
   highscoreSpaansNederlands:
     localStorage.getItem('highscore-spaans-nederlands') || 0,
   highscoreNederlandsSpaans:
