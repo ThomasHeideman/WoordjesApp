@@ -7,7 +7,6 @@ const lists = {
   all: ['unidad_1.json', 'unidad_2.json', 'los_numeros_0_100.json'],
 };
 
-
 // Applicatiestatus
 let appState = {
   words: [],
@@ -25,6 +24,7 @@ let appState = {
   highscoreNederlandsSpaans:
     localStorage.getItem('highscore-nederlands-spaans') || 0,
   currentWord: null,
+  currentLevelWords: [], // Add this line
 };
 
 // HTML-elementen selecteren
@@ -39,9 +39,9 @@ const questionEl = document.querySelector('.question');
 const optionsEl = document.querySelector('.options');
 const feedbackEl = document.querySelector('.feedback');
 const progressBarEl = document.querySelector('.progress-bar');
-const setProgressBarEl = document.querySelector('.set-progress-bar');
+const levelProgressBarEl = document.querySelector('.level-progress-bar');
 const progressInfoEl = document.querySelector('.progress-info');
-const setProgressInfoEl = document.querySelector('.set-progress-info');
+const levelProgressInfoEl = document.querySelector('.level-progress-info');
 const resultEl = document.querySelector('.result');
 const scoreEl = document.getElementById('score');
 const highscoreEl = document.getElementById('highscore');
@@ -65,6 +65,16 @@ startButtonEl.addEventListener('click', startQuiz);
 backButtonEl.addEventListener('click', goToStartScreen);
 repeatErrorsButtonEl.addEventListener('click', startErrorReview);
 nextLevelButtonEl.addEventListener('click', proceedToNextLevel);
+
+// utility functions
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    // Swap elements array[i] and array[j]
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
 
 function goToStartScreen() {
   quizContainerEl.style.display = 'none';
@@ -158,7 +168,17 @@ function startNewSet() {
     return;
   }
 
-  appState.currentWordIndex = currentSetIndex * setSize;
+  const startIdx = currentSetIndex * setSize;
+  const endIdx = Math.min(startIdx + setSize, words.length);
+
+  // extract words for the current level
+  const currentLevelWords = words.slice(startIdx, endIdx);
+  //shuffle the words for the current level
+  const shuffledLevelWords = shuffleArray(currentLevelWords);
+
+  // update the app state with the shuffled words for the current level
+  appState.currentLevelWords = shuffledLevelWords;
+  appState.currentWordIndex = 0;
   appState.errors = [];
 
   motivationalMessageEl.textContent = `Laten we beginnen - Level ${appState.currentLevel}`;
@@ -167,15 +187,14 @@ function startNewSet() {
 }
 
 function displayQuestion() {
-  const { currentWordIndex, words, currentSetIndex, setSize } = appState;
-  const setEndIndex = Math.min((currentSetIndex + 1) * setSize, words.length);
+  const { currentWordIndex, currentLevelWords } = appState;
 
-  if (currentWordIndex >= setEndIndex) {
+  if (currentWordIndex >= currentLevelWords.length) {
     checkIfSetCompleted();
     return;
   }
 
-  appState.currentWord = words[currentWordIndex];
+  appState.currentWord = currentLevelWords[currentWordIndex];
   const vraag =
     appState.oefenrichting === 'spaans-nederlands'
       ? appState.currentWord.woord
@@ -185,7 +204,7 @@ function displayQuestion() {
       ? appState.currentWord.vertaling
       : appState.currentWord.woord;
 
-  questionEl.innerHTML = `Wat is de vertaling van: <strong class='word' style='color: #F24464';>${vraag}</strong> ?`;
+  questionEl.innerHTML = `<div class="what-is">Wat is de vertaling van</div><div class='word' style='color: #F24464;'>'${vraag}'</div>`;
 
   const options = shuffleOptions(correctAntwoord);
   optionsEl.innerHTML = '';
@@ -200,20 +219,18 @@ function displayQuestion() {
   });
 
   updateProgressBar();
-  updateSetProgressBar();
+  updatelevelProgressBar();
+
   progressInfoEl.innerHTML = `Vraag <strong style="color: #2f2570">${
-    appState.currentWordIndex - appState.currentSetIndex * appState.setSize + 1
-  }</strong> van ${Math.min(
-    appState.setSize,
-    appState.words.length - appState.currentSetIndex * appState.setSize
-  )}`;
-  setProgressInfoEl.innerHTML = `Level <strong style="color: #2f2570">${
+    currentWordIndex + 1
+  }</strong> van ${currentLevelWords.length}`;
+  levelProgressInfoEl.innerHTML = `Level <strong style="color: #2f2570">${
     appState.currentLevel
   }</strong> van ${Math.ceil(
     appState.originalWords.length / appState.setSize
   )}`;
 }
-
+// processAnswer function that processes the user's answer
 function processAnswer(button, selectedOption, correctAnswer) {
   const isCorrect = selectedOption === correctAnswer;
   if (isCorrect) {
@@ -232,7 +249,7 @@ function processAnswer(button, selectedOption, correctAnswer) {
       appState.errors.push(appState.currentWord);
     }
 
-    // Markeer het juiste antwoord
+    // Mark the correct answer
     optionsEl.querySelectorAll('button').forEach(optButton => {
       if (optButton.textContent.trim().includes(correctAnswer)) {
         optButton.classList.add('correct-answer');
@@ -277,7 +294,7 @@ function startErrorReview() {
     proceedToNextLevel();
     return;
   }
-  appState.words = appState.errors.slice();
+  appState.currentLevelWords = shuffleArray(appState.errors.slice());
   appState.currentWordIndex = 0;
   appState.errors = [];
   questionContainerEl.style.display = 'block';
@@ -319,22 +336,21 @@ function showResult() {
 }
 
 function updateScoreDisplay() {
-  scoreEl.textContent = `Goed: ${appState.score} | Fout: ${appState.foutenCount}`;
+  scoreEl.innerHTML = `<span style="color:#a3e5e3"><span class="emoji emoji-small">✅</span> Goed: ${appState.score}</span>  <span style="color: #fab4c1"><span class="emoji emoji-small">❌</span> Fout: ${appState.foutenCount}</span>`;
 }
 
 function updateProgressBar() {
-  const { currentWordIndex, currentSetIndex, setSize } = appState;
   const progress =
-    ((currentWordIndex - currentSetIndex * setSize) / setSize) * 100;
+    (appState.currentWordIndex / appState.currentLevelWords.length) * 100;
   progressBarEl.style.width = `${progress}%`;
 }
 
-function updateSetProgressBar() {
+function updatelevelProgressBar() {
   const progress =
     ((appState.currentSetIndex + 1) /
       Math.ceil(appState.originalWords.length / appState.setSize)) *
     100;
-  setProgressBarEl.style.width = `${progress}%`;
+  levelProgressBarEl.style.width = `${progress}%`;
 }
 
 function shuffleOptions(correctAnswer) {
