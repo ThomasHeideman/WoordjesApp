@@ -1,38 +1,44 @@
+/* Globale stijlen */
 * {
   box-sizing: border-box;
 }
+
 html {
   font-size: 16px;
 }
 
 body {
-  color: #333;
+  margin: 0;
+  padding: 1rem;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
   font-family: 'Nunito', sans-serif;
+  color: #333;
   background-color: #3b2e8c;
-  margin: 0;
-  padding: 1rem;
 }
 
+/* App-container */
 .app {
+  position: relative;
   width: 600px;
   max-width: 960px;
   margin: 0 auto;
-  background-color: #fff;
   padding: 2rem;
+  background-color: #fff;
   border-radius: 0.5rem;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: rgba(0, 0, 0, 0.16) 0 3px 6px, rgba(0, 0, 0, 0.23) 0 3px 6px;
 }
 
+/* Koppen en tekst */
 h1 {
   text-align: center;
 }
 
-.highscore-container {
+.highscore-container,
+.score-container {
   margin-bottom: 1rem;
   text-align: center;
   font-family: 'Nunito', sans-serif;
@@ -40,65 +46,91 @@ h1 {
   font-size: 1rem;
 }
 
+.motivational-message {
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+/* Emoji's */
+.emoji {
+  font-family: 'Noto Color Emoji', sans-serif;
+}
+
+button .emoji {
+  margin-left: 0.5rem;
+  font-size: 1rem;
+}
+
+/* Selectie-elementen */
 .select-list,
 .select-direction,
 .select-set-size {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-bottom: 1rem;
-  text-align: center;
+  gap: 1rem;
   font-family: 'Nunito', sans-serif;
   font-weight: 600;
   font-size: 1.125rem;
-  gap: 1rem;
 }
 
 .select-list select,
 .select-direction select,
 .select-set-size select {
-  font-family: 'Nunito' !important;
-  font-weight: 600;
   width: 40%;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 600;
   font-size: 1rem;
 }
-button.start-btn {
-  background: #f24464;
-  border-radius: 0.25rem;
+
+/* Knoppen */
+button.start-btn,
+button.back-btn {
   padding: 0.5rem 1rem;
-  color: #fff;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
   font-weight: bold;
   font-size: 1rem;
-  border: none;
-  cursor: pointer;
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 4px, rgba(0, 0, 0, 0.23) 0px 3px 4px;
-}
-button.start-btn:hover {
-  background: #f35774;
-  box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0 3px 4px, rgba(0, 0, 0, 0.23) 0 3px 4px;
 }
 
-.app {
-  position: relative;
+button.start-btn {
+  background-color: #f24464;
+  color: #fff;
 }
-.back-btn {
-  height: 2rem;
-  border-radius: 1rem;
-  padding: 0 1rem;
-  border: none;
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 4px, rgba(0, 0, 0, 0.23) 0px 3px 4px;
-  gap: 0.5rem;
+
+button.start-btn:hover {
+  background-color: #f35774;
+  box-shadow: rgba(0, 0, 0, 0.12) 0 1px 3px, rgba(0, 0, 0, 0.24) 0 1px 2px;
+}
+
+button.back-btn {
+  color: #444;
+  background-color: #dddddd;
+  order: 2;
+  margin-left: auto;
+  font-size: 0.875rem;
+}
+
+button.back-btn:hover {
+  background-color: #c7c7c7;
+  box-shadow: rgba(0, 0, 0, 0.12) 0 1px 3px, rgba(0, 0, 0, 0.24) 0 1px 2px;
+}
+
+/* Controle-elementen */
+.controls {
   display: flex;
-  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 2rem;
 }
+
+/* Quiz-container */
 .quiz-container {
   margin-top: 1.5rem;
-}
-
-.score-container {
-  text-align: center;
-  font-size: 1rem;
-  margin-bottom: 1rem;
-  font-weight: 600;
 }
 
 .question-container {
@@ -108,59 +140,33 @@ button.start-btn:hover {
 .question {
   font-size: 1.25rem;
 }
+
 .question strong {
   font-weight: 800;
 }
+
+/* Opties */
 .options {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
   margin-top: 1rem;
 }
+
 .options button {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 10px;
+  padding: 0.625rem;
+  height: 6rem;
   background-color: #f4f4f4;
-  border: none;
-  cursor: pointer;
   color: #474747;
   font-size: 1.125rem;
   font-weight: 600;
-  height: 6rem;
-  border-radius: 0.25rem;
   border: 1px solid #ddd;
+  border-radius: 0.25rem;
+  cursor: pointer;
   text-indent: -1rem;
-}
-
-.options button.correct {
-  background-color: #61b68a !important;
-  color: #fff !important;
-}
-
-.options button.correct i {
-  color: #fff;
-}
-
-.options button.wrong {
-  background-color: #a63841 !important;
-  color: #fff !important;
-}
-
-.options button.wrong i {
-  color: #fff;
-}
-
-.options button.correct-answer {
-  background-color: #fff;
-  border: 2px solid #61b68a;
-  color: #61b68a;
-}
-
-.options button.correct-answer i {
-  color: #61b68a;
-  visibility: visible;
 }
 
 .options button i {
@@ -174,47 +180,60 @@ button.start-btn:hover {
   background-color: #ddd;
 }
 
+/* Kleurindicaties voor antwoorden */
+.options button.correct {
+  background-color: #61b68a !important;
+  color: #fff !important;
+}
+
+.options button.correct i,
+.options button.wrong i {
+  color: #fff;
+}
+
+.options button.wrong {
+  background-color: #a63841 !important;
+  color: #fff !important;
+}
+
+.options button.correct-answer {
+  background-color: #fff;
+  border: 2px solid #61b68a;
+  color: #61b68a;
+}
+
+.options button.correct-answer i {
+  color: #61b68a;
+  visibility: visible;
+}
+
+/* Voortgangsbalken */
 .progress,
 .set-progress {
   width: 100%;
+  height: 0.5rem;
   background-color: #ddd;
   margin: 0.125rem 0 0.5rem;
   border-radius: 0.25rem;
-  height: 0.5rem;
   overflow: hidden;
 }
 
-.progress-bar {
-  width: 0;
-  height: 0.5rem;
-  background-color: #81c5a1;
-}
-
+.progress-bar,
 .set-progress-bar {
   width: 0;
-  height: 0.5rem;
+  height: 100%;
   background-color: #81c5a1;
 }
 
+/* Resultaten en feedback */
 .result {
+  margin-top: 1rem;
   text-align: center;
-  font-size: 18px;
+  font-size: 1.125rem;
 }
 
 .feedback {
+  margin-top: 1rem;
   text-align: center;
-  font-size: 16px;
-  margin-top: 10px;
-}
-
-.motivational-message {
-  text-align: center;
-  font-size: 16px;
-  margin-top: 20px;
-}
-
-#custom-set-size {
-  margin-top: 10px;
-  display: block;
-  text-align: center;
+  font-size: 1rem;
 }

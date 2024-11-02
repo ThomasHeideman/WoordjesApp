@@ -1,29 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nl">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dante's TaalTrainer 🎓</title>
     <link rel="stylesheet" href="style.css" />
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;0,800;1,200..1000&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&family=Nunito:ital,wght@0,200..1000;0,800;1,200..1000&display=swap"
       rel="stylesheet"
     />
 
+    <!-- Favicon -->
     <link
       rel="icon"
-      type="../src/image/png"
+      type="image/png"
       sizes="32x32"
       href="src/favicon-32x32.png"
     />
-
-    <style></style>
-    <title>Woordenschat Oefenen</title>
   </head>
   <body>
     <div id="app" class="app">
-      <h1>Woordenschat Oefenen</h1>
+      <h1>Dante's TaalTrainer 🎓</h1>
       <div class="highscore-container" id="highscore-container">
         <p id="highscore-spaans-nederlands">Highscore Spaans-Nederlands: 0</p>
         <p id="highscore-nederlands-spaans">Highscore Nederlands-Spaans: 0</p>
@@ -46,11 +47,10 @@
       </div>
 
       <button id="start-button" class="start-btn">Start Oefenen</button>
-      <button id="back-button" class="back-btn" style="display: none">
-        <i class="fa-solid fa-rotate-left"></i>Terug naar start
-      </button>
+
       <div id="quiz-container" class="quiz-container" style="display: none">
         <div class="score-container">
+          <div class="motivational-message" id="motivational-message"></div>
           <p id="score">Goed: 0 | Fout: 0</p>
           <p id="highscore">Highscore: 0</p>
         </div>
@@ -58,7 +58,6 @@
           <div class="question"></div>
           <div class="options"></div>
         </div>
-        <div class="motivational-message" id="motivational-message"></div>
         <div class="feedback"></div>
         <div class="progress-info"></div>
         <div class="progress">
@@ -70,12 +69,34 @@
         </div>
       </div>
       <div class="result"></div>
+      <div id="controls" class="controls" style="display: none">
+        <button id="back-button" class="back-btn">
+          <i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Terug naar
+          start
+        </button>
+        <button
+          id="repeat-errors"
+          class="start-btn repeat-btn btn"
+          style="display: none"
+        >
+          Probeer het nog eens! 👊
+        </button>
+        <button
+          id="next-level"
+          class="start-btn nextlvl-btn btn"
+          style="display: none"
+        >
+          Naar het volgende level! 🎉
+        </button>
+      </div>
     </div>
+
+    <!-- FontAwesome Icons -->
     <script
       src="https://kit.fontawesome.com/f347a2f41e.js"
       crossorigin="anonymous"
     ></script>
-
+    <!-- JavaScript -->
     <script src="script.js"></script>
   </body>
 </html>
