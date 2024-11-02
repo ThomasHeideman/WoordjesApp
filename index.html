@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nl">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dante's TaalTrainer 🎓</title>
     <link rel="stylesheet" href="style.css" />
 
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -12,19 +14,17 @@
       rel="stylesheet"
     />
 
+    <!-- Favicon -->
     <link
       rel="icon"
-      type="../src/image/png"
+      type="image/png"
       sizes="32x32"
       href="src/favicon-32x32.png"
     />
-
-    <style></style>
-    <title>Woorden Oefenen</title>
   </head>
   <body>
     <div id="app" class="app">
-      <h1>Dante's TaalTrainer <span class="emoji">🎓</span></h1>
+      <h1>Dante's TaalTrainer 🎓</h1>
       <div class="highscore-container" id="highscore-container">
         <p id="highscore-spaans-nederlands">Highscore Spaans-Nederlands: 0</p>
         <p id="highscore-nederlands-spaans">Highscore Nederlands-Spaans: 0</p>
@@ -70,33 +70,33 @@
       </div>
       <div class="result"></div>
       <div id="controls" class="controls" style="display: none">
-        <div id="controls" class="controls">
-          <button id="back-button" class="back-btn">
-            <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>Terug naar
-            start
-          </button>
-          <button
-            id="repeat-errors"
-            class="start-btn repeat-btn btn"
-            style="display: none"
-          >
-            Probeer het nog eens!<span class="emoji">👊</span>
-          </button>
-          <button
-            id="next-level"
-            class="start-btn nextlvl-btn btn"
-            style="display: none"
-          >
-            Naar het volgende level!<span class="emoji">🎉</span>
-          </button>
-        </div>
+        <button id="back-button" class="back-btn">
+          <i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Terug naar
+          start
+        </button>
+        <button
+          id="repeat-errors"
+          class="start-btn repeat-btn btn"
+          style="display: none"
+        >
+          Probeer het nog eens! 👊
+        </button>
+        <button
+          id="next-level"
+          class="start-btn nextlvl-btn btn"
+          style="display: none"
+        >
+          Naar het volgende level! 🎉
+        </button>
       </div>
     </div>
+
+    <!-- FontAwesome Icons -->
     <script
       src="https://kit.fontawesome.com/f347a2f41e.js"
       crossorigin="anonymous"
     ></script>
-
+    <!-- JavaScript -->
     <script src="script.js"></script>
   </body>
 </html>

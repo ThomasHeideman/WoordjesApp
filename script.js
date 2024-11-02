@@ -1,4 +1,5 @@
 'use strict';
+
 const lists = {
   unidad_1: 'unidad_1.json',
   unidad_2: 'unidad_2.json',
@@ -6,24 +7,24 @@ const lists = {
   all: ['unidad_1.json', 'unidad_2.json', 'los_numeros_0_100.json'],
 };
 
-let woordenlijst = [];
-let randomWords = [];
-let currentIndex = 0;
-let score = 0;
-let foutenCount = 0;
-let setIndex = 0;
-let levelIndex = 0;
-let fouten = [];
-let nieuweFouten = [];
-let isRepeatRound = false;
-
-let oefenrichting = 'spaans-nederlands';
-let setSize = 2; // Altijd 10 woorden per set
-let highscoreSpaansNederlands =
-  localStorage.getItem('highscore-spaans-nederlands') || 0;
-let highscoreNederlandsSpaans =
-  localStorage.getItem('highscore-nederlands-spaans') || 0;
-let currentWord = null;
+// Applicatiestatus
+let appState = {
+  words: [],
+  originalWords: [],
+  currentLevel: 1,
+  currentSetIndex: 0,
+  currentWordIndex: 0,
+  score: 0,
+  foutenCount: 0,
+  errors: [],
+  oefenrichting: 'spaans-nederlands',
+  setSize: 2, // Altijd 10 woorden per set
+  highscoreSpaansNederlands:
+    localStorage.getItem('highscore-spaans-nederlands') || 0,
+  highscoreNederlandsSpaans:
+    localStorage.getItem('highscore-nederlands-spaans') || 0,
+  currentWord: null,
+};
 
 // HTML-elementen selecteren
 const listSelectEl = document.getElementById('list-select');
@@ -51,393 +52,293 @@ const highscoreNederlandsSpaansEl = document.getElementById(
 );
 const highscoreContainerEl = document.getElementById('highscore-container');
 const motivationalMessageEl = document.getElementById('motivational-message');
+const repeatErrorsButtonEl = document.getElementById('repeat-errors');
+const nextLevelButtonEl = document.getElementById('next-level');
 
 // Update highscore display
-highscoreSpaansNederlandsEl.textContent = `Highscore Spaans-Nederlands: ${highscoreSpaansNederlands}`;
-highscoreNederlandsSpaansEl.textContent = `Highscore Nederlands-Spaans: ${highscoreNederlandsSpaans}`;
+highscoreSpaansNederlandsEl.textContent = `Highscore Spaans-Nederlands: ${appState.highscoreSpaansNederlands}`;
+highscoreNederlandsSpaansEl.textContent = `Highscore Nederlands-Spaans: ${appState.highscoreNederlandsSpaans}`;
 
-startButtonEl.addEventListener('click', () => {
-  oefenrichting = directionSelectEl.value;
+// Event Listeners
+startButtonEl.addEventListener('click', startQuiz);
+backButtonEl.addEventListener('click', goToStartScreen);
+repeatErrorsButtonEl.addEventListener('click', startErrorReview);
+nextLevelButtonEl.addEventListener('click', proceedToNextLevel);
+
+function goToStartScreen() {
+  quizContainerEl.style.display = 'none';
+  controlsEl.style.display = 'none';
+  startButtonEl.style.display = 'block';
+  listSelectEl.parentElement.style.display = 'flex';
+  directionSelectEl.parentElement.style.display = 'flex';
+  highscoreContainerEl.style.display = 'block';
+  resultEl.textContent = '';
+  motivationalMessageEl.textContent = '';
+
+  // Reset de applicatiestatus
+  appState = {
+    ...appState,
+    words: [],
+    originalWords: [],
+    currentLevel: 1,
+    currentSetIndex: 0,
+    currentWordIndex: 0,
+    score: 0,
+    foutenCount: 0,
+    errors: [],
+  };
+}
+
+async function startQuiz() {
+  appState.oefenrichting = directionSelectEl.value;
   const selectedList = listSelectEl.value;
-  let fetchPromises;
   highscoreContainerEl.style.display = 'none';
 
+  try {
+    appState.originalWords = await loadWords(selectedList);
+    if (appState.originalWords.length === 0) {
+      console.error('Geen woorden gevonden om te oefenen.');
+      return;
+    }
+    // Reset de applicatiestatus
+    appState = {
+      ...appState,
+      words: appState.originalWords.slice(),
+      currentLevel: 1,
+      currentSetIndex: 0,
+      currentWordIndex: 0,
+      score: 0,
+      foutenCount: 0,
+      errors: [],
+    };
+    startButtonEl.style.display = 'none';
+    listSelectEl.parentElement.style.display = 'none';
+    directionSelectEl.parentElement.style.display = 'none';
+    controlsEl.style.display = 'block';
+    quizContainerEl.style.display = 'block';
+    resultEl.textContent = '';
+    motivationalMessageEl.textContent = '';
+    highscoreEl.textContent = `Highscore: ${
+      appState.oefenrichting === 'spaans-nederlands'
+        ? appState.highscoreSpaansNederlands
+        : appState.highscoreNederlandsSpaans
+    }`;
+    updateScoreDisplay();
+    startNewSet();
+  } catch (error) {
+    console.error('Fout bij het starten van de quiz:', error);
+  }
+}
+
+async function loadWords(selectedList) {
+  let words = [];
   if (selectedList === 'all') {
-    fetchPromises = lists[selectedList].map(url =>
+    const fetchPromises = lists.all.map(url =>
       fetch(url)
         .then(response => response.json())
-        .catch(error => {
-          console.error(`Fout bij het laden van woordenlijst ${url}:`, error);
-        })
+        .then(data => data.spaans ?? [])
     );
-    Promise.all(fetchPromises)
-      .then(dataArrays => {
-        woordenlijst = [].concat(...dataArrays.map(data => data?.spaans ?? []));
-        console.log(
-          'Aantal woorden geladen in woordenlijst:',
-          woordenlijst.length
-        );
-
-        if (woordenlijst.length === 0) {
-          console.error('Geen woorden gevonden om te oefenen.');
-          return;
-        }
-        console.log('Woordenlijst geladen:', woordenlijst);
-        startQuiz();
-      })
-      .catch(error =>
-        console.error('Fout bij het laden van woordenlijsten:', error)
-      );
+    const dataArrays = await Promise.all(fetchPromises);
+    words = dataArrays.flat();
   } else {
-    fetch(lists[selectedList])
-      .then(response => response.json())
-      .then(data => {
-        woordenlijst = data.spaans ?? [];
-        if (woordenlijst.length === 0) {
-          console.error('Geen woorden gevonden om te oefenen.');
-          return;
-        }
-        console.log('Woordenlijst geladen:', woordenlijst);
-        startQuiz();
-      })
-      .catch(error =>
-        console.error('Fout bij het laden van woordenlijst:', error)
-      );
+    const response = await fetch(lists[selectedList]);
+    const data = await response.json();
+    words = data.spaans ?? [];
   }
-});
-
-backButtonEl.addEventListener('click', () => {
-  quizContainerEl.style.display = 'none';
-
-  startButtonEl.style.display = 'block';
-  listSelectEl.parentElement.style.display = 'flex';
-  directionSelectEl.parentElement.style.display = 'flex';
-  highscoreContainerEl.style.display = 'block';
-
-  // Reset alle belangrijke variabelen naar hun beginwaarden
-  currentIndex = 0;
-  setIndex = 0;
-  score = 0;
-  foutenCount = 0;
-  fouten = [];
-  woordenlijst = [];
-});
-
-function startQuiz() {
-  randomWords = woordenlijst.slice();
-  if (woordenlijst.length === 0) {
-    console.error('Woordenlijst is leeg, kan de quiz niet starten.');
-    return;
-  }
-  currentIndex = 0;
-  setIndex = 0;
-  score = 0;
-  foutenCount = 0;
-  fouten = [];
-  nieuweFouten = []; // Reset nieuwe fouten bij het starten van een nieuw spel
-  motivationalMessageEl.textContent = '';
-  questionContainerEl.style.display = 'block';
-  quizContainerEl.style.display = 'block';
-  controlsEl.style.display = 'block'; // Toon de controls-div
-  startButtonEl.style.display = 'none';
-  listSelectEl.parentElement.style.display = 'none';
-  directionSelectEl.parentElement.style.display = 'none';
-  resultEl.textContent = '';
-  highscoreEl.textContent = `Highscore: ${
-    oefenrichting === 'spaans-nederlands'
-      ? highscoreSpaansNederlands
-      : highscoreNederlandsSpaans
-  }`;
-  updateScoreDisplay();
-  loadQuestionSet(); // Hier geen parameter nodig, de standaardwaarde is 0
+  return words;
 }
 
-// Terugknop
-backButtonEl.addEventListener('click', () => {
-  quizContainerEl.style.display = 'none';
-  controlsEl.style.display = 'none'; // Verberg de controls-div op het startscherm
-  startButtonEl.style.display = 'block';
-  listSelectEl.parentElement.style.display = 'flex';
-  directionSelectEl.parentElement.style.display = 'flex';
-  highscoreContainerEl.style.display = 'block';
+function startNewSet() {
+  const { currentSetIndex, words, setSize } = appState;
+  const totalSets = Math.ceil(words.length / setSize);
 
-  // Reset alle belangrijke variabelen naar hun beginwaarden
-  currentIndex = 0;
-  setIndex = 0;
-  score = 0;
-  foutenCount = 0;
-  fouten = [];
-  woordenlijst = [];
-});
-// Load question set
-function loadQuestionSet() {
-  const totalSetsInLevel = Math.ceil(woordenlijst.length / setSize);
-
-  if (setIndex >= totalSetsInLevel) {
-    // Level volledig afgerond
+  if (currentSetIndex >= totalSets) {
     showResult();
-    levelIndex++;
-    setIndex = 0; // Reset de setIndex voor het nieuwe level
     return;
   }
 
-  motivationalMessageEl.textContent = `Laten we beginnen - Level ${
-    levelIndex + 1
-  }`;
-  const start = setIndex * setSize;
-  const end = Math.min(start + setSize, woordenlijst.length);
-  currentIndex = start;
-  loadQuestion(start, end);
+  appState.currentWordIndex = currentSetIndex * setSize;
+  appState.errors = [];
+
+  motivationalMessageEl.textContent = `Laten we beginnen - Level ${appState.currentLevel}`;
+  questionContainerEl.style.display = 'block';
+  displayQuestion();
 }
 
-// Load question
-function loadQuestion(start, end, callback) {
-  console.log('Loading question:', { start, end, currentIndex });
-  if (currentIndex >= end) {
-    console.log('We hebben het einde van de set bereikt');
-    if (callback) {
-      console.log('Herhalingsronde afgerond. Callback uitvoeren...');
-      // foutenlijst niet leegmaken hier, dit gebeurt pas na succesvolle herhaling
-      if (fouten.length > 0) {
-        console.log('Herhaalfouten gevonden, opnieuw herhalen.');
-        startRepeatErrors(callback);
-      } else {
-        callback();
-      }
-    } else {
-      console.log('Set resultaat tonen...');
-      showSetResult();
-    }
+function displayQuestion() {
+  const { currentWordIndex, words, currentSetIndex, setSize } = appState;
+  const setEndIndex = Math.min((currentSetIndex + 1) * setSize, words.length);
+
+  if (currentWordIndex >= setEndIndex) {
+    checkIfSetCompleted();
     return;
   }
 
-  currentWord = woordenlijst[currentIndex];
+  appState.currentWord = words[currentWordIndex];
   const vraag =
-    oefenrichting === 'spaans-nederlands'
-      ? currentWord.woord
-      : currentWord.vertaling;
+    appState.oefenrichting === 'spaans-nederlands'
+      ? appState.currentWord.woord
+      : appState.currentWord.vertaling;
   const correctAntwoord =
-    oefenrichting === 'spaans-nederlands'
-      ? currentWord.vertaling
-      : currentWord.woord;
+    appState.oefenrichting === 'spaans-nederlands'
+      ? appState.currentWord.vertaling
+      : appState.currentWord.woord;
 
   questionEl.innerHTML = `Wat is de vertaling van: <strong class='word' style='color: #F24464';>${vraag}</strong> ?`;
 
-  const options = shuffleOptions(correctAntwoord, woordenlijst);
+  const options = shuffleOptions(correctAntwoord);
   optionsEl.innerHTML = '';
   options.forEach((option, index) => {
     const button = document.createElement('button');
     button.className = `answer${index + 1}`;
     button.innerHTML = `<i class="fa"></i> ${option}`;
     button.addEventListener('click', () =>
-      checkAnswer(button, option, correctAntwoord, start, end, callback)
+      processAnswer(button, option, correctAntwoord)
     );
     optionsEl.appendChild(button);
   });
 
-  updateProgressBar(start, end);
+  updateProgressBar();
   updateSetProgressBar();
-  progressInfoEl.textContent = `Level ${levelIndex + 1} - Vraag ${
-    currentIndex - start + 1
-  } van ${end - start}`;
+  progressInfoEl.textContent = `Level ${appState.currentLevel} - Vraag ${
+    appState.currentWordIndex - appState.currentSetIndex * appState.setSize + 1
+  } van ${Math.min(
+    appState.setSize,
+    appState.words.length - appState.currentSetIndex * appState.setSize
+  )}`;
   setProgressInfoEl.textContent = `Progressie van sets: ${
-    setIndex + 1
-  } van ${Math.ceil(woordenlijst.length / setSize)}`;
+    appState.currentSetIndex + 1
+  } van ${Math.ceil(appState.words.length / appState.setSize)}`;
 }
 
-// Check answer
-function checkAnswer(
-  button,
-  selectedOption,
-  correctAnswer,
-  start,
-  end,
-  callback
-) {
-  try {
-    console.log('Checking answer:', { selectedOption, correctAnswer });
-    const isCorrect = selectedOption === correctAnswer;
-    if (isCorrect) {
-      button.classList.add('correct');
-      button.querySelector('i').classList.add('fa-solid', 'fa-check');
-      button.style.backgroundColor = '#61B68A';
-      button.style.color = '#fff';
-      score++;
-    } else {
-      button.classList.add('wrong');
-      button.querySelector('i').classList.add('fa-solid', 'fa-xmark');
-      button.style.backgroundColor = '#A63841';
-      button.style.color = '#fff';
-      foutenCount++;
-
-      // Voeg de fout toe aan de juiste foutenlijst
-      if (!fouten.some(word => word.woord === currentWord.woord)) {
-        if (isRepeatRound) {
-          nieuweFouten.push(currentWord); // Voeg toe aan nieuweFouten tijdens herhaalronde
-          console.log('Nieuwe fout toegevoegd aan nieuweFouten:', currentWord);
-        } else {
-          fouten.push(currentWord); // Voeg toe aan fouten tijdens gewone ronde
-          console.log('Fout toegevoegd aan foutenlijst:', currentWord);
-        }
-      }
-
-      // Markeer ook het juiste antwoord
-      optionsEl.querySelectorAll('button').forEach(optButton => {
-        if (optButton.textContent.trim() === correctAnswer) {
-          optButton.classList.add('correct-answer');
-          optButton.querySelector('i').classList.add('fa-solid', 'fa-check');
-          optButton.style.backgroundColor = '#fff';
-          optButton.style.border = '2px solid #61B68A';
-          optButton.style.color = '#61B68A';
-        }
-      });
-    }
-    currentIndex++;
-    setTimeout(() => {
-      feedbackEl.textContent = '';
-      if (currentIndex >= end) {
-        console.log('We hebben het einde van de set bereikt');
-        if (callback) {
-          // foutenlijst wordt niet geleegd totdat alle fouten succesvol zijn beantwoord
-          callback();
-        } else {
-          showSetResult();
-        }
-      } else {
-        loadQuestion(start, end, callback);
-      }
-    }, 1000);
-    updateScoreDisplay();
-  } catch (error) {
-    console.error(
-      'Er is een fout opgetreden bij het afhandelen van het antwoord:',
-      error
-    );
-  }
-}
-
-// Show set result
-function showSetResult() {
-  questionContainerEl.style.display = 'none';
-  let message = '';
-
-  // Logica voor het tonen van de juiste knoppen
-  if (fouten.length > 0 || nieuweFouten.length > 0) {
-    console.log('Fouten gevonden, herhaal deze vragen');
-    message = `Nog niet helemaal onder de knie, maar je bent goed op weg! <span class="emoji">🫶</span>`;
-    document.getElementById('repeat-errors').style.display = 'block';
-    document.getElementById('next-level').style.display = 'none';
-
-    // Voeg event listener toe aan de repeat-errors knop
-    document.getElementById('repeat-errors').onclick = () => {
-      document.getElementById('repeat-errors').style.display = 'none';
-      startRepeatErrors(() => {
-        if (fouten.length > 0) {
-          startRepeatErrors(() => {
-            fouten = [];
-            showSetResult();
-          });
-        } else {
-          fouten = [];
-          showSetResult();
-        }
-      });
-    };
+function processAnswer(button, selectedOption, correctAnswer) {
+  const isCorrect = selectedOption === correctAnswer;
+  if (isCorrect) {
+    button.classList.add('correct');
+    button.querySelector('i').classList.add('fa-solid', 'fa-check');
+    button.style.backgroundColor = '#61B68A';
+    button.style.color = '#fff';
+    appState.score++;
   } else {
-    console.log('Geen fouten gevonden, ga door naar het volgende level');
-    message = `Wow, fantastisch gedaan! <span class="emoji">💯</span>`;
-    document.getElementById('repeat-errors').style.display = 'none';
-    document.getElementById('next-level').style.display = 'block';
+    button.classList.add('wrong');
+    button.querySelector('i').classList.add('fa-solid', 'fa-xmark');
+    button.style.backgroundColor = '#A63841';
+    button.style.color = '#fff';
+    appState.foutenCount++;
+    if (!appState.errors.includes(appState.currentWord)) {
+      appState.errors.push(appState.currentWord);
+    }
 
-    // Voeg event listener toe aan de next-level knop
-    document.getElementById('next-level').onclick = () => {
-      document.getElementById('next-level').style.display = 'none';
-      try {
-        setIndex++; // Verhoog pas hier de setIndex na een volledig afgerond level
-        currentIndex = setIndex * setSize;
-        questionContainerEl.style.display = 'block';
-        quizContainerEl.style.display = 'block';
-        motivationalMessageEl.textContent = '';
-        loadQuestionSet();
-      } catch (error) {
-        console.error('Er is een fout opgetreden:', error);
+    // Markeer het juiste antwoord
+    optionsEl.querySelectorAll('button').forEach(optButton => {
+      if (optButton.textContent.trim().includes(correctAnswer)) {
+        optButton.classList.add('correct-answer');
+        optButton.querySelector('i').classList.add('fa-solid', 'fa-check');
+        optButton.style.backgroundColor = '#fff';
+        optButton.style.border = '2px solid #61B68A';
+        optButton.style.color = '#61B68A';
       }
-    };
+    });
   }
-  motivationalMessageEl.innerHTML = `${message} <br/>`;
+  appState.currentWordIndex++;
+  setTimeout(() => {
+    feedbackEl.textContent = '';
+    displayQuestion();
+  }, 1000);
+  updateScoreDisplay();
+}
+
+function checkIfSetCompleted() {
+  if (appState.errors.length > 0) {
+    showSetResult(false);
+  } else {
+    showSetResult(true);
+  }
+}
+
+function showSetResult(isSetCleared) {
+  questionContainerEl.style.display = 'none';
+  if (isSetCleared) {
+    motivationalMessageEl.innerHTML = `Geweldig, je hebt dit level gehaald! 💯`;
+    repeatErrorsButtonEl.style.display = 'none';
+    nextLevelButtonEl.style.display = 'block';
+  } else {
+    motivationalMessageEl.innerHTML = `Laten we de fouten nog eens bekijken. 👊`;
+    repeatErrorsButtonEl.style.display = 'block';
+    nextLevelButtonEl.style.display = 'none';
+  }
+}
+
+function startErrorReview() {
+  if (appState.errors.length === 0) {
+    proceedToNextLevel();
+    return;
+  }
+  appState.words = appState.errors.slice();
+  appState.currentWordIndex = 0;
+  appState.errors = [];
+  questionContainerEl.style.display = 'block';
+  repeatErrorsButtonEl.style.display = 'none';
+  motivationalMessageEl.textContent = 'Herhalingsronde van de fouten';
+  displayQuestion();
+}
+
+function proceedToNextLevel() {
+  appState.currentSetIndex++;
+  appState.currentLevel++;
+  appState.currentWordIndex = appState.currentSetIndex * appState.setSize;
+  appState.words = appState.originalWords.slice();
+  questionContainerEl.style.display = 'block';
+  nextLevelButtonEl.style.display = 'none';
+  motivationalMessageEl.textContent = '';
+  startNewSet();
 }
 
 function showResult() {
-  try {
-    resultEl.textContent = `Je hebt ${score} van de ${woordenlijst.length} goed!`;
-    quizContainerEl.style.display = 'none';
-    if (
-      score >
-      (oefenrichting === 'spaans-nederlands'
-        ? highscoreSpaansNederlands
-        : highscoreNederlandsSpaans)
-    ) {
-      if (oefenrichting === 'spaans-nederlands') {
-        highscoreSpaansNederlands = score;
-        localStorage.setItem('highscore-spaans-nederlands', score);
-      } else {
-        highscoreNederlandsSpaans = score;
-        localStorage.setItem('highscore-nederlands-spaans', score);
-      }
-      highscoreEl.textContent = `Nieuwe highscore: ${score}`;
+  resultEl.textContent = `Je hebt ${appState.score} van de ${appState.originalWords.length} goed!`;
+  quizContainerEl.style.display = 'none';
+
+  const currentHighscore =
+    appState.oefenrichting === 'spaans-nederlands'
+      ? appState.highscoreSpaansNederlands
+      : appState.highscoreNederlandsSpaans;
+
+  if (appState.score > currentHighscore) {
+    if (appState.oefenrichting === 'spaans-nederlands') {
+      appState.highscoreSpaansNederlands = appState.score;
+      localStorage.setItem('highscore-spaans-nederlands', appState.score);
+    } else {
+      appState.highscoreNederlandsSpaans = appState.score;
+      localStorage.setItem('highscore-nederlands-spaans', appState.score);
     }
-  } catch (error) {
-    console.error(
-      'Er is een fout opgetreden bij het tonen van het resultaat:',
-      error
-    );
+    highscoreEl.textContent = `Nieuwe highscore: ${appState.score}`;
   }
 }
 
-// Start repeat errors
-function startRepeatErrors(callback) {
-  try {
-    console.log('Starting repeat errors');
-    isRepeatRound = true; // Stel in op true om aan te geven dat we een herhaalronde starten
-    woordenlijst = fouten.slice();
-    fouten = [];
-    currentIndex = 0;
-    score = 0;
-    foutenCount = 0;
-    motivationalMessageEl.textContent = '';
-    questionContainerEl.style.display = 'block';
-    console.log('Woordenlijst voor herhaling:', woordenlijst);
-    loadQuestion(0, woordenlijst.length, callback);
-  } catch (error) {
-    console.error(
-      'Er is een fout opgetreden bij het herhalen van fouten:',
-      error
-    );
-  }
-}
-
-// Update score display
 function updateScoreDisplay() {
-  scoreEl.textContent = `Goed: ${score} | Fout: ${foutenCount}`;
+  scoreEl.textContent = `Goed: ${appState.score} | Fout: ${appState.foutenCount}`;
 }
 
-function updateProgressBar(start, end) {
-  const progress = ((currentIndex - start) / (end - start)) * 100;
+function updateProgressBar() {
+  const { currentWordIndex, currentSetIndex, setSize } = appState;
+  const progress =
+    ((currentWordIndex - currentSetIndex * setSize) / setSize) * 100;
   progressBarEl.style.width = `${progress}%`;
 }
 
 function updateSetProgressBar() {
-  const setProgress =
-    ((setIndex + 1) / Math.ceil(woordenlijst.length / setSize)) * 100;
-  setProgressBarEl.style.width = `${setProgress}%`;
+  const progress =
+    ((appState.currentSetIndex + 1) /
+      Math.ceil(appState.originalWords.length / appState.setSize)) *
+    100;
+  setProgressBarEl.style.width = `${progress}%`;
 }
 
-// Nieuwe shuffleOptions functie
 function shuffleOptions(correctAnswer) {
   const allWords =
-    oefenrichting === 'spaans-nederlands'
-      ? randomWords.map(word => word.vertaling)
-      : randomWords.map(word => word.woord);
+    appState.oefenrichting === 'spaans-nederlands'
+      ? appState.originalWords.map(word => word.vertaling)
+      : appState.originalWords.map(word => word.woord);
   let options = [correctAnswer];
 
   while (options.length < 4) {
