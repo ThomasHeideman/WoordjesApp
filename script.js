@@ -7,6 +7,7 @@ const lists = {
   all: ['unidad_1.json', 'unidad_2.json', 'los_numeros_0_100.json'],
 };
 
+
 // Applicatiestatus
 let appState = {
   words: [],
