@@ -237,9 +237,9 @@ function loadQuestion(start, end, callback) {
 
   updateProgressBar(start, end);
   updateSetProgressBar();
-  progressInfoEl.textContent = `Vraag ${currentIndex - start + 1} van ${
-    end - start
-  } binnen de huidige set`;
+  progressInfoEl.textContent = `Level ${levelIndex + 1} - Vraag ${
+    currentIndex - start + 1
+  } van ${end - start}`;
   setProgressInfoEl.textContent = `Progressie van sets: ${
     setIndex + 1
   } van ${Math.ceil(woordenlijst.length / setSize)}`;
@@ -321,18 +321,10 @@ function showSetResult() {
   questionContainerEl.style.display = 'none';
   let message = '';
 
-  // Stel een motiverend bericht in op basis van de score
-  if (score < 5) {
-    message = `Nog niet helemaal onder de knie, maar je bent goed op weg! <span class="emoji">🫶</span>`;
-  } else if (score < 8) {
-    message = `Goed bezig, ga zo door! <span class="emoji">👍</span>`;
-  } else {
-    message = `Wow, fantastisch gedaan! <span class="emoji">💯</span>`;
-  }
-  motivationalMessageEl.innerHTML = `${message} <br/>`;
-
   // Logica voor het tonen van de juiste knoppen
   if (fouten.length > 0 || nieuweFouten.length > 0) {
+    console.log('Fouten gevonden, herhaal deze vragen');
+    message = `Nog niet helemaal onder de knie, maar je bent goed op weg! <span class="emoji">🫶</span>`;
     document.getElementById('repeat-errors').style.display = 'block';
     document.getElementById('next-level').style.display = 'none';
 
@@ -352,6 +344,8 @@ function showSetResult() {
       });
     };
   } else {
+    console.log('Geen fouten gevonden, ga door naar het volgende level');
+    message = `Wow, fantastisch gedaan! <span class="emoji">💯</span>`;
     document.getElementById('repeat-errors').style.display = 'none';
     document.getElementById('next-level').style.display = 'block';
 
@@ -370,6 +364,7 @@ function showSetResult() {
       }
     };
   }
+  motivationalMessageEl.innerHTML = `${message} <br/>`;
 }
 
 function showResult() {
