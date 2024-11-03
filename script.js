@@ -1,5 +1,19 @@
 'use strict';
 
+// Define current version
+const CURRENT_VERSION = '1.0';
+
+// Migration functions
+const migrations = {
+  0.9: data => {
+    // Example: Suppose in version 1.0, you added a new property `completedSets`
+    data.completedSets = data.completedSets || 0;
+    data.version = '1.0';
+    return data;
+  },
+  // Future migrations can be added here
+};
+
 // Application state
 let appState = {
   words: [],
@@ -16,6 +30,7 @@ let appState = {
   currentLevelWords: [],
   selectedList: null,
   languageCode: null,
+  version: CURRENT_VERSION, // Current version
 };
 
 // Data loaded from languages.json
@@ -52,6 +67,8 @@ const savedSessionsListEl = document.getElementById('saved-sessions-list');
 // Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
   loadLanguageData().then(() => {
+    // Only attempt to display saved sessions after language data is loaded
+    displaySavedSessions();
     goToStartScreen();
   });
 });
@@ -68,11 +85,14 @@ wordListSelectEl.addEventListener('change', checkStartButtonAvailability);
 async function loadLanguageData() {
   try {
     const response = await fetch('languages.json');
+    if (!response.ok) {
+      throw new Error(`Failed to load languages.json: ${response.statusText}`);
+    }
     data = await response.json();
     populateLanguageSelect();
-    displaySavedSessions(); // Call this after data is loaded
   } catch (error) {
     console.error('Error loading language data:', error);
+    alert('Er is een fout opgetreden bij het laden van de taalgegevens.');
   }
 }
 
@@ -180,6 +200,7 @@ function checkStartButtonAvailability() {
     startButtonEl.disabled = true;
   }
 }
+
 // Start the quiz
 async function startQuiz() {
   appState.languageCode = languageSelectEl.value;
@@ -209,6 +230,7 @@ async function startQuiz() {
       errors: [],
       currentLevelWords: [],
       currentWord: null,
+      version: CURRENT_VERSION, // Reset version
     };
 
     // Hide start screen elements
@@ -228,14 +250,26 @@ async function startQuiz() {
     startNewSet();
   } catch (error) {
     console.error('Fout bij het starten van de quiz:', error);
+    alert('Er is een fout opgetreden bij het starten van de quiz.');
   }
 }
 
 // Load words from the selected word list file
 async function loadWords(filePath) {
-  const response = await fetch(filePath);
-  const data = await response.json();
-  return data.words ?? [];
+  try {
+    const response = await fetch(filePath);
+    if (!response.ok) {
+      throw new Error(
+        `Failed to load word list from ${filePath}: ${response.statusText}`
+      );
+    }
+    const data = await response.json();
+    return data.words ?? [];
+  } catch (error) {
+    console.error('Error loading word list:', error);
+    alert('Er is een fout opgetreden bij het laden van de woordenlijst.');
+    return [];
+  }
 }
 
 // Start a new set of questions
@@ -331,7 +365,7 @@ function shuffleOptions(correctAnswer) {
       options.push(randomWord);
     }
   }
-  return options.sort(() => Math.random() - 0.5);
+  return shuffleArray(options);
 }
 
 // Process the user's answer
@@ -428,6 +462,7 @@ function proceedToNextLevel() {
 function showResult() {
   resultEl.textContent = `Je hebt ${appState.score} van de ${appState.originalWords.length} goed!`;
   quizContainerEl.style.display = 'none';
+  controlsEl.style.display = 'none';
 
   const highscoreKey = getHighscoreKey();
   const currentHighscore = parseInt(localStorage.getItem(highscoreKey)) || 0;
@@ -435,6 +470,8 @@ function showResult() {
   if (appState.score > currentHighscore) {
     localStorage.setItem(highscoreKey, appState.score);
     highscoreEl.textContent = `Nieuwe highscore: ${appState.score}`;
+  } else {
+    highscoreEl.textContent = `Highscore: ${currentHighscore}`;
   }
 
   // Clear saved progress for this session
@@ -443,6 +480,8 @@ function showResult() {
 
   // Refresh saved sessions
   displaySavedSessions();
+
+  // Optionally, you can add a button to restart or go back to start
 }
 
 // Update the score display
@@ -485,53 +524,126 @@ function getHighscoreKey() {
   return `highscore_${appState.languageCode}_${appState.oefenrichting}`;
 }
 
-// Save progress to localStorage
+// Save progress to localStorage with versioning
 function saveProgress() {
   const progressData = {
     ...appState,
+    version: CURRENT_VERSION, // Ensure version is saved
   };
   const sessionKey = generateSessionKey();
-  localStorage.setItem(sessionKey, JSON.stringify(progressData));
+  try {
+    localStorage.setItem(sessionKey, JSON.stringify(progressData));
+  } catch (error) {
+    console.error('Error saving progress:', error);
+    alert('Er is een fout opgetreden bij het opslaan van je voortgang.');
+  }
 }
 
-// Load progress from localStorage
+// Load progress from localStorage with validation and migration
 async function loadProgress(sessionKey) {
   const savedData = localStorage.getItem(sessionKey);
   if (savedData) {
-    const progressData = JSON.parse(savedData);
+    try {
+      let progressData = JSON.parse(savedData);
+      console.log(`Loaded progress data:`, progressData);
 
-    // Update appState with the saved data
-    appState = {
-      ...appState,
-      ...progressData,
-    };
+      // Check if version exists; if not, assume it's an old version
+      if (!progressData.version) {
+        progressData.version = '0.9'; // Example: previous version
+        console.log(`Assumed version 0.9 for saved data.`);
+      }
 
-    // Find the selected language
-    const selectedLanguage = data.languages.find(
-      lang => lang.code === appState.languageCode
-    );
+      // Migrate data step by step to the current version
+      while (progressData.version !== CURRENT_VERSION) {
+        const migrate = migrations[progressData.version];
+        if (migrate) {
+          console.log(
+            `Migrating from version ${progressData.version} to ${CURRENT_VERSION}`
+          );
+          progressData = migrate(progressData);
+          console.log(`Progress data after migration:`, progressData);
+        } else {
+          console.error(
+            `No migration available for version ${progressData.version}`
+          );
+          return false;
+        }
+      }
 
-    if (!selectedLanguage) {
-      console.error('Language not found.');
+      // Ensure required properties are present
+      const requiredProps = [
+        'languageCode',
+        'selectedList',
+        'oefenrichting',
+        'currentLevel',
+        'currentSetIndex',
+        'currentWordIndex',
+        'score',
+        'foutenCount',
+        'errors',
+        'currentLevelWords',
+        'words',
+        'originalWords',
+        'version',
+      ];
+
+      const hasAllProps = requiredProps.every(prop =>
+        progressData.hasOwnProperty(prop)
+      );
+
+      console.log(
+        `Checking for required properties: ${hasAllProps ? 'Passed' : 'Failed'}`
+      );
+
+      if (!hasAllProps) {
+        console.error('Saved progress data is incomplete or corrupted.');
+        return false;
+      }
+
+      // Find the selected language
+      const selectedLanguage = data.languages.find(
+        lang => lang.code === progressData.languageCode
+      );
+      if (!selectedLanguage) {
+        console.error('Language not found.');
+        return false;
+      }
+
+      // Find the selected word list
+      const selectedWordList = selectedLanguage.wordLists.find(
+        list => list.id === progressData.selectedList
+      );
+      if (!selectedWordList) {
+        console.error('Word list not found.');
+        return false;
+      }
+
+      // Load words from the selected word list file
+      const loadedWords = await loadWords(selectedWordList.file);
+      if (loadedWords.length === 0) {
+        console.error('No words loaded from the word list.');
+        return false;
+      }
+      progressData.originalWords = loadedWords;
+      console.log(`Loaded words from ${selectedWordList.file}:`, loadedWords);
+
+      // **Important Correction: Do NOT overwrite progressData.words**
+      // progressData.words = loadedWords.slice(); // Remove or comment out this line
+
+      // Update appState with the saved data
+      appState = {
+        ...appState,
+        ...progressData,
+      };
+      console.log(`Updated appState:`, appState);
+
+      return true;
+    } catch (error) {
+      console.error('Error loading progress data:', error);
       return false;
     }
-
-    // Find the selected word list
-    const selectedWordList = selectedLanguage.wordLists.find(
-      list => list.id === appState.selectedList
-    );
-
-    if (!selectedWordList) {
-      console.error('Word list not found.');
-      return false;
-    }
-
-    // Load words from the selected word list file
-    appState.originalWords = await loadWords(selectedWordList.file);
-    appState.words = appState.originalWords.slice();
-
-    return true;
   }
+  console.log(`No saved data found for sessionKey: ${sessionKey}`);
   return false;
 }
 
@@ -556,7 +668,10 @@ function continueSession(sessionKey) {
         updateScoreDisplay();
         displayQuestion();
       } else {
-        alert('Geen opgeslagen sessie gevonden.');
+        alert('Geen opgeslagen sessie gevonden of sessie is corrupt.');
+        // Optionally, remove the corrupt session
+        deleteSession(sessionKey);
+        displaySavedSessions();
       }
     })
     .catch(error => {
@@ -571,10 +686,17 @@ function getAllSavedSessions() {
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
     if (key.startsWith('progress_')) {
-      sessions.push({
-        key: key,
-        data: JSON.parse(localStorage.getItem(key)),
-      });
+      try {
+        const data = JSON.parse(localStorage.getItem(key));
+        sessions.push({
+          key: key,
+          data: data,
+        });
+      } catch (error) {
+        console.error(`Error parsing session data for key ${key}:`, error);
+        // Optionally, remove the corrupt session
+        localStorage.removeItem(key);
+      }
     }
   }
   return sessions;
@@ -582,7 +704,12 @@ function getAllSavedSessions() {
 
 // Delete a saved session
 function deleteSession(sessionKey) {
-  localStorage.removeItem(sessionKey);
+  try {
+    localStorage.removeItem(sessionKey);
+  } catch (error) {
+    console.error(`Error deleting session ${sessionKey}:`, error);
+    alert('Er is een fout opgetreden bij het verwijderen van de sessie.');
+  }
 }
 
 // Display saved sessions on the start screen
@@ -695,8 +822,19 @@ function goToStartScreen() {
     currentLevelWords: [],
     selectedList: null,
     languageCode: null,
+    version: CURRENT_VERSION, // Ensure version is reset
   };
 
   // Refresh saved sessions
   displaySavedSessions();
 }
+
+// Summary of Changes Implemented:
+// 1. Added a 'version' property to appState and included it when saving progress.
+// 2. Created migration functions to handle data structure changes.
+// 3. Enhanced loadProgress() to validate the presence of required properties and apply migrations.
+// 4. Improved error handling in all fetch requests to handle network or file errors gracefully.
+// 5. Ensured that saved sessions are only loaded after language data has been successfully loaded.
+// 6. Managed the visibility of UI elements correctly when loading a saved session or starting a new one.
+// 7. Added try-catch blocks around localStorage operations to handle potential errors.
+// 8. Cleaned up corrupted saved sessions by removing them if they fail validation.
