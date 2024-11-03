@@ -3,6 +3,7 @@
     {
       "code": "es",
       "name": " 🇪🇸 Spaans",
+      "icon": "🇪🇸",
       "directions": [
         { "value": "es-nl", "text": "Spaans 🇪🇸 - Nederlands 🇳🇱" },
         { "value": "nl-es", "text": "Nederlands 🇳🇱 - Spaans 🇪🇸" }
@@ -28,6 +29,7 @@
     {
       "code": "en",
       "name": " 🇬🇧 Engels",
+      "icon": "🇬🇧",
       "directions": [
         { "value": "en-nl", "text": "Engels 🇬🇧 - Nederlands 🇳🇱" },
         { "value": "nl-en", "text": "Nederlands 🇳🇱 - Engels 🇬🇧" }
@@ -43,6 +45,7 @@
     {
       "code": "de",
       "name": " 🇩🇪 Duits",
+      "icon": "🇩🇪",
       "directions": [
         { "value": "de-nl", "text": "Duits 🇩🇪 - Nederlands 🇳🇱" },
         { "value": "nl-de", "text": "Nederlands 🇳🇱 - Duits 🇩🇪" }

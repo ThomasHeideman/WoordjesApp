@@ -628,7 +628,7 @@ function displaySavedSessions() {
       });
 
       const deleteBtn = document.createElement('button');
-      deleteBtn.className = 'delete-btn';
+      deleteBtn.className = 'delete-btn btn';
       deleteBtn.innerHTML = `<i class="fa-solid fa-trash-can"></i>`;
       deleteBtn.addEventListener('click', () => {
         deleteSession(session.key);
