@@ -89,6 +89,7 @@ async function loadLanguageData() {
       throw new Error(`Failed to load languages.json: ${response.statusText}`);
     }
     data = await response.json();
+    console.log('Loaded languages.json:', data);
     populateLanguageSelect();
   } catch (error) {
     console.error('Error loading language data:', error);
@@ -115,6 +116,8 @@ function populateLanguageSelect() {
     option.textContent = language.name;
     languageSelectEl.appendChild(option);
   });
+
+  console.log('Populated language select:', languageSelectEl.innerHTML);
 }
 
 // Handle language selection
@@ -141,10 +144,12 @@ function onLanguageSelected() {
 
     // Disable the start button until all selections are made
     startButtonEl.disabled = true;
+    console.log('Language selected:', selectedLanguageCode);
   } else {
     // If no language is selected, disable direction and list selects
     directionSelectEl.disabled = true;
     wordListSelectEl.disabled = true;
+    console.log('No language selected.');
   }
 }
 
@@ -166,6 +171,8 @@ function populateDirectionSelect(directions) {
     option.textContent = direction.text;
     directionSelectEl.appendChild(option);
   });
+
+  console.log('Populated direction select:', directionSelectEl.innerHTML);
 }
 
 // Populate the word list select element
@@ -186,6 +193,8 @@ function populateWordListSelect(wordLists) {
     option.textContent = list.title;
     wordListSelectEl.appendChild(option);
   });
+
+  console.log('Populated word list select:', wordListSelectEl.innerHTML);
 }
 
 // Function to enable the start button when all selections are made
@@ -196,8 +205,10 @@ function checkStartButtonAvailability() {
     wordListSelectEl.value
   ) {
     startButtonEl.disabled = false;
+    console.log('All selections made. Start button enabled.');
   } else {
     startButtonEl.disabled = true;
+    console.log('Incomplete selections. Start button disabled.');
   }
 }
 
@@ -217,6 +228,7 @@ async function startQuiz() {
 
   try {
     appState.originalWords = await loadWords(selectedWordList.file);
+    console.log('Loaded words:', appState.originalWords);
 
     // Reset the application state
     appState = {
@@ -232,6 +244,7 @@ async function startQuiz() {
       currentWord: null,
       version: CURRENT_VERSION, // Reset version
     };
+    console.log('Reset appState for new quiz:', appState);
 
     // Hide start screen elements
     startButtonEl.style.display = 'none';
@@ -264,6 +277,7 @@ async function loadWords(filePath) {
       );
     }
     const data = await response.json();
+    console.log(`Loaded word list from ${filePath}:`, data);
     return data.words ?? [];
   } catch (error) {
     console.error('Error loading word list:', error);
@@ -276,8 +290,10 @@ async function loadWords(filePath) {
 function startNewSet() {
   const { currentSetIndex, words, setSize } = appState;
   const totalSets = Math.ceil(words.length / setSize);
+  console.log(`Starting set ${currentSetIndex + 1} of ${totalSets}`);
 
   if (currentSetIndex >= totalSets) {
+    console.log('All sets completed. Showing results.');
     showResult();
     return;
   }
@@ -287,8 +303,11 @@ function startNewSet() {
 
   // Extract words for the current level
   const currentLevelWords = words.slice(startIdx, endIdx);
+  console.log(`Current level words:`, currentLevelWords);
+
   // Shuffle the words for the current level
   const shuffledLevelWords = shuffleArray(currentLevelWords);
+  console.log(`Shuffled level words:`, shuffledLevelWords);
 
   // Update the app state with the shuffled words for the current level
   appState.currentLevelWords = shuffledLevelWords;
@@ -297,19 +316,27 @@ function startNewSet() {
 
   motivationalMessageEl.textContent = `Laten we beginnen - Level ${appState.currentLevel}`;
   questionContainerEl.style.display = 'block';
+  console.log(
+    'Set questionContainerEl to display: block and updated motivational message'
+  );
   displayQuestion();
 }
 
 // Display the current question
 function displayQuestion() {
   const { currentWordIndex, currentLevelWords } = appState;
+  console.log(
+    `Displaying question ${currentWordIndex + 1} of ${currentLevelWords.length}`
+  );
 
   if (currentWordIndex >= currentLevelWords.length) {
+    console.log('All questions in the current set have been answered.');
     checkIfSetCompleted();
     return;
   }
 
   appState.currentWord = currentLevelWords[currentWordIndex];
+  console.log(`Current word:`, appState.currentWord);
 
   const [fromLang, toLang] = appState.oefenrichting.split('-');
   const vraag =
@@ -323,8 +350,11 @@ function displayQuestion() {
       : appState.currentWord.translation; // Word in Dutch
 
   questionEl.innerHTML = `<div class="what-is">Wat is de vertaling van</div><div class='word' style='color: #F24464;'>'${vraag}'</div>`;
+  console.log(`Question set to: ${vraag}`);
 
   const options = shuffleOptions(correctAntwoord);
+  console.log(`Options:`, options);
+
   optionsEl.innerHTML = '';
   options.forEach((option, index) => {
     const button = document.createElement('button');
@@ -335,6 +365,10 @@ function displayQuestion() {
     );
     optionsEl.appendChild(button);
   });
+
+  // Ensure the question container is visible
+  questionContainerEl.style.display = 'block';
+  console.log('Set questionContainerEl to display: block');
 
   updateProgressBar();
   updateLevelProgressBar();
@@ -371,6 +405,10 @@ function shuffleOptions(correctAnswer) {
 // Process the user's answer
 function processAnswer(button, selectedOption, correctAnswer) {
   const isCorrect = selectedOption === correctAnswer;
+  console.log(
+    `User selected: ${selectedOption} | Correct answer: ${correctAnswer} | Is correct: ${isCorrect}`
+  );
+
   if (isCorrect) {
     button.classList.add('correct');
     button.querySelector('i').classList.add('fa-solid', 'fa-check');
@@ -385,6 +423,7 @@ function processAnswer(button, selectedOption, correctAnswer) {
     appState.foutenCount++;
     if (!appState.errors.includes(appState.currentWord)) {
       appState.errors.push(appState.currentWord);
+      console.log('Added to errors:', appState.currentWord);
     }
 
     // Mark the correct answer
@@ -395,10 +434,13 @@ function processAnswer(button, selectedOption, correctAnswer) {
         optButton.style.backgroundColor = '#fff';
         optButton.style.border = '2px solid #61B68A';
         optButton.style.color = '#61B68A';
+        console.log('Marked correct answer button.');
       }
     });
   }
   appState.currentWordIndex++;
+  console.log(`Updated appState after answer:`, appState);
+
   setTimeout(() => {
     feedbackEl.textContent = '';
     displayQuestion();
@@ -409,6 +451,7 @@ function processAnswer(button, selectedOption, correctAnswer) {
 
 // Check if the set is completed
 function checkIfSetCompleted() {
+  console.log(`Set completed. Errors count: ${appState.errors.length}`);
   if (appState.errors.length > 0) {
     showSetResult(false);
   } else {
@@ -419,6 +462,7 @@ function checkIfSetCompleted() {
 // Show the result of the set
 function showSetResult(isSetCleared) {
   questionContainerEl.style.display = 'none';
+  console.log(`Set result: ${isSetCleared ? 'Cleared' : 'Errors present'}`);
   if (isSetCleared) {
     motivationalMessageEl.innerHTML = `Geweldig, je hebt dit level gehaald! 💯`;
     repeatErrorsButtonEl.style.display = 'none';
@@ -436,6 +480,7 @@ function startErrorReview() {
     proceedToNextLevel();
     return;
   }
+  console.log('Starting error review with errors:', appState.errors);
   appState.currentLevelWords = shuffleArray(appState.errors.slice());
   appState.currentWordIndex = 0;
   appState.errors = [];
@@ -451,6 +496,7 @@ function proceedToNextLevel() {
   appState.currentSetIndex++;
   appState.currentLevel++;
   appState.currentWordIndex = 0; // Reset word index for new level
+  console.log(`Proceeding to next level: ${appState.currentLevel}`);
   questionContainerEl.style.display = 'block';
   nextLevelButtonEl.style.display = 'none';
   motivationalMessageEl.textContent = '';
@@ -470,13 +516,16 @@ function showResult() {
   if (appState.score > currentHighscore) {
     localStorage.setItem(highscoreKey, appState.score);
     highscoreEl.textContent = `Nieuwe highscore: ${appState.score}`;
+    console.log('New highscore achieved:', appState.score);
   } else {
     highscoreEl.textContent = `Highscore: ${currentHighscore}`;
+    console.log('Highscore remains:', currentHighscore);
   }
 
   // Clear saved progress for this session
   const sessionKey = generateSessionKey();
   localStorage.removeItem(sessionKey);
+  console.log(`Cleared saved session: ${sessionKey}`);
 
   // Refresh saved sessions
   displaySavedSessions();
@@ -487,6 +536,7 @@ function showResult() {
 // Update the score display
 function updateScoreDisplay() {
   scoreEl.innerHTML = `<span style="color:#16aba7"><span class="emoji emoji-small">✅</span> Goed: ${appState.score}</span>  <span style="color: #da3d5a"><span class="emoji emoji-small">❌</span> Fout: ${appState.foutenCount}</span>`;
+  console.log(`Updated score display:`, scoreEl.innerHTML);
 }
 
 // Update the progress bar
@@ -494,6 +544,7 @@ function updateProgressBar() {
   const progress =
     (appState.currentWordIndex / appState.currentLevelWords.length) * 100;
   progressBarEl.style.width = `${progress}%`;
+  console.log(`Updated progress bar to ${progress}%`);
 }
 
 // Update the level progress bar
@@ -503,6 +554,7 @@ function updateLevelProgressBar() {
       Math.ceil(appState.originalWords.length / appState.setSize)) *
     100;
   levelProgressBarEl.style.width = `${progress}%`;
+  console.log(`Updated level progress bar to ${progress}%`);
 }
 
 // Shuffle an array
@@ -533,6 +585,7 @@ function saveProgress() {
   const sessionKey = generateSessionKey();
   try {
     localStorage.setItem(sessionKey, JSON.stringify(progressData));
+    console.log(`Progress saved for sessionKey: ${sessionKey}`, progressData);
   } catch (error) {
     console.error('Error saving progress:', error);
     alert('Er is een fout opgetreden bij het opslaan van je voortgang.');
@@ -628,7 +681,8 @@ async function loadProgress(sessionKey) {
       console.log(`Loaded words from ${selectedWordList.file}:`, loadedWords);
 
       // **Important Correction: Do NOT overwrite progressData.words**
-      // progressData.words = loadedWords.slice(); // Remove or comment out this line
+      // Removed the following line to preserve shuffled words
+      // progressData.words = loadedWords.slice();
 
       // Update appState with the saved data
       appState = {
@@ -652,6 +706,7 @@ function continueSession(sessionKey) {
   loadProgress(sessionKey)
     .then(loaded => {
       if (loaded) {
+        console.log('Session loaded successfully.');
         // Hide start screen elements
         startButtonEl.style.display = 'none';
         savedSessionsContainerEl.style.display = 'none';
@@ -668,6 +723,9 @@ function continueSession(sessionKey) {
         updateScoreDisplay();
         displayQuestion();
       } else {
+        console.error(
+          'Failed to load the session. The session may be corrupt or incomplete.'
+        );
         alert('Geen opgeslagen sessie gevonden of sessie is corrupt.');
         // Optionally, remove the corrupt session
         deleteSession(sessionKey);
@@ -696,9 +754,11 @@ function getAllSavedSessions() {
         console.error(`Error parsing session data for key ${key}:`, error);
         // Optionally, remove the corrupt session
         localStorage.removeItem(key);
+        console.log(`Removed corrupt session: ${key}`);
       }
     }
   }
+  console.log(`Retrieved ${sessions.length} saved sessions.`);
   return sessions;
 }
 
@@ -706,6 +766,7 @@ function getAllSavedSessions() {
 function deleteSession(sessionKey) {
   try {
     localStorage.removeItem(sessionKey);
+    console.log(`Deleted session with key: ${sessionKey}`);
   } catch (error) {
     console.error(`Error deleting session ${sessionKey}:`, error);
     alert('Er is een fout opgetreden bij het verwijderen van de sessie.');
@@ -770,8 +831,10 @@ function displaySavedSessions() {
 
       savedSessionsListEl.appendChild(listItem);
     });
+    console.log('Displayed all saved sessions.');
   } else {
     savedSessionsContainerEl.style.display = 'none';
+    console.log('No saved sessions to display.');
   }
 }
 
@@ -824,17 +887,8 @@ function goToStartScreen() {
     languageCode: null,
     version: CURRENT_VERSION, // Ensure version is reset
   };
+  console.log('Returned to start screen. Reset appState:', appState);
 
   // Refresh saved sessions
   displaySavedSessions();
 }
-
-// Summary of Changes Implemented:
-// 1. Added a 'version' property to appState and included it when saving progress.
-// 2. Created migration functions to handle data structure changes.
-// 3. Enhanced loadProgress() to validate the presence of required properties and apply migrations.
-// 4. Improved error handling in all fetch requests to handle network or file errors gracefully.
-// 5. Ensured that saved sessions are only loaded after language data has been successfully loaded.
-// 6. Managed the visibility of UI elements correctly when loading a saved session or starting a new one.
-// 7. Added try-catch blocks around localStorage operations to handle potential errors.
-// 8. Cleaned up corrupted saved sessions by removing them if they fail validation.
