@@ -25,30 +25,35 @@
   <body>
     <div id="app" class="app">
       <h1>Dante's TaalTrainer 🎓</h1>
-      <div class="highscore-container" id="highscore-container">
+      <section class="highscore-container" id="highscore-container">
         <p id="highscore-spaans-nederlands">Highscore Spaans-Nederlands: 0</p>
         <p id="highscore-nederlands-spaans">Highscore Nederlands-Spaans: 0</p>
-      </div>
-      <div class="select-direction">
-        <label for="direction-select">Kies de oefenrichting:</label>
-        <select id="direction-select">
-          <option value="spaans-nederlands">Spaans 🇪🇸 - Nederlands 🇳🇱</option>
-          <option value="nederlands-spaans">Nederlands 🇳🇱 - Spaans 🇪🇸</option>
-        </select>
-      </div>
-      <div class="select-list">
-        <label for="list-select">Kies een lijst:</label>
-        <select id="list-select">
-          <option value="unidad_1">Unidad 1</option>
-          <option value="unidad_2">Unidad 2</option>
-          <option value="los_numeros">Los Números 0-100</option>
-          <option value="all">Alle Woorden</option>
-        </select>
-      </div>
+      </section>
+      <section class="game-selection-container">
+        <div class="select-direction">
+          <label for="direction-select">Kies de oefenrichting:</label>
+          <select id="direction-select">
+            <option value="spaans-nederlands">Spaans 🇪🇸 - Nederlands 🇳🇱</option>
+            <option value="nederlands-spaans">Nederlands 🇳🇱 - Spaans 🇪🇸</option>
+          </select>
+        </div>
 
-      <button id="start-button" class="start-btn">Start Oefenen</button>
-
-      <div id="quiz-container" class="quiz-container" style="display: none">
+        <div class="select-list">
+          <label for="list-select">Kies een lijst:</label>
+          <select id="list-select">
+            <option value="unidad_1">Unidad 1</option>
+            <option value="unidad_2">Unidad 2</option>
+            <option value="los_numeros">Los Números 0-100</option>
+            <option value="all">Alle Woorden</option>
+          </select>
+        </div>
+        <button id="start-button" class="start-btn btn">Start Oefenen</button>
+      </section>
+      <section id="saved-sessions-container" style="display: none">
+        <h2>Opgeslagen Sessies</h2>
+        <ul id="saved-sessions-list"></ul>
+      </section>
+      <section id="quiz-container" class="quiz-container" style="display: none">
         <div class="score-container">
           <div class="motivational-message" id="motivational-message"></div>
           <div class="level-progress">
@@ -69,23 +74,23 @@
         <div class="progress">
           <div class="progress-bar"></div>
         </div>
-      </div>
+      </section>
       <div class="result"></div>
       <div id="controls" class="controls" style="display: none">
-        <button id="back-button" class="back-btn">
+        <button id="back-button" class="back-btn btn">
           <i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Terug naar
           start
         </button>
         <button
           id="repeat-errors"
-          class="start-btn repeat-btn btn"
+          class="start-btn btn repeat-btn btn"
           style="display: none"
         >
           Probeer het nog eens! 👊
         </button>
         <button
           id="next-level"
-          class="start-btn nextlvl-btn btn"
+          class="start-btn btn nextlvl-btn btn"
           style="display: none"
         >
           Naar het volgende level! 🎉

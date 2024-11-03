@@ -24,7 +24,8 @@ let appState = {
   highscoreNederlandsSpaans:
     localStorage.getItem('highscore-nederlands-spaans') || 0,
   currentWord: null,
-  currentLevelWords: [], // Add this line
+  currentLevelWords: [],
+  selectedList: null, // Added this line
 };
 
 // HTML-elementen selecteren
@@ -56,6 +57,12 @@ const motivationalMessageEl = document.getElementById('motivational-message');
 const repeatErrorsButtonEl = document.getElementById('repeat-errors');
 const nextLevelButtonEl = document.getElementById('next-level');
 
+// Add references to new elements
+const savedSessionsContainerEl = document.getElementById(
+  'saved-sessions-container'
+);
+const savedSessionsListEl = document.getElementById('saved-sessions-list');
+
 // Update highscore display
 highscoreSpaansNederlandsEl.textContent = `Highscore Spaans-Nederlands: ${appState.highscoreSpaansNederlands}`;
 highscoreNederlandsSpaansEl.textContent = `Highscore Nederlands-Spaans: ${appState.highscoreNederlandsSpaans}`;
@@ -66,7 +73,7 @@ backButtonEl.addEventListener('click', goToStartScreen);
 repeatErrorsButtonEl.addEventListener('click', startErrorReview);
 nextLevelButtonEl.addEventListener('click', proceedToNextLevel);
 
-// utility functions
+// Utility functions
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -74,6 +81,10 @@ function shuffleArray(array) {
     [array[i], array[j]] = [array[j], array[i]];
   }
   return array;
+}
+
+function generateSessionKey() {
+  return `progress_${appState.selectedList}_${appState.oefenrichting}`;
 }
 
 function goToStartScreen() {
@@ -97,16 +108,22 @@ function goToStartScreen() {
     score: 0,
     foutenCount: 0,
     errors: [],
+    currentLevelWords: [],
+    currentWord: null,
+    selectedList: null,
   };
+
+  // Refresh saved sessions
+  displaySavedSessions();
 }
 
 async function startQuiz() {
   appState.oefenrichting = directionSelectEl.value;
-  const selectedList = listSelectEl.value;
+  appState.selectedList = listSelectEl.value; // Store selected list
   highscoreContainerEl.style.display = 'none';
 
   try {
-    appState.originalWords = await loadWords(selectedList);
+    appState.originalWords = await loadWords(appState.selectedList);
     if (appState.originalWords.length === 0) {
       console.error('Geen woorden gevonden om te oefenen.');
       return;
@@ -121,8 +138,11 @@ async function startQuiz() {
       score: 0,
       foutenCount: 0,
       errors: [],
+      currentLevelWords: [],
+      currentWord: null,
     };
     startButtonEl.style.display = 'none';
+    savedSessionsContainerEl.style.display = 'none';
     listSelectEl.parentElement.style.display = 'none';
     directionSelectEl.parentElement.style.display = 'none';
     controlsEl.style.display = 'flex';
@@ -171,12 +191,12 @@ function startNewSet() {
   const startIdx = currentSetIndex * setSize;
   const endIdx = Math.min(startIdx + setSize, words.length);
 
-  // extract words for the current level
+  // Extract words for the current level
   const currentLevelWords = words.slice(startIdx, endIdx);
-  //shuffle the words for the current level
+  // Shuffle the words for the current level
   const shuffledLevelWords = shuffleArray(currentLevelWords);
 
-  // update the app state with the shuffled words for the current level
+  // Update the app state with the shuffled words for the current level
   appState.currentLevelWords = shuffledLevelWords;
   appState.currentWordIndex = 0;
   appState.errors = [];
@@ -219,7 +239,7 @@ function displayQuestion() {
   });
 
   updateProgressBar();
-  updatelevelProgressBar();
+  updateLevelProgressBar();
 
   progressInfoEl.innerHTML = `Vraag <strong style="color: #2f2570">${
     currentWordIndex + 1
@@ -230,7 +250,8 @@ function displayQuestion() {
     appState.originalWords.length / appState.setSize
   )}`;
 }
-// processAnswer function that processes the user's answer
+
+// Process the user's answer
 function processAnswer(button, selectedOption, correctAnswer) {
   const isCorrect = selectedOption === correctAnswer;
   if (isCorrect) {
@@ -266,6 +287,7 @@ function processAnswer(button, selectedOption, correctAnswer) {
     displayQuestion();
   }, 1000);
   updateScoreDisplay();
+  saveProgress(); // Save progress after processing the answer
 }
 
 function checkIfSetCompleted() {
@@ -301,17 +323,19 @@ function startErrorReview() {
   repeatErrorsButtonEl.style.display = 'none';
   motivationalMessageEl.textContent = 'Herhalingsronde van de fouten';
   displayQuestion();
+  saveProgress(); // Save progress after starting error review
 }
 
 function proceedToNextLevel() {
   appState.currentSetIndex++;
   appState.currentLevel++;
-  appState.currentWordIndex = appState.currentSetIndex * appState.setSize;
+  appState.currentWordIndex = 0; // Reset word index for new level
   appState.words = appState.originalWords.slice();
   questionContainerEl.style.display = 'block';
   nextLevelButtonEl.style.display = 'none';
   motivationalMessageEl.textContent = '';
   startNewSet();
+  saveProgress(); // Save progress after proceeding to next level
 }
 
 function showResult() {
@@ -333,6 +357,13 @@ function showResult() {
     }
     highscoreEl.textContent = `Nieuwe highscore: ${appState.score}`;
   }
+
+  // Clear saved progress for this session
+  const sessionKey = generateSessionKey();
+  localStorage.removeItem(sessionKey);
+
+  // Refresh saved sessions
+  displaySavedSessions();
 }
 
 function updateScoreDisplay() {
@@ -345,7 +376,7 @@ function updateProgressBar() {
   progressBarEl.style.width = `${progress}%`;
 }
 
-function updatelevelProgressBar() {
+function updateLevelProgressBar() {
   const progress =
     ((appState.currentSetIndex + 1) /
       Math.ceil(appState.originalWords.length / appState.setSize)) *
@@ -368,3 +399,149 @@ function shuffleOptions(correctAnswer) {
   }
   return options.sort(() => Math.random() - 0.5);
 }
+
+// Function to save progress under a unique session key
+function saveProgress() {
+  const progressData = {
+    words: appState.words,
+    originalWords: appState.originalWords,
+    currentLevel: appState.currentLevel,
+    currentSetIndex: appState.currentSetIndex,
+    currentWordIndex: appState.currentWordIndex,
+    score: appState.score,
+    foutenCount: appState.foutenCount,
+    errors: appState.errors,
+    oefenrichting: appState.oefenrichting,
+    setSize: appState.setSize,
+    currentWord: appState.currentWord,
+    currentLevelWords: appState.currentLevelWords,
+    selectedList: appState.selectedList,
+    timestamp: new Date().getTime(),
+  };
+  const sessionKey = generateSessionKey();
+  localStorage.setItem(sessionKey, JSON.stringify(progressData));
+}
+
+// Function to load progress from a specific session key
+async function loadProgress(sessionKey) {
+  const savedData = localStorage.getItem(sessionKey);
+  if (savedData) {
+    const progressData = JSON.parse(savedData);
+
+    // Load the selected word list
+    appState.selectedList = progressData.selectedList;
+    appState.oefenrichting = progressData.oefenrichting;
+    appState.setSize = progressData.setSize;
+
+    // Fetch words based on saved `selectedList`
+    appState.originalWords = await loadWords(appState.selectedList);
+    appState.words = appState.originalWords.slice();
+
+    // Update appState with the rest of the saved data
+    appState = {
+      ...appState,
+      ...progressData,
+    };
+    return true;
+  }
+  return false;
+}
+
+// Function to continue a session based on session key
+function continueSession(sessionKey) {
+  loadProgress(sessionKey)
+    .then(loaded => {
+      if (loaded) {
+        // Hide start screen elements
+        startButtonEl.style.display = 'none';
+        savedSessionsContainerEl.style.display = 'none';
+        listSelectEl.parentElement.style.display = 'none';
+        directionSelectEl.parentElement.style.display = 'none';
+        controlsEl.style.display = 'flex';
+        quizContainerEl.style.display = 'block';
+        resultEl.textContent = '';
+        motivationalMessageEl.textContent = '';
+        highscoreEl.textContent = `Highscore: ${
+          appState.oefenrichting === 'spaans-nederlands'
+            ? appState.highscoreSpaansNederlands
+            : appState.highscoreNederlandsSpaans
+        }`;
+        updateScoreDisplay();
+        displayQuestion();
+      } else {
+        alert('Geen opgeslagen sessie gevonden.');
+      }
+    })
+    .catch(error => {
+      console.error('Fout bij het laden van de sessie:', error);
+      alert('Er is een fout opgetreden bij het laden van de sessie.');
+    });
+}
+
+// Function to get all saved sessions
+function getAllSavedSessions() {
+  const sessions = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key.startsWith('progress_')) {
+      sessions.push({
+        key: key,
+        data: JSON.parse(localStorage.getItem(key)),
+      });
+    }
+  }
+  return sessions;
+}
+
+// Function to delete a session
+function deleteSession(sessionKey) {
+  localStorage.removeItem(sessionKey);
+}
+
+// Function to display saved sessions on the start screen
+function displaySavedSessions() {
+  const sessions = getAllSavedSessions();
+  if (sessions.length > 0) {
+    savedSessionsContainerEl.style.display = 'block';
+    savedSessionsListEl.innerHTML = '';
+
+    sessions.forEach(session => {
+      const listItem = document.createElement('li');
+
+      const sessionDescription = document.createElement('span');
+      sessionDescription.className = 'session-description';
+      sessionDescription.textContent = `${session.data.selectedList} - ${session.data.oefenrichting}, Level: ${session.data.currentLevel}`;
+
+      const sessionControlBtns = document.createElement('div');
+      sessionControlBtns.className = 'session-control-btn-container';
+
+      const continueBtn = document.createElement('button');
+      continueBtn.className = 'continue-btn btn';
+      continueBtn.textContent = 'Doorgaan';
+      continueBtn.addEventListener('click', () => {
+        continueSession(session.key);
+      });
+
+      const deleteBtn = document.createElement('button');
+      deleteBtn.className = 'delete-btn';
+      deleteBtn.innerHTML = `<i class="fa-solid fa-trash-can"></i>`;
+      deleteBtn.addEventListener('click', () => {
+        deleteSession(session.key);
+        displaySavedSessions(); // Refresh the list
+      });
+
+      sessionControlBtns.appendChild(continueBtn);
+      sessionControlBtns.appendChild(deleteBtn);
+
+      listItem.appendChild(sessionDescription);
+      listItem.appendChild(sessionControlBtns);
+
+      savedSessionsListEl.appendChild(listItem);
+    });
+  } else {
+    savedSessionsContainerEl.style.display = 'none';
+  }
+}
+
+// Call displaySavedSessions() when the app loads
+displaySavedSessions();
