@@ -1,0 +1,509 @@
+{
+  "words": [
+    {
+      "word": "0",
+      "translation": "cero",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "1",
+      "translation": "uno",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "2",
+      "translation": "dos",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "3",
+      "translation": "tres",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "4",
+      "translation": "cuatro",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "5",
+      "translation": "cinco",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "6",
+      "translation": "seis",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "7",
+      "translation": "siete",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "8",
+      "translation": "ocho",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "9",
+      "translation": "nueve",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "10",
+      "translation": "diez",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "11",
+      "translation": "once",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "12",
+      "translation": "doce",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "13",
+      "translation": "trece",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "14",
+      "translation": "catorce",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "15",
+      "translation": "quince",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "16",
+      "translation": "dieciséis",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "17",
+      "translation": "diecisiete",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "18",
+      "translation": "dieciocho",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "19",
+      "translation": "diecinueve",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "20",
+      "translation": "veinte",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "21",
+      "translation": "veintiuno",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "22",
+      "translation": "veintidós",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "23",
+      "translation": "veintitrés",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "24",
+      "translation": "veinticuatro",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "25",
+      "translation": "veinticinco",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "26",
+      "translation": "veintiséis",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "27",
+      "translation": "veintisiete",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "28",
+      "translation": "veintiocho",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "29",
+      "translation": "veintinueve",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "30",
+      "translation": "treinta",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "31",
+      "translation": "treinta y uno",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "32",
+      "translation": "treinta y dos",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "33",
+      "translation": "treinta y tres",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "34",
+      "translation": "treinta y cuatro",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "35",
+      "translation": "treinta y cinco",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "36",
+      "translation": "treinta y seis",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "37",
+      "translation": "treinta y siete",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "38",
+      "translation": "treinta y ocho",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "39",
+      "translation": "treinta y nueve",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "40",
+      "translation": "cuarenta",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "41",
+      "translation": "cuarenta y uno",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "42",
+      "translation": "cuarenta y dos",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "43",
+      "translation": "cuarenta y tres",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "44",
+      "translation": "cuarenta y cuatro",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "45",
+      "translation": "cuarenta y cinco",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "46",
+      "translation": "cuarenta y seis",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "47",
+      "translation": "cuarenta y siete",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "48",
+      "translation": "cuarenta y ocho",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "49",
+      "translation": "cuarenta y nueve",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "50",
+      "translation": "cincuenta",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "51",
+      "translation": "cincuenta y uno",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "52",
+      "translation": "cincuenta y dos",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "53",
+      "translation": "cincuenta y tres",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "54",
+      "translation": "cincuenta y cuatro",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "55",
+      "translation": "cincuenta y cinco",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "56",
+      "translation": "cincuenta y seis",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "57",
+      "translation": "cincuenta y siete",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "58",
+      "translation": "cincuenta y ocho",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "59",
+      "translation": "cincuenta y nueve",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "60",
+      "translation": "sesenta",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "61",
+      "translation": "sesenta y uno",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "62",
+      "translation": "sesenta y dos",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "63",
+      "translation": "sesenta y tres",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "64",
+      "translation": "sesenta y cuatro",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "65",
+      "translation": "sesenta y cinco",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "66",
+      "translation": "sesenta y seis",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "67",
+      "translation": "sesenta y siete",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "68",
+      "translation": "sesenta y ocho",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "69",
+      "translation": "sesenta y nueve",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "70",
+      "translation": "setenta",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "71",
+      "translation": "setenta y uno",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "72",
+      "translation": "setenta y dos",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "73",
+      "translation": "setenta y tres",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "74",
+      "translation": "setenta y cuatro",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "75",
+      "translation": "setenta y cinco",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "76",
+      "translation": "setenta y seis",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "77",
+      "translation": "setenta y siete",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "78",
+      "translation": "setenta y ocho",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "79",
+      "translation": "setenta y nueve",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "80",
+      "translation": "ochenta",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "81",
+      "translation": "ochenta y uno",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "82",
+      "translation": "ochenta y dos",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "83",
+      "translation": "ochenta y tres",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "84",
+      "translation": "ochenta y cuatro",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "85",
+      "translation": "ochenta y cinco",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "86",
+      "translation": "ochenta y seis",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "87",
+      "translation": "ochenta y siete",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "88",
+      "translation": "ochenta y ocho",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "89",
+      "translation": "ochenta y nueve",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "90",
+      "translation": "noventa",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "91",
+      "translation": "noventa y uno",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "92",
+      "translation": "noventa y dos",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "93",
+      "translation": "noventa y tres",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "94",
+      "translation": "noventa y cuatro",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "95",
+      "translation": "noventa y cinco",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "96",
+      "translation": "noventa y seis",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "97",
+      "translation": "noventa y siete",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "98",
+      "translation": "noventa y ocho",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "99",
+      "translation": "noventa y nueve",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "100",
+      "translation": "cien",
+      "image": "url_naar_afbeelding.jpg"
+    }
+  ]
+}

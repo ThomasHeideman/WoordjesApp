@@ -90,6 +90,7 @@ button .emoji {
 }
 
 /* Selectie-elementen */
+.select-language,
 .select-list,
 .select-direction,
 .select-set-size {
@@ -102,7 +103,7 @@ button .emoji {
   font-weight: 600;
   font-size: 1.125rem;
 }
-
+.select-language select,
 .select-list select,
 .select-direction select,
 .select-set-size select {
@@ -116,6 +117,17 @@ button .emoji {
   background-color: #e8e8e9;
 }
 
+.select-language {
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #bbbbbd;
+}
+
+.select-list select:disabled,
+.select-direction select:disabled,
+.select-set-size select:disabled {
+  opacity: 0.5;
+}
 /* Knoppen */
 .btn {
   border: none;
@@ -142,6 +154,12 @@ button.start-btn:hover {
   background-color: #55b6cc;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
 }
+button.start-btn:disabled {
+  background-color: #bfe4ec;
+  box-shadow: none;
+
+  cursor: not-allowed;
+}
 
 button.back-btn {
   color: #444;
@@ -157,7 +175,7 @@ button.back-btn:hover {
 }
 
 /* saved sessions */
-#saved-sessions-container ul {
+.saved-sessions-container ul {
   list-style-type: none;
   display: flex;
   flex-direction: column;
@@ -169,12 +187,12 @@ button.back-btn:hover {
   background: #e8e8e9;
 }
 
-#saved-sessions-container ul li {
+.saved-sessions-container ul li {
   display: flex;
   justify-content: space-between;
   border-radius: 0.25rem;
   border: 1px solid #bbbbbd;
-  padding: 0.25rem;
+  padding: 0.25rem 0.25rem 0.25rem 0.5rem;
   background-color: #fff;
 }
 
@@ -212,6 +230,7 @@ button.back-btn:hover {
   align-items: center;
   font-weight: 500;
   color: #52525e;
+  font-size: 0.95rem;
 }
 
 /* Controle-elementen */

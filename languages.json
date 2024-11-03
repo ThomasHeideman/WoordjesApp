@@ -1,0 +1,59 @@
+{
+  "languages": [
+    {
+      "code": "es",
+      "name": " 🇪🇸 Spaans",
+      "directions": [
+        { "value": "es-nl", "text": "Spaans 🇪🇸 - Nederlands 🇳🇱" },
+        { "value": "nl-es", "text": "Nederlands 🇳🇱 - Spaans 🇪🇸" }
+      ],
+      "wordLists": [
+        {
+          "id": "unidad_1",
+          "title": "Unidad 1",
+          "file": "languages/spanish/unidad_1.json"
+        },
+        {
+          "id": "unidad_2",
+          "title": "Unidad 2",
+          "file": "languages/spanish/unidad_2.json"
+        },
+        {
+          "id": "los_numeros",
+          "title": "Los Números 0-100",
+          "file": "languages/spanish/los_numeros_0_100.json"
+        }
+      ]
+    },
+    {
+      "code": "en",
+      "name": " 🇬🇧 Engels",
+      "directions": [
+        { "value": "en-nl", "text": "Engels 🇬🇧 - Nederlands 🇳🇱" },
+        { "value": "nl-en", "text": "Nederlands 🇳🇱 - Engels 🇬🇧" }
+      ],
+      "wordLists": [
+        {
+          "id": "unit_1",
+          "title": "Unit 1",
+          "file": "languages/english/unit_1.json"
+        }
+      ]
+    },
+    {
+      "code": "de",
+      "name": " 🇩🇪 Duits",
+      "directions": [
+        { "value": "de-nl", "text": "Duits 🇩🇪 - Nederlands 🇳🇱" },
+        { "value": "nl-de", "text": "Nederlands 🇳🇱 - Duits 🇩🇪" }
+      ],
+      "wordLists": [
+        {
+          "id": "kapitel_1",
+          "title": "Kapitel 1",
+          "file": "languages/german/kapitel_1.json"
+        }
+      ]
+    }
+  ]
+}

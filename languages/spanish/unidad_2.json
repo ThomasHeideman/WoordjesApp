@@ -1,0 +1,469 @@
+{
+  "words": [
+    {
+      "word": "belangrijk",
+      "translation": "importante",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "slecht",
+      "translation": "mal, malo, mala",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "altijd",
+      "translation": "siempre",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "nou, dus",
+      "translation": "pues",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de persoon",
+      "translation": "la persona",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "Frans",
+      "translation": "Francés",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de radio",
+      "translation": "la radio",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de televisie",
+      "translation": "la televisión",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de tekening",
+      "translation": "el dibujo",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "het uur",
+      "translation": "la hora",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de lijst",
+      "translation": "la lista",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de nationaliteit",
+      "translation": "la nacionalidad",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de jongen",
+      "translation": "el chico",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "het meisje",
+      "translation": "la chica",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de verpleegkundige (m)",
+      "translation": "el enfermero",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de verpleegkundige (v)",
+      "translation": "la enfermera",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de leraar",
+      "translation": "el profesor",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de lerares",
+      "translation": "la profesora",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de maand",
+      "translation": "el mes",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de boodschap, het bericht",
+      "translation": "el mensaje",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "het meervoud",
+      "translation": "el plural",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "het enkelvoud",
+      "translation": "el singular",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "geschikt/ passend",
+      "translation": "adecuado, adecuada",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "veel",
+      "translation": "mucho, mucha",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "heel",
+      "translation": "todo, toda",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de gymnastiek",
+      "translation": "la educación física",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "oud",
+      "translation": "viejo, vieja",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "lang (van mensen)",
+      "translation": "alto, alta",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "lang (van dingen)",
+      "translation": "largo, larga",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "nieuw",
+      "translation": "nuevo, nueva",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "juist/ goed",
+      "translation": "correcto, correcta",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "beroemd",
+      "translation": "famoso, famosa",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "het park",
+      "translation": "el parque",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de rivier",
+      "translation": "el río",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de boom",
+      "translation": "el árbol",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "culturele en kunstzinnige vorming",
+      "translation": "Educación plástica",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de foto",
+      "translation": "la foto",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de trein",
+      "translation": "el tren",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "wat goed!",
+      "translation": "¡qué bien!",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "hier",
+      "translation": "aquí",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de straat",
+      "translation": "la calle",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "het plein",
+      "translation": "la plaza",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "oké",
+      "translation": "vale",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de sociale wetenschappen",
+      "translation": "las ciencias sociales",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "natuurwetenschappen",
+      "translation": "las ciencias naturales",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de muziek",
+      "translation": "la música",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "rond de, in de buurt van",
+      "translation": "alrededor de",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "links (van)/ naar links",
+      "translation": "a la izquierda (de)",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "rechts (van)/ naar rechts",
+      "translation": "a la derecha (de)",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de dierentuin",
+      "translation": "el zoo",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "het zwembad",
+      "translation": "la piscina",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de bibliotheek",
+      "translation": "la biblioteca",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de politie",
+      "translation": "la policía",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "informatica",
+      "translation": "Informática",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de discotheek",
+      "translation": "la discoteca",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de achternaam",
+      "translation": "el apellido",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "wiskunde",
+      "translation": "matemáticas (las)",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de groet",
+      "translation": "el saludo",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de ochtend",
+      "translation": "la mañana",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de kantine",
+      "translation": "la cafetería",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "het broodje",
+      "translation": "el bocadillo",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "het snoep",
+      "translation": "los dulces",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de sap",
+      "translation": "el zumo",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de middag, de vroege avond",
+      "translation": "la tarde",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de activiteit",
+      "translation": "la actividad",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "het adres",
+      "translation": "la dirección",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de maandag",
+      "translation": "el lunes",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de dinsdag",
+      "translation": "el martes",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de woensdag",
+      "translation": "el miércoles",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de donderdag",
+      "translation": "el jueves",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de vrijdag",
+      "translation": "el viernes",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de zaterdag",
+      "translation": "el sábado",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de zondag",
+      "translation": "el domingo",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de middelbare school",
+      "translation": "el instituto",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de school",
+      "translation": "el colegio, la escuela",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "het schoolvak",
+      "translation": "la asignatura",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de pauze",
+      "translation": "la pausa",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de lunchpauze",
+      "translation": "el recreo",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "het leerjaar",
+      "translation": "el curso",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "het lesrooster",
+      "translation": "el horario",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de minuut",
+      "translation": "el minuto",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "verschillend, anders",
+      "translation": "diferente",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "het ding",
+      "translation": "la cosa",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "bekijken",
+      "translation": "mirar",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "gebruiken",
+      "translation": "usar",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "werken",
+      "translation": "trabajar",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "aanvullen",
+      "translation": "completar",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "gaan zitten",
+      "translation": "sentarse",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "denken",
+      "translation": "pensar",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "leren/ studeren",
+      "translation": "estudiar",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "doorgaan",
+      "translation": "continuar",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "wonen/ leven",
+      "translation": "vivir",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "vertrekken/ uitgaan",
+      "translation": "salir",
+      "image": "url_naar_afbeelding.jpg"
+    }
+  ]
+}

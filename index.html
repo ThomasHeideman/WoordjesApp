@@ -26,32 +26,48 @@
     <div id="app" class="app">
       <h1>Dante's TaalTrainer 🎓</h1>
       <section class="highscore-container" id="highscore-container">
-        <p id="highscore-spaans-nederlands">Highscore Spaans-Nederlands: 0</p>
-        <p id="highscore-nederlands-spaans">Highscore Nederlands-Spaans: 0</p>
+        <p id="highscore">Highscore: 0</p>
       </section>
       <section class="game-selection-container">
-        <div class="select-direction">
-          <label for="direction-select">Kies de oefenrichting:</label>
-          <select id="direction-select">
-            <option value="spaans-nederlands">Spaans 🇪🇸 - Nederlands 🇳🇱</option>
-            <option value="nederlands-spaans">Nederlands 🇳🇱 - Spaans 🇪🇸</option>
+        <!-- Added Language Selection -->
+        <div class="select-language">
+          <label for="language-select">Kies een taal:</label>
+          <select id="language-select">
+            <option value="" selected disabled>Kies een taal</option>
+            <!-- Options will be populated dynamically -->
           </select>
         </div>
 
-        <div class="select-list">
-          <label for="list-select">Kies een lijst:</label>
-          <select id="list-select">
-            <option value="unidad_1">Unidad 1</option>
-            <option value="unidad_2">Unidad 2</option>
-            <option value="los_numeros">Los Números 0-100</option>
-            <option value="all">Alle Woorden</option>
+        <!-- Adjusted Direction Selection (Initially hidden) -->
+        <div class="select-direction">
+          <label for="direction-select">Kies de oefenrichting:</label>
+          <select id="direction-select" disabled>
+            <option value="" selected disabled>Kies een richting</option>
+            <!-- Options will be populated dynamically -->
           </select>
         </div>
-        <button id="start-button" class="start-btn btn">Start Oefenen</button>
+
+        <!-- Adjusted Word List Selection (Initially hidden) -->
+        <div class="select-list">
+          <label for="list-select">Kies een lijst:</label>
+          <select id="list-select" disabled>
+            <option value="" selected disabled>Kies een lijst</option>
+            <!-- Options will be populated dynamically -->
+          </select>
+        </div>
+
+        <!-- Start Button (Initially hidden) -->
+        <button id="start-button" class="start-btn btn" disabled>
+          Start Oefenen
+        </button>
       </section>
-      <section id="saved-sessions-container" style="display: none">
+      <section
+        id="saved-sessions-container"
+        class="saved-sessions-container"
+        style="display: none"
+      >
         <h2>Opgeslagen Sessies</h2>
-        <ul id="saved-sessions-list"></ul>
+        <ul id="saved-sessions-list" class="saved-sessions-list"></ul>
       </section>
       <section id="quiz-container" class="quiz-container" style="display: none">
         <div class="score-container">

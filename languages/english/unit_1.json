@@ -1,0 +1,104 @@
+{
+  "words": [
+    {
+      "word": "goedemorgen",
+      "translation": "good morning",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "goedenavond",
+      "translation": "good evening",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "het huis",
+      "translation": "the house",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "het boek",
+      "translation": "the book",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de tafel",
+      "translation": "the table",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de stoel",
+      "translation": "the chair",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de auto",
+      "translation": "the car",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de school",
+      "translation": "the school",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de stad",
+      "translation": "the city",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "het jaar",
+      "translation": "the year",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de vraag",
+      "translation": "the question",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "het antword",
+      "translation": "the answer",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de vader",
+      "translation": "the father",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de moeder",
+      "translation": "the mother",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de broer",
+      "translation": "the brother",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de zus",
+      "translation": "the sister",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "het potlood",
+      "translation": "the pencil",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de leraar",
+      "translation": "the teacher",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de leerling",
+      "translation": "the student",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "het werk",
+      "translation": "the work",
+      "image": "url_naar_afbeelding.jpg"
+    }
+  ]
+}

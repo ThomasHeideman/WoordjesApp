@@ -1,13 +1,6 @@
 'use strict';
 
-const lists = {
-  unidad_1: 'unidad_1.json',
-  unidad_2: 'unidad_2.json',
-  los_numeros: 'los_numeros_0_100.json',
-  all: ['unidad_1.json', 'unidad_2.json', 'los_numeros_0_100.json'],
-};
-
-// Applicatiestatus
+// Application state
 let appState = {
   words: [],
   originalWords: [],
@@ -17,20 +10,21 @@ let appState = {
   score: 0,
   foutenCount: 0,
   errors: [],
-  oefenrichting: 'spaans-nederlands',
-  setSize: 10, // Altijd 10 woorden per set
-  highscoreSpaansNederlands:
-    localStorage.getItem('highscore-spaans-nederlands') || 0,
-  highscoreNederlandsSpaans:
-    localStorage.getItem('highscore-nederlands-spaans') || 0,
+  oefenrichting: null,
+  setSize: 10, // Always 10 words per set
   currentWord: null,
   currentLevelWords: [],
-  selectedList: null, // Added this line
+  selectedList: null,
+  languageCode: null,
 };
 
-// HTML-elementen selecteren
-const listSelectEl = document.getElementById('list-select');
+// Data loaded from languages.json
+let data = {};
+
+// HTML elements
+const languageSelectEl = document.getElementById('language-select');
 const directionSelectEl = document.getElementById('direction-select');
+const wordListSelectEl = document.getElementById('list-select');
 const startButtonEl = document.getElementById('start-button');
 const controlsEl = document.getElementById('controls');
 const backButtonEl = document.getElementById('back-button');
@@ -46,89 +40,164 @@ const levelProgressInfoEl = document.querySelector('.level-progress-info');
 const resultEl = document.querySelector('.result');
 const scoreEl = document.getElementById('score');
 const highscoreEl = document.getElementById('highscore');
-const highscoreSpaansNederlandsEl = document.getElementById(
-  'highscore-spaans-nederlands'
-);
-const highscoreNederlandsSpaansEl = document.getElementById(
-  'highscore-nederlands-spaans'
-);
 const highscoreContainerEl = document.getElementById('highscore-container');
 const motivationalMessageEl = document.getElementById('motivational-message');
 const repeatErrorsButtonEl = document.getElementById('repeat-errors');
 const nextLevelButtonEl = document.getElementById('next-level');
-
-// Add references to new elements
 const savedSessionsContainerEl = document.getElementById(
   'saved-sessions-container'
 );
 const savedSessionsListEl = document.getElementById('saved-sessions-list');
 
-// Update highscore display
-highscoreSpaansNederlandsEl.textContent = `Highscore Spaans-Nederlands: ${appState.highscoreSpaansNederlands}`;
-highscoreNederlandsSpaansEl.textContent = `Highscore Nederlands-Spaans: ${appState.highscoreNederlandsSpaans}`;
-
 // Event Listeners
+document.addEventListener('DOMContentLoaded', () => {
+  loadLanguageData().then(() => {
+    goToStartScreen();
+  });
+});
+
 startButtonEl.addEventListener('click', startQuiz);
 backButtonEl.addEventListener('click', goToStartScreen);
 repeatErrorsButtonEl.addEventListener('click', startErrorReview);
 nextLevelButtonEl.addEventListener('click', proceedToNextLevel);
+languageSelectEl.addEventListener('change', onLanguageSelected);
+directionSelectEl.addEventListener('change', checkStartButtonAvailability);
+wordListSelectEl.addEventListener('change', checkStartButtonAvailability);
 
-// Utility functions
-function shuffleArray(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    // Swap elements array[i] and array[j]
-    [array[i], array[j]] = [array[j], array[i]];
+// Load language data from languages.json
+async function loadLanguageData() {
+  try {
+    const response = await fetch('languages.json');
+    data = await response.json();
+    populateLanguageSelect();
+    displaySavedSessions(); // Call this after data is loaded
+  } catch (error) {
+    console.error('Error loading language data:', error);
   }
-  return array;
 }
 
-function generateSessionKey() {
-  return `progress_${appState.selectedList}_${appState.oefenrichting}`;
+// Populate the language select element
+function populateLanguageSelect() {
+  // Clear existing options (if any)
+  languageSelectEl.innerHTML = '';
+
+  // Add the default placeholder option
+  const defaultOption = document.createElement('option');
+  defaultOption.value = '';
+  defaultOption.textContent = 'Kies een taal';
+  defaultOption.selected = true;
+  defaultOption.disabled = true;
+  languageSelectEl.appendChild(defaultOption);
+
+  data.languages.forEach(language => {
+    const option = document.createElement('option');
+    option.value = language.code;
+    option.textContent = language.name;
+    languageSelectEl.appendChild(option);
+  });
 }
 
-function goToStartScreen() {
-  quizContainerEl.style.display = 'none';
-  controlsEl.style.display = 'none';
-  startButtonEl.style.display = 'block';
-  listSelectEl.parentElement.style.display = 'flex';
-  directionSelectEl.parentElement.style.display = 'flex';
-  highscoreContainerEl.style.display = 'block';
-  resultEl.textContent = '';
-  motivationalMessageEl.textContent = '';
+// Handle language selection
+function onLanguageSelected() {
+  const selectedLanguageCode = languageSelectEl.value;
+  const selectedLanguage = data.languages.find(
+    lang => lang.code === selectedLanguageCode
+  );
 
-  // Reset de applicatiestatus
-  appState = {
-    ...appState,
-    words: [],
-    originalWords: [],
-    currentLevel: 1,
-    currentSetIndex: 0,
-    currentWordIndex: 0,
-    score: 0,
-    foutenCount: 0,
-    errors: [],
-    currentLevelWords: [],
-    currentWord: null,
-    selectedList: null,
-  };
+  if (selectedLanguage) {
+    // Populate Direction Select
+    populateDirectionSelect(selectedLanguage.directions);
 
-  // Refresh saved sessions
-  displaySavedSessions();
+    // Populate Word List Select
+    populateWordListSelect(selectedLanguage.wordLists);
+
+    // Enable the direction and word list selects
+    directionSelectEl.disabled = false;
+    wordListSelectEl.disabled = false;
+
+    // Reset the selected values
+    directionSelectEl.value = '';
+    wordListSelectEl.value = '';
+
+    // Disable the start button until all selections are made
+    startButtonEl.disabled = true;
+  } else {
+    // If no language is selected, disable direction and list selects
+    directionSelectEl.disabled = true;
+    wordListSelectEl.disabled = true;
+  }
 }
 
+// Populate the direction select element
+function populateDirectionSelect(directions) {
+  directionSelectEl.innerHTML = '';
+
+  // Add default placeholder option
+  const defaultOption = document.createElement('option');
+  defaultOption.value = '';
+  defaultOption.textContent = 'Kies een richting';
+  defaultOption.selected = true;
+  defaultOption.disabled = true;
+  directionSelectEl.appendChild(defaultOption);
+
+  directions.forEach(direction => {
+    const option = document.createElement('option');
+    option.value = direction.value;
+    option.textContent = direction.text;
+    directionSelectEl.appendChild(option);
+  });
+}
+
+// Populate the word list select element
+function populateWordListSelect(wordLists) {
+  wordListSelectEl.innerHTML = '';
+
+  // Add default placeholder option
+  const defaultOption = document.createElement('option');
+  defaultOption.value = '';
+  defaultOption.textContent = 'Kies een lijst';
+  defaultOption.selected = true;
+  defaultOption.disabled = true;
+  wordListSelectEl.appendChild(defaultOption);
+
+  wordLists.forEach(list => {
+    const option = document.createElement('option');
+    option.value = list.id;
+    option.textContent = list.title;
+    wordListSelectEl.appendChild(option);
+  });
+}
+
+// Function to enable the start button when all selections are made
+function checkStartButtonAvailability() {
+  if (
+    languageSelectEl.value &&
+    directionSelectEl.value &&
+    wordListSelectEl.value
+  ) {
+    startButtonEl.disabled = false;
+  } else {
+    startButtonEl.disabled = true;
+  }
+}
+// Start the quiz
 async function startQuiz() {
+  appState.languageCode = languageSelectEl.value;
   appState.oefenrichting = directionSelectEl.value;
-  appState.selectedList = listSelectEl.value; // Store selected list
-  highscoreContainerEl.style.display = 'none';
+  appState.selectedList = wordListSelectEl.value;
+
+  const selectedLanguage = data.languages.find(
+    lang => lang.code === appState.languageCode
+  );
+
+  const selectedWordList = selectedLanguage.wordLists.find(
+    list => list.id === appState.selectedList
+  );
 
   try {
-    appState.originalWords = await loadWords(appState.selectedList);
-    if (appState.originalWords.length === 0) {
-      console.error('Geen woorden gevonden om te oefenen.');
-      return;
-    }
-    // Reset de applicatiestatus
+    appState.originalWords = await loadWords(selectedWordList.file);
+
+    // Reset the application state
     appState = {
       ...appState,
       words: appState.originalWords.slice(),
@@ -141,18 +210,19 @@ async function startQuiz() {
       currentLevelWords: [],
       currentWord: null,
     };
+
+    // Hide start screen elements
     startButtonEl.style.display = 'none';
     savedSessionsContainerEl.style.display = 'none';
-    listSelectEl.parentElement.style.display = 'none';
+    languageSelectEl.parentElement.style.display = 'none';
     directionSelectEl.parentElement.style.display = 'none';
+    wordListSelectEl.parentElement.style.display = 'none';
     controlsEl.style.display = 'flex';
     quizContainerEl.style.display = 'block';
     resultEl.textContent = '';
     motivationalMessageEl.textContent = '';
     highscoreEl.textContent = `Highscore: ${
-      appState.oefenrichting === 'spaans-nederlands'
-        ? appState.highscoreSpaansNederlands
-        : appState.highscoreNederlandsSpaans
+      localStorage.getItem(getHighscoreKey()) || 0
     }`;
     updateScoreDisplay();
     startNewSet();
@@ -161,24 +231,14 @@ async function startQuiz() {
   }
 }
 
-async function loadWords(selectedList) {
-  let words = [];
-  if (selectedList === 'all') {
-    const fetchPromises = lists.all.map(url =>
-      fetch(url)
-        .then(response => response.json())
-        .then(data => data.spaans ?? [])
-    );
-    const dataArrays = await Promise.all(fetchPromises);
-    words = dataArrays.flat();
-  } else {
-    const response = await fetch(lists[selectedList]);
-    const data = await response.json();
-    words = data.spaans ?? [];
-  }
-  return words;
+// Load words from the selected word list file
+async function loadWords(filePath) {
+  const response = await fetch(filePath);
+  const data = await response.json();
+  return data.words ?? [];
 }
 
+// Start a new set of questions
 function startNewSet() {
   const { currentSetIndex, words, setSize } = appState;
   const totalSets = Math.ceil(words.length / setSize);
@@ -206,6 +266,7 @@ function startNewSet() {
   displayQuestion();
 }
 
+// Display the current question
 function displayQuestion() {
   const { currentWordIndex, currentLevelWords } = appState;
 
@@ -215,14 +276,17 @@ function displayQuestion() {
   }
 
   appState.currentWord = currentLevelWords[currentWordIndex];
+
+  const [fromLang, toLang] = appState.oefenrichting.split('-');
   const vraag =
-    appState.oefenrichting === 'spaans-nederlands'
-      ? appState.currentWord.woord
-      : appState.currentWord.vertaling;
+    fromLang === appState.languageCode
+      ? appState.currentWord.word // Word in the foreign language
+      : appState.currentWord.translation; // Word in Dutch
+
   const correctAntwoord =
-    appState.oefenrichting === 'spaans-nederlands'
-      ? appState.currentWord.vertaling
-      : appState.currentWord.woord;
+    toLang === appState.languageCode
+      ? appState.currentWord.word // Word in the foreign language
+      : appState.currentWord.translation; // Word in Dutch
 
   questionEl.innerHTML = `<div class="what-is">Wat is de vertaling van</div><div class='word' style='color: #F24464;'>'${vraag}'</div>`;
 
@@ -249,6 +313,25 @@ function displayQuestion() {
   }</strong> van ${Math.ceil(
     appState.originalWords.length / appState.setSize
   )}`;
+}
+
+// Shuffle the answer options
+function shuffleOptions(correctAnswer) {
+  const [fromLang, toLang] = appState.oefenrichting.split('-');
+  const allWords =
+    toLang === appState.languageCode
+      ? appState.originalWords.map(word => word.word)
+      : appState.originalWords.map(word => word.translation);
+
+  let options = [correctAnswer];
+
+  while (options.length < 4) {
+    const randomWord = allWords[Math.floor(Math.random() * allWords.length)];
+    if (!options.includes(randomWord) && randomWord !== undefined) {
+      options.push(randomWord);
+    }
+  }
+  return options.sort(() => Math.random() - 0.5);
 }
 
 // Process the user's answer
@@ -290,6 +373,7 @@ function processAnswer(button, selectedOption, correctAnswer) {
   saveProgress(); // Save progress after processing the answer
 }
 
+// Check if the set is completed
 function checkIfSetCompleted() {
   if (appState.errors.length > 0) {
     showSetResult(false);
@@ -298,6 +382,7 @@ function checkIfSetCompleted() {
   }
 }
 
+// Show the result of the set
 function showSetResult(isSetCleared) {
   questionContainerEl.style.display = 'none';
   if (isSetCleared) {
@@ -311,6 +396,7 @@ function showSetResult(isSetCleared) {
   }
 }
 
+// Start the error review
 function startErrorReview() {
   if (appState.errors.length === 0) {
     proceedToNextLevel();
@@ -326,11 +412,11 @@ function startErrorReview() {
   saveProgress(); // Save progress after starting error review
 }
 
+// Proceed to the next level
 function proceedToNextLevel() {
   appState.currentSetIndex++;
   appState.currentLevel++;
   appState.currentWordIndex = 0; // Reset word index for new level
-  appState.words = appState.originalWords.slice();
   questionContainerEl.style.display = 'block';
   nextLevelButtonEl.style.display = 'none';
   motivationalMessageEl.textContent = '';
@@ -338,23 +424,16 @@ function proceedToNextLevel() {
   saveProgress(); // Save progress after proceeding to next level
 }
 
+// Show the final result
 function showResult() {
   resultEl.textContent = `Je hebt ${appState.score} van de ${appState.originalWords.length} goed!`;
   quizContainerEl.style.display = 'none';
 
-  const currentHighscore =
-    appState.oefenrichting === 'spaans-nederlands'
-      ? appState.highscoreSpaansNederlands
-      : appState.highscoreNederlandsSpaans;
+  const highscoreKey = getHighscoreKey();
+  const currentHighscore = parseInt(localStorage.getItem(highscoreKey)) || 0;
 
   if (appState.score > currentHighscore) {
-    if (appState.oefenrichting === 'spaans-nederlands') {
-      appState.highscoreSpaansNederlands = appState.score;
-      localStorage.setItem('highscore-spaans-nederlands', appState.score);
-    } else {
-      appState.highscoreNederlandsSpaans = appState.score;
-      localStorage.setItem('highscore-nederlands-spaans', appState.score);
-    }
+    localStorage.setItem(highscoreKey, appState.score);
     highscoreEl.textContent = `Nieuwe highscore: ${appState.score}`;
   }
 
@@ -366,16 +445,19 @@ function showResult() {
   displaySavedSessions();
 }
 
+// Update the score display
 function updateScoreDisplay() {
   scoreEl.innerHTML = `<span style="color:#a3e5e3"><span class="emoji emoji-small">✅</span> Goed: ${appState.score}</span>  <span style="color: #fab4c1"><span class="emoji emoji-small">❌</span> Fout: ${appState.foutenCount}</span>`;
 }
 
+// Update the progress bar
 function updateProgressBar() {
   const progress =
     (appState.currentWordIndex / appState.currentLevelWords.length) * 100;
   progressBarEl.style.width = `${progress}%`;
 }
 
+// Update the level progress bar
 function updateLevelProgressBar() {
   const progress =
     ((appState.currentSetIndex + 1) /
@@ -384,70 +466,76 @@ function updateLevelProgressBar() {
   levelProgressBarEl.style.width = `${progress}%`;
 }
 
-function shuffleOptions(correctAnswer) {
-  const allWords =
-    appState.oefenrichting === 'spaans-nederlands'
-      ? appState.originalWords.map(word => word.vertaling)
-      : appState.originalWords.map(word => word.woord);
-  let options = [correctAnswer];
-
-  while (options.length < 4) {
-    const randomWord = allWords[Math.floor(Math.random() * allWords.length)];
-    if (!options.includes(randomWord) && randomWord !== undefined) {
-      options.push(randomWord);
-    }
+// Shuffle an array
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
   }
-  return options.sort(() => Math.random() - 0.5);
+  return array;
 }
 
-// Function to save progress under a unique session key
+// Generate a session key for saving progress
+function generateSessionKey() {
+  return `progress_${appState.languageCode}_${appState.selectedList}_${appState.oefenrichting}`;
+}
+
+// Generate a highscore key
+function getHighscoreKey() {
+  return `highscore_${appState.languageCode}_${appState.oefenrichting}`;
+}
+
+// Save progress to localStorage
 function saveProgress() {
   const progressData = {
-    words: appState.words,
-    originalWords: appState.originalWords,
-    currentLevel: appState.currentLevel,
-    currentSetIndex: appState.currentSetIndex,
-    currentWordIndex: appState.currentWordIndex,
-    score: appState.score,
-    foutenCount: appState.foutenCount,
-    errors: appState.errors,
-    oefenrichting: appState.oefenrichting,
-    setSize: appState.setSize,
-    currentWord: appState.currentWord,
-    currentLevelWords: appState.currentLevelWords,
-    selectedList: appState.selectedList,
-    timestamp: new Date().getTime(),
+    ...appState,
   };
   const sessionKey = generateSessionKey();
   localStorage.setItem(sessionKey, JSON.stringify(progressData));
 }
 
-// Function to load progress from a specific session key
+// Load progress from localStorage
 async function loadProgress(sessionKey) {
   const savedData = localStorage.getItem(sessionKey);
   if (savedData) {
     const progressData = JSON.parse(savedData);
 
-    // Load the selected word list
-    appState.selectedList = progressData.selectedList;
-    appState.oefenrichting = progressData.oefenrichting;
-    appState.setSize = progressData.setSize;
-
-    // Fetch words based on saved `selectedList`
-    appState.originalWords = await loadWords(appState.selectedList);
-    appState.words = appState.originalWords.slice();
-
-    // Update appState with the rest of the saved data
+    // Update appState with the saved data
     appState = {
       ...appState,
       ...progressData,
     };
+
+    // Find the selected language
+    const selectedLanguage = data.languages.find(
+      lang => lang.code === appState.languageCode
+    );
+
+    if (!selectedLanguage) {
+      console.error('Language not found.');
+      return false;
+    }
+
+    // Find the selected word list
+    const selectedWordList = selectedLanguage.wordLists.find(
+      list => list.id === appState.selectedList
+    );
+
+    if (!selectedWordList) {
+      console.error('Word list not found.');
+      return false;
+    }
+
+    // Load words from the selected word list file
+    appState.originalWords = await loadWords(selectedWordList.file);
+    appState.words = appState.originalWords.slice();
+
     return true;
   }
   return false;
 }
 
-// Function to continue a session based on session key
+// Continue a saved session
 function continueSession(sessionKey) {
   loadProgress(sessionKey)
     .then(loaded => {
@@ -455,16 +543,15 @@ function continueSession(sessionKey) {
         // Hide start screen elements
         startButtonEl.style.display = 'none';
         savedSessionsContainerEl.style.display = 'none';
-        listSelectEl.parentElement.style.display = 'none';
+        languageSelectEl.parentElement.style.display = 'none';
         directionSelectEl.parentElement.style.display = 'none';
+        wordListSelectEl.parentElement.style.display = 'none';
         controlsEl.style.display = 'flex';
         quizContainerEl.style.display = 'block';
         resultEl.textContent = '';
         motivationalMessageEl.textContent = '';
         highscoreEl.textContent = `Highscore: ${
-          appState.oefenrichting === 'spaans-nederlands'
-            ? appState.highscoreSpaansNederlands
-            : appState.highscoreNederlandsSpaans
+          localStorage.getItem(getHighscoreKey()) || 0
         }`;
         updateScoreDisplay();
         displayQuestion();
@@ -478,7 +565,7 @@ function continueSession(sessionKey) {
     });
 }
 
-// Function to get all saved sessions
+// Get all saved sessions
 function getAllSavedSessions() {
   const sessions = [];
   for (let i = 0; i < localStorage.length; i++) {
@@ -493,12 +580,12 @@ function getAllSavedSessions() {
   return sessions;
 }
 
-// Function to delete a session
+// Delete a saved session
 function deleteSession(sessionKey) {
   localStorage.removeItem(sessionKey);
 }
 
-// Function to display saved sessions on the start screen
+// Display saved sessions on the start screen
 function displaySavedSessions() {
   const sessions = getAllSavedSessions();
   if (sessions.length > 0) {
@@ -508,9 +595,27 @@ function displaySavedSessions() {
     sessions.forEach(session => {
       const listItem = document.createElement('li');
 
+      // Find the language, word list, and direction texts
+      const language = data.languages.find(
+        lang => lang.code === session.data.languageCode
+      );
+
+      const languageName = language ? language.name : session.data.languageCode;
+
+      const listText = language
+        ? language.wordLists.find(list => list.id === session.data.selectedList)
+            ?.title || session.data.selectedList
+        : session.data.selectedList;
+
+      const directionText = language
+        ? language.directions.find(
+            dir => dir.value === session.data.oefenrichting
+          )?.text || session.data.oefenrichting
+        : session.data.oefenrichting;
+
       const sessionDescription = document.createElement('span');
       sessionDescription.className = 'session-description';
-      sessionDescription.textContent = `${session.data.selectedList} - ${session.data.oefenrichting}, Level: ${session.data.currentLevel}`;
+      sessionDescription.textContent = `${languageName} | ${listText} - ${directionText} | Level: ${session.data.currentLevel}`;
 
       const sessionControlBtns = document.createElement('div');
       sessionControlBtns.className = 'session-control-btn-container';
@@ -543,5 +648,55 @@ function displaySavedSessions() {
   }
 }
 
-// Call displaySavedSessions() when the app loads
-displaySavedSessions();
+// Go back to the start screen
+function goToStartScreen() {
+  // Hide quiz-related elements
+  quizContainerEl.style.display = 'none';
+  controlsEl.style.display = 'none';
+  resultEl.textContent = '';
+  motivationalMessageEl.textContent = '';
+
+  // Reset the selects
+  languageSelectEl.value = '';
+  directionSelectEl.value = '';
+  wordListSelectEl.value = '';
+
+  // Disable the direction and word list selects
+  directionSelectEl.disabled = true;
+  wordListSelectEl.disabled = true;
+
+  // Disable the start button
+  startButtonEl.disabled = true;
+
+  // Show the selects
+  languageSelectEl.parentElement.style.display = 'flex';
+  directionSelectEl.parentElement.style.display = 'flex';
+  wordListSelectEl.parentElement.style.display = 'flex';
+
+  // Show the start button
+  startButtonEl.style.display = 'block';
+
+  // Show the highscore container
+  highscoreContainerEl.style.display = 'block';
+
+  // Reset the application state
+  appState = {
+    words: [],
+    originalWords: [],
+    currentLevel: 1,
+    currentSetIndex: 0,
+    currentWordIndex: 0,
+    score: 0,
+    foutenCount: 0,
+    errors: [],
+    oefenrichting: null,
+    setSize: 10,
+    currentWord: null,
+    currentLevelWords: [],
+    selectedList: null,
+    languageCode: null,
+  };
+
+  // Refresh saved sessions
+  displaySavedSessions();
+}
