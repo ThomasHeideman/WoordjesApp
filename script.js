@@ -447,7 +447,7 @@ function showResult() {
 
 // Update the score display
 function updateScoreDisplay() {
-  scoreEl.innerHTML = `<span style="color:#a3e5e3"><span class="emoji emoji-small">✅</span> Goed: ${appState.score}</span>  <span style="color: #fab4c1"><span class="emoji emoji-small">❌</span> Fout: ${appState.foutenCount}</span>`;
+  scoreEl.innerHTML = `<span style="color:#16aba7"><span class="emoji emoji-small">✅</span> Goed: ${appState.score}</span>  <span style="color: #da3d5a"><span class="emoji emoji-small">❌</span> Fout: ${appState.foutenCount}</span>`;
 }
 
 // Update the progress bar
