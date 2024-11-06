@@ -1,0 +1,384 @@
+{
+  "words": [
+    {
+      "word": "de leraar",
+      "translation": "der Lerher - die Lehrer",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "het lesrooster",
+      "translation": "der Studienplan",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de toets",
+      "translation": "der Test - die Tests",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de klas",
+      "translation": "die Klasse",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de lerares",
+      "translation": "die Lerherin - die Lehrerinnen",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "het (les)uur",
+      "translation": "die Stunde - die Stunden",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de pauze",
+      "translation": "die Pause - die Pausen",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "het proefwerk",
+      "translation": "die Klassenarbeit - die Klassenarbeiten",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "de school",
+      "translation": "die Schule - die Schulen",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "vmbo-t/havo",
+      "translation": "die Realschule",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "het boek",
+      "translation": "das Buch - die Bücher",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "het schrift",
+      "translation": "das Heft - die Hefte",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "vwo",
+      "translation": "das Gymnasium",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "het huiswerk",
+      "translation": "die Hausaufgaben",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "gaan",
+      "translation": "gehen",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "maken",
+      "translation": "machen",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "schrijven",
+      "translation": "schreiben",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "vinden",
+      "translation": "finden",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "vrij hebben",
+      "translation": "freihaben",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "dom, stom",
+      "translation": "blöd",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "interessant",
+      "translation": "interessant",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "leuk",
+      "translation": "toll",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "makkelijk",
+      "translation": "leicht",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "moeilijk",
+      "translation": "schwierig",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "saai",
+      "translation": "langweilig",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "wanneer",
+      "translation": "wann",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "aardrijkskunde",
+      "translation": "Erdkunde",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "biologie",
+      "translation": "Biologie",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "Duits",
+      "translation": "Deutsch",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "Engels",
+      "translation": "Englisch",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "Frans",
+      "translation": "Französisch",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "geschiedenis",
+      "translation": "Geschichte",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "gym",
+      "translation": "Sport",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "natuurkunde",
+      "translation": "Physik",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "Nederlands",
+      "translation": "Niederländisch",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "Scheikunde",
+      "translation": "Chemie",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "Tekenen",
+      "translation": "Kunst",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "wiskunde",
+      "translation": "Mathe",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "op maandag",
+      "translation": "am Montag",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "op dinsdag",
+      "translation": "am Dienstag",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "op woensdag",
+      "translation": "am Mittwoch",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "op woensdag",
+      "translation": "am Mittwoch",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "op donderdag",
+      "translation": "am Donnerstag",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "op vrijdag",
+      "translation": "am Freitag",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "op zaterdag",
+      "translation": "am Samstag",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "op zondag",
+      "translation": "am Sonntag",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "'s morgens",
+      "translation": "morgens",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "'s middags",
+      "translation": "nachmittags",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "'s avonds",
+      "translation": "abends",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "'s nachts",
+      "translation": "nachts",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "'s zondags",
+      "translation": "sonntags",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "om één uur",
+      "translation": "um ein Uhr",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "kwart over één",
+      "translation": "Viertel nach eins",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "half twee",
+      "translation": "halb zwei",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "kwart voor twee",
+      "translation": "Viertel vor zwei",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "gisteren",
+      "translation": "gestern",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "in het weekend",
+      "translation": "am Wochenende",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "morgen",
+      "translation": "morgen",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "vandaag",
+      "translation": "heute",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "vorige week",
+      "translation": "vorige Woche",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "volgende week",
+      "translation": "nächste Woche",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "eerste",
+      "translation": "erste",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "tweede",
+      "translation": "zweite",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "derde",
+      "translation": "dritte",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "vierde",
+      "translation": "vierte",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "vijfde",
+      "translation": "fünfte",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "zesde",
+      "translation": "sechste",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "zevende",
+      "translation": "siebte",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "achtste",
+      "translation": "achte",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "negende",
+      "translation": "neunte",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "tiende",
+      "translation": "zehnte",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "hoe",
+      "translation": "wie",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "waar",
+      "translation": "wo",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "waarvandaan",
+      "translation": "woher",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "wat",
+      "translation": "was",
+      "image": "url_naar_afbeelding.jpg"
+    },
+    {
+      "word": "wie",
+      "translation": "wer",
+      "image": "url_naar_afbeelding.jpg"
+    }
+  ]
+}

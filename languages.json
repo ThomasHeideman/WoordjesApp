@@ -52,9 +52,14 @@
       ],
       "wordLists": [
         {
-          "id": "kapitel_1",
-          "title": "Kapitel 1",
-          "file": "languages/german/kapitel_1.json"
+          "id": "H3_Lernliste_Niederlandisch_-_Deutsch",
+          "title": "H3 Lernliste - 🇳🇱 / 🇩🇪",
+          "file": "languages/german/H3_Lernliste_Niederlandisch_-_Deutsch.json"
+        },
+        {
+          "id": "H3_Lernliste_Deutsch_-_Niederlandisch",
+          "title": "H3 Lernliste - 🇩🇪 / 🇳🇱",
+          "file": "languages/german/H3_Lernliste_Deutsch_-_Niederlandisch.json"
         }
       ]
     }
