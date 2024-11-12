@@ -55,11 +55,23 @@
             <!-- Options will be populated dynamically -->
           </select>
         </div>
-
-        <!-- Start Button (Initially hidden) -->
+        <div id="select-method-container" class="select-method-buttons">
+          <button
+            id="multiple-choice-btn"
+            class="training-method-btn btn"
+            disabled
+          >
+            <span class="emoji">☑️</span>
+            <span class="btn-txt">Multiple Choice<span> </span></span>
+          </button>
+          <button id="flashcards-btn" class="training-method-btn btn" disabled>
+            <span class="emoji">⚡</span><span class="btn-txt">Flashcards</span>
+          </button>
+        </div>
+        <!-- Start Button (Initially hidden)
         <button id="start-button" class="start-btn btn" disabled>
           Start Oefenen
-        </button>
+        </button> -->
       </section>
       <section
         id="saved-sessions-container"
@@ -69,6 +81,7 @@
         <h2>Opgeslagen Sessies</h2>
         <ul id="saved-sessions-list" class="saved-sessions-list"></ul>
       </section>
+      <!-- Quiz Container - for multiplew choice game-->
       <section id="quiz-container" class="quiz-container" style="display: none">
         <div class="score-container">
           <div class="motivational-message" id="motivational-message"></div>
@@ -91,6 +104,26 @@
           <div class="progress-bar"></div>
         </div>
       </section>
+
+      <!-- Flashcards Container - for flashcards game-->
+      <section
+        id="flashcard-container"
+        class="flashcard-container"
+        style="display: none"
+      >
+        <div class="flashcard-question"></div>
+        <input
+          type="text"
+          id="flashcard-answer-input"
+          class="flashcard-answer-input"
+          placeholder="Typ hier je antwoord..."
+        />
+        <button id="flashcard-submit-btn" class="flashcard-btn btn">
+          controleer
+        </button>
+        <div class="flashcard-feedback"></div>
+      </section>
+
       <div class="result"></div>
       <div id="controls" class="controls" style="display: none">
         <button id="back-button" class="back-btn btn">
