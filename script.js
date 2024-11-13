@@ -6,13 +6,18 @@ const CURRENT_VERSION = '1.1';
 // Migration functions
 const migrations = {
   0.9: data => {
-    // Example: Suppose in version 1.0, you added a new property `completedSets`
+    // Migration logic from version 0.9 to 1.0
     data.completedSets = data.completedSets || 0;
     data.version = '1.0';
     return data;
   },
-  1.0: data => {
-    data.isFlashcards = data.isFlashcards ?? false; // Set default value if not present
+  '1.0': data => {
+    // Migrate from version 1.0 to 1.1
+    data.isFlashcards = false; // Default to multiple-choice game
+    data.levelScore = 0; // Initialize level score
+    data.levelFoutenCount = 0; // Initialize level fouten count
+    data.flashcardSetSize = 10; // Default flashcard set size
+    data.scheduledWords = []; // Initialize scheduledWords
     data.version = '1.1';
     return data;
   },
@@ -20,24 +25,7 @@ const migrations = {
 };
 
 // Application state
-let appState = {
-  words: [],
-  originalWords: [],
-  currentLevel: 1,
-  currentSetIndex: 0,
-  currentWordIndex: 0,
-  score: 0,
-  foutenCount: 0,
-  errors: [],
-  oefenrichting: null,
-  setSize: 10, // Always 10 words per set
-  currentWord: null,
-  currentLevelWords: [],
-  selectedList: null,
-  languageCode: null,
-  isFlashcards: false, // Indicates if the current game is flashcards
-  version: CURRENT_VERSION, // Current version
-};
+let appState;
 
 // Data loaded from languages.json
 let data = {};
@@ -54,13 +42,33 @@ const selectMethodContainer = document.getElementById(
 const multipleChoiceBtnEl = document.getElementById('multiple-choice-btn');
 const flashcardsBtnEl = document.getElementById('flashcards-btn');
 // Flashcards elements
-const flashcardContainerEl = document.getElementById('flashcard-container');
+const flashcardContainerEl = document.getElementById(
+  'flashcard-game-container'
+);
+const flashcardEl = document.getElementById('flashcard');
 const flashcardQuestionEl = document.querySelector('.flashcard-question');
 const flashcardAnswerInputEl = document.getElementById(
   'flashcard-answer-input'
 );
+const flashcardInputContainer = document.getElementById(
+  'flashcard-answer-input-container'
+);
 const flashcardSubmitBtnEl = document.getElementById('flashcard-submit-btn');
 const flashcardFeedbackEl = document.querySelector('.flashcard-feedback');
+// Define elements for flashcard progress
+const flashcardLevelProgressBarEl = document.getElementById(
+  'flashcard-level-progress-bar'
+);
+const flashcardLevelProgressInfoEl = document.getElementById(
+  'flashcard-level-progress-info'
+);
+const flashcardProgressBarEl = document.getElementById(
+  'flashcard-progress-bar'
+);
+const flashcardProgressInfoEl = document.getElementById(
+  'flashcard-progress-info'
+);
+const flashcardScoreEl = document.getElementById('flashcard-score');
 // Multiple choice elements
 const controlsEl = document.getElementById('controls');
 const quizContainerEl = document.getElementById('quiz-container');
@@ -79,8 +87,7 @@ const nextLevelButtonEl = document.getElementById('next-level');
 
 const resultEl = document.querySelector('.result');
 const scoreEl = document.getElementById('score');
-const highscoreEl = document.getElementById('highscore');
-const highscoreContainerEl = document.getElementById('highscore-container');
+
 const motivationalMessageEl = document.getElementById('motivational-message');
 const savedSessionsContainerEl = document.getElementById(
   'saved-sessions-container'
@@ -88,6 +95,32 @@ const savedSessionsContainerEl = document.getElementById(
 const savedSessionsListEl = document.getElementById('saved-sessions-list');
 
 // UTILITY FUNCTIONS
+
+function initializeAppState() {
+  appState = {
+    words: [],
+    originalWords: [],
+    currentLevel: 1,
+    currentSetIndex: 0,
+    currentWordIndex: 0,
+    score: 0,
+    foutenCount: 0,
+    levelScore: 0,
+    levelFoutenCount: 0,
+    errors: [],
+    oefenrichting: null,
+    setSize: 10, // For multiple-choice game
+    flashcardSetSize: 10, // For flashcard game
+    currentWord: null,
+    currentLevelWords: [],
+    selectedList: null,
+    languageCode: null,
+    isFlashcards: false,
+    version: CURRENT_VERSION,
+    scheduledWords: [],
+  };
+}
+
 async function loadWords(filePath) {
   //--// Load words from the selected word list file
   try {
@@ -119,10 +152,7 @@ function generateSessionKey() {
   const gameMode = appState.isFlashcards ? 'flashcards' : 'multipleChoice';
   return `progress_${appState.languageCode}_${appState.selectedList}_${appState.oefenrichting}`;
 }
-function getHighscoreKey() {
-  //--// Generate a highscore key
-  return `highscore_${appState.languageCode}_${appState.oefenrichting}`;
-}
+
 async function loadProgress(sessionKey) {
   // Ensure language data is loaded before loading progress
   if (!data.languages || data.languages.length === 0) {
@@ -137,8 +167,8 @@ async function loadProgress(sessionKey) {
 
       // Check if version exists; if not, assume it's an old version
       if (!progressData.version) {
-        progressData.version = '0.9'; // Example: previous version
-        console.log(`Assumed version 0.9 for saved data.`);
+        progressData.version = '1.0'; // Assuming the old version is 1.0
+        console.log(`Assumed version 1.0 for saved data.`);
       }
 
       // Migrate data step by step to the current version
@@ -146,7 +176,7 @@ async function loadProgress(sessionKey) {
         const migrate = migrations[progressData.version];
         if (migrate) {
           console.log(
-            `Migrating from version ${progressData.version} to ${CURRENT_VERSION}`
+            `Migrating from version ${progressData.version} to next version`
           );
           progressData = migrate(progressData);
           console.log(`Progress data after migration:`, progressData);
@@ -158,8 +188,14 @@ async function loadProgress(sessionKey) {
         }
       }
 
-      // Ensure required properties are present
-      const requiredProps = [
+      // Provide default values for missing properties
+      progressData.levelScore = progressData.levelScore || 0;
+      progressData.levelFoutenCount = progressData.levelFoutenCount || 0;
+      progressData.flashcardSetSize = progressData.flashcardSetSize || 10;
+      progressData.scheduledWords = progressData.scheduledWords || [];
+
+      // Adjust required properties based on game mode
+      const baseRequiredProps = [
         'languageCode',
         'selectedList',
         'oefenrichting',
@@ -169,12 +205,22 @@ async function loadProgress(sessionKey) {
         'score',
         'foutenCount',
         'errors',
-        'currentLevelWords',
         'words',
         'originalWords',
         'version',
         'isFlashcards',
       ];
+
+      const flashcardProps = [
+        'levelScore',
+        'levelFoutenCount',
+        'flashcardSetSize',
+        'scheduledWords',
+      ];
+
+      const requiredProps = progressData.isFlashcards
+        ? [...baseRequiredProps, ...flashcardProps]
+        : baseRequiredProps;
 
       const hasAllProps = requiredProps.every(prop =>
         progressData.hasOwnProperty(prop)
@@ -189,34 +235,9 @@ async function loadProgress(sessionKey) {
         return false;
       }
 
-      // Find the selected language
-      const selectedLanguage = data.languages.find(
-        lang => lang.code === progressData.languageCode
-      );
-      if (!selectedLanguage) {
-        console.error('Language not found.');
-        return false;
-      }
-
-      // Find the selected word list
-      const selectedWordList = selectedLanguage.wordLists.find(
-        list => list.id === progressData.selectedList
-      );
-      if (!selectedWordList) {
-        console.error('Word list not found.');
-        return false;
-      }
-
-      // Load words from the selected word list file
-      const loadedWords = await loadWords(selectedWordList.file);
-      if (loadedWords.length === 0) {
-        console.error('No words loaded from the word list.');
-        return false;
-      }
-      progressData.originalWords = loadedWords;
-      console.log(`Loaded words from ${selectedWordList.file}:`, loadedWords);
-
-      // Update appState with the saved data
+      // Continue with loading the session as before...
+      // (rest of your loadProgress function)
+      // Update appState with the migrated data
       appState = {
         ...appState,
         ...progressData,
@@ -232,6 +253,7 @@ async function loadProgress(sessionKey) {
   console.log(`No saved data found for sessionKey: ${sessionKey}`);
   return false;
 }
+
 function saveProgress() {
   const progressData = {
     ...appState,
@@ -327,8 +349,31 @@ function insertCharAtCursor(input, char) {
   input.focus();
 }
 
+function updateFlashcardProgressBar() {
+  const progress = (appState.currentWordIndex / appState.words.length) * 100;
+  flashcardProgressBarEl.style.width = `${progress}%`;
+}
+function updateFlashcardLevelProgressBar() {
+  if (typeof appState.flashcardSetSize !== 'number') {
+    appState.flashcardSetSize = 10; // Default value
+  }
+
+  const totalSets = Math.ceil(
+    appState.originalWords.length / appState.flashcardSetSize
+  );
+  const progress = ((appState.currentSetIndex + 1) / totalSets) * 100;
+  flashcardLevelProgressBarEl.style.width = `${progress}%`;
+}
+
+// Update score display for flashcards
+function updateFlashcardScoreDisplay() {
+  flashcardScoreEl.innerHTML = `<span style="color:#16aba7"><span class="emoji emoji-small">✅</span> Goed: ${appState.levelScore}</span>  <span style="color: #da3d5a"><span class="emoji emoji-small">❌</span> Fout: ${appState.levelFoutenCount}</span>`;
+  console.log(`Updated flashcard score display:`, flashcardScoreEl.innerHTML);
+}
+
 // Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
+  initializeAppState();
   loadLanguageData().then(() => {
     // Only attempt to display saved sessions after language data is loaded
     displaySavedSessions();
@@ -338,7 +383,13 @@ document.addEventListener('DOMContentLoaded', () => {
 multipleChoiceBtnEl.addEventListener('click', startQuiz);
 flashcardsBtnEl.addEventListener('click', startFlashcardGame);
 backButtonEl.addEventListener('click', goToStartScreen);
-repeatErrorsButtonEl.addEventListener('click', startErrorReview);
+repeatErrorsButtonEl.addEventListener('click', () => {
+  if (appState.isFlashcards) {
+    startFlashcardErrorReview();
+  } else {
+    startErrorReview();
+  }
+});
 nextLevelButtonEl.addEventListener('click', proceedToNextLevel);
 languageSelectEl.addEventListener('change', onLanguageSelected);
 directionSelectEl.addEventListener('change', checkStartButtonAvailability);
@@ -513,26 +564,8 @@ function goToStartScreen() {
   // Show the start button
   selectMethodContainer.style.display = 'flex';
 
-  // Show the highscore container
-  highscoreContainerEl.style.display = 'block';
   // Reset the application state
-  appState = {
-    words: [],
-    originalWords: [],
-    currentLevel: 1,
-    currentSetIndex: 0,
-    currentWordIndex: 0,
-    score: 0,
-    foutenCount: 0,
-    errors: [],
-    oefenrichting: null,
-    setSize: 10,
-    currentWord: null,
-    currentLevelWords: [],
-    selectedList: null,
-    languageCode: null,
-    version: CURRENT_VERSION, // Ensure version is reset
-  };
+  initializeAppState();
   console.log('Returned to start screen. Reset appState:', appState);
 
   // Refresh saved sessions
@@ -623,6 +656,10 @@ function continueSession(sessionKey) {
         directionSelectEl.parentElement.style.display = 'none';
         wordListSelectEl.parentElement.style.display = 'none';
 
+        // **Hide next level and repeat errors buttons**
+        nextLevelButtonEl.style.display = 'none';
+        repeatErrorsButtonEl.style.display = 'none';
+
         controlsEl.style.display = 'flex';
         resultEl.textContent = '';
         motivationalMessageEl.textContent = '';
@@ -659,10 +696,18 @@ function continueSession(sessionKey) {
 
 // Start the multiple choice game
 async function startQuiz() {
+  // Initialize the app state
+  initializeAppState();
+
+  // Set game-specific properties
   appState.languageCode = languageSelectEl.value;
   appState.oefenrichting = directionSelectEl.value;
   appState.selectedList = wordListSelectEl.value;
   appState.isFlashcards = false; // This is a multiple-choice session
+
+  // **Hide next level and repeat errors buttons**
+  nextLevelButtonEl.style.display = 'none';
+  repeatErrorsButtonEl.style.display = 'none';
 
   const selectedLanguage = data.languages.find(
     lang => lang.code === appState.languageCode
@@ -676,20 +721,7 @@ async function startQuiz() {
     appState.originalWords = await loadWords(selectedWordList.file);
     console.log('Loaded words:', appState.originalWords);
 
-    // Reset the application state
-    appState = {
-      ...appState,
-      words: appState.originalWords.slice(),
-      currentLevel: 1,
-      currentSetIndex: 0,
-      currentWordIndex: 0,
-      score: 0,
-      foutenCount: 0,
-      errors: [],
-      currentLevelWords: [],
-      currentWord: null,
-      version: CURRENT_VERSION, // Reset version
-    };
+    appState.words = appState.originalWords.slice();
     console.log('Reset appState for new quiz:', appState);
 
     // Hide start screen elements
@@ -702,9 +734,7 @@ async function startQuiz() {
     quizContainerEl.style.display = 'block';
     resultEl.textContent = '';
     motivationalMessageEl.textContent = '';
-    highscoreEl.textContent = `Highscore: ${
-      localStorage.getItem(getHighscoreKey()) || 0
-    }`;
+
     updateScoreDisplay();
     startNewSet();
 
@@ -839,14 +869,14 @@ function processAnswer(button, selectedOption, correctAnswer) {
   if (isCorrect) {
     button.classList.add('correct');
     button.querySelector('i').classList.add('fa-solid', 'fa-check');
-    button.style.backgroundColor = '#61B68A';
-    button.style.color = '#fff';
+    // button.style.backgroundColor = '#61B68A';
+    // button.style.color = '#fff';
     appState.score++;
   } else {
     button.classList.add('wrong');
     button.querySelector('i').classList.add('fa-solid', 'fa-xmark');
-    button.style.backgroundColor = '#A63841';
-    button.style.color = '#fff';
+    // button.style.backgroundColor = '#A63841';
+    // button.style.color = '#fff';
     appState.foutenCount++;
     if (!appState.errors.includes(appState.currentWord)) {
       appState.errors.push(appState.currentWord);
@@ -859,8 +889,8 @@ function processAnswer(button, selectedOption, correctAnswer) {
         optButton.classList.add('correct-answer');
         optButton.querySelector('i').classList.add('fa-solid', 'fa-check');
         optButton.style.backgroundColor = '#fff';
-        optButton.style.border = '2px solid #61B68A';
-        optButton.style.color = '#61B68A';
+        optButton.style.border = '2px solid #16aba7';
+        optButton.style.color = '#16aba7';
         console.log('Marked correct answer button.');
       }
     });
@@ -915,41 +945,77 @@ function startErrorReview() {
   displayQuestion();
   saveProgress(); // Save progress after starting error review
 }
-// Proceed to the next level
+
 function proceedToNextLevel() {
   appState.currentSetIndex++;
   appState.currentLevel++;
-  appState.currentWordIndex = 0; // Reset word index for new level
-  console.log(`Proceeding to next level: ${appState.currentLevel}`);
-  questionContainerEl.style.display = 'block';
+  appState.currentWordIndex = 0;
+
+  // Hide next level button
   nextLevelButtonEl.style.display = 'none';
   motivationalMessageEl.textContent = '';
-  startNewSet();
-  saveProgress(); // Save progress after proceeding to next level
+  resultEl.textContent = '';
+  // controlsEl.style.display = 'none';
+
+  if (appState.isFlashcards) {
+    // For flashcard game
+    startFlashcardSet();
+  } else {
+    // For multiple-choice game
+    startNewSet();
+  }
+
+  // Save progress after proceeding to the next level
+  saveProgress();
 }
-// Show the final result
+function startFlashcardErrorReview() {
+  if (appState.errors.length === 0) {
+    proceedToNextLevel();
+    return;
+  }
+
+  appState.words = shuffleArray(appState.errors.slice());
+  appState.currentWordIndex = 0;
+  appState.errors = [];
+
+  appState.levelScore = 0;
+  appState.levelFoutenCount = 0;
+
+  flashcardEl.style.display = 'flex';
+  repeatErrorsButtonEl.style.display = 'none';
+  motivationalMessageEl.textContent = 'Herhalingsronde van de fouten';
+  resultEl.textContent = '';
+  // controlsEl.style.display = 'none';
+
+  displayFlashcardQuestion();
+  saveProgress();
+}
+
+function showFinalFlashcardResult() {
+  flashcardEl.style.display = 'none';
+  // controlsEl.style.display = 'none';
+
+  resultEl.textContent = `Je hebt alle levels voltooid! Je totale score is ${appState.score} van de ${appState.originalWords.length}.`;
+
+  // Clear saved progress for this session
+  const sessionKey = generateSessionKey();
+  localStorage.removeItem(sessionKey);
+
+  // Refresh saved sessions
+  displaySavedSessions();
+}
+
 function showResult() {
   resultEl.textContent = `Je hebt ${appState.score} van de ${appState.originalWords.length} goed!`;
   quizContainerEl.style.display = 'none';
-  controlsEl.style.display = 'none';
-
-  const highscoreKey = getHighscoreKey();
-  const currentHighscore = parseInt(localStorage.getItem(highscoreKey)) || 0;
-
-  if (appState.score > currentHighscore) {
-    localStorage.setItem(highscoreKey, appState.score);
-    highscoreEl.textContent = `Nieuwe highscore: ${appState.score}`;
-    console.log('New highscore achieved:', appState.score);
-  } else {
-    highscoreEl.textContent = `Highscore: ${currentHighscore}`;
-    console.log('Highscore remains:', currentHighscore);
-  }
+  //controlsEl.style.display = 'none';
 
   // Clear saved progress for this session
   const sessionKey = generateSessionKey();
   localStorage.removeItem(sessionKey);
   console.log(`Cleared saved session: ${sessionKey}`);
-
+  // Reset the application state
+  initializeAppState();
   // Refresh saved sessions
   displaySavedSessions();
 
@@ -980,13 +1046,15 @@ function updateLevelProgressBar() {
   console.log(`Updated level progress bar to ${progress}%`);
 }
 // Start the flashcard game
-// Start the flashcard game
-// Start the flashcard game
 async function startFlashcardGame() {
+  // Initialize the app state
+  initializeAppState();
+
+  // Set game-specific properties
   appState.languageCode = languageSelectEl.value;
   appState.oefenrichting = directionSelectEl.value;
   appState.selectedList = wordListSelectEl.value;
-  appState.isFlashcards = true;
+  appState.isFlashcards = true; // This is a flashcard session
 
   // Hide start screen elements
   selectMethodContainer.style.display = 'none';
@@ -995,14 +1063,25 @@ async function startFlashcardGame() {
   directionSelectEl.parentElement.style.display = 'none';
   wordListSelectEl.parentElement.style.display = 'none';
   controlsEl.style.display = 'flex';
+  // **Hide next level and repeat errors buttons**
+  nextLevelButtonEl.style.display = 'none';
+  repeatErrorsButtonEl.style.display = 'none';
   flashcardContainerEl.style.display = 'flex';
   resultEl.textContent = '';
   motivationalMessageEl.textContent = '';
 
+  // Reset flashcard-specific state properties
+  appState.score = 0;
+  appState.foutenCount = 0;
+  appState.currentLevel = 1;
+  appState.currentSetIndex = 0;
+  appState.levelScore = 0;
+  appState.levelFoutenCount = 0;
+
   // Load the words and start the flashcard session
   await loadFlashcardWords();
 
-  // Create the special character toolbar if the direction is Dutch to Spanish
+  // Create the special character toolbar if needed
   if (appState.languageCode === 'es' && appState.oefenrichting === 'nl-es') {
     createSpecialCharToolbar(flashcardAnswerInputEl);
   }
@@ -1010,8 +1089,31 @@ async function startFlashcardGame() {
   // Save progress
   saveProgress();
 }
+function startFlashcardSet() {
+  const { currentSetIndex, originalWords, flashcardSetSize } = appState;
+  const totalSets = Math.ceil(originalWords.length / flashcardSetSize);
 
-// Load flashcard words
+  if (currentSetIndex >= totalSets) {
+    showFinalFlashcardResult();
+    return;
+  }
+
+  const startIdx = currentSetIndex * flashcardSetSize;
+  const endIdx = Math.min(startIdx + flashcardSetSize, originalWords.length);
+
+  // Extract words for the current level
+  appState.words = shuffleArray(originalWords.slice(startIdx, endIdx));
+  appState.currentWordIndex = 0;
+  appState.errors = [];
+
+  appState.levelScore = 0;
+  appState.levelFoutenCount = 0;
+
+  motivationalMessageEl.textContent = `Laten we beginnen - Level ${appState.currentLevel}`;
+  flashcardEl.style.display = 'flex';
+  displayFlashcardQuestion();
+}
+
 async function loadFlashcardWords() {
   try {
     const selectedLanguage = data.languages.find(
@@ -1020,27 +1122,60 @@ async function loadFlashcardWords() {
     const selectedWordList = selectedLanguage.wordLists.find(
       list => list.id === appState.selectedList
     );
+
+    // Load original words
     appState.originalWords = await loadWords(selectedWordList.file);
-    appState.words = shuffleArray(appState.originalWords.slice());
+
+    // Ensure flashcardSetSize is defined
+    if (typeof appState.flashcardSetSize !== 'number') {
+      console.error('flashcardSetSize is not defined or not a number.');
+      appState.flashcardSetSize = 10; // Default value
+    }
+
+    // Calculate total sets
+    const totalSets = Math.ceil(
+      appState.originalWords.length / appState.flashcardSetSize
+    );
+
+    // Extract words for the current set
+    const startIdx = appState.currentSetIndex * appState.flashcardSetSize;
+    const endIdx = Math.min(
+      startIdx + appState.flashcardSetSize,
+      appState.originalWords.length
+    );
+
+    console.log(`flashcardSetSize: ${appState.flashcardSetSize}`);
+    console.log(`startIdx: ${startIdx}, endIdx: ${endIdx}`);
+    console.log(`Original words length: ${appState.originalWords.length}`);
+
+    appState.words = shuffleArray(
+      appState.originalWords.slice(startIdx, endIdx)
+    );
+
+    // Reset the word index and scheduled words
     appState.currentWordIndex = 0;
+    appState.scheduledWords = [];
+
+    // Display the first flashcard question
     displayFlashcardQuestion();
   } catch (error) {
     console.error('Error loading flashcard words:', error);
   }
 }
-// Display flashcard question
+
 function displayFlashcardQuestion() {
-  const { currentWordIndex, words, oefenrichting } = appState;
+  const { currentWordIndex, words } = appState;
 
   if (currentWordIndex >= words.length) {
-    showFlashcardResult();
+    checkIfFlashcardSetCompleted();
     return;
   }
 
-  const currentWord = words[currentWordIndex];
+  appState.currentWord = words[currentWordIndex];
+
+  const { currentWord, oefenrichting } = appState;
   const [fromLang, toLang] = oefenrichting.split('-');
 
-  // Display the question in the "from" language
   const question =
     fromLang === 'nl'
       ? currentWord.word // The word in Dutch
@@ -1049,15 +1184,26 @@ function displayFlashcardQuestion() {
   flashcardQuestionEl.innerHTML = `<div class="what-is">Wat is de vertaling van</div><div class='word' style='color: #F24464;'>'${question}'</div>`;
   flashcardAnswerInputEl.value = ''; // Clear input field
   flashcardFeedbackEl.textContent = ''; // Clear feedback
+
+  // Update progress and score
+  updateFlashcardProgressBar();
+  updateFlashcardScoreDisplay();
+
+  flashcardProgressInfoEl.innerHTML = `Vraag <strong style="color: #2f2570">${appState.currentWordIndex}</strong> van ${appState.words.length}`;
+  flashcardLevelProgressInfoEl.innerHTML = `Level <strong style="color: #2f2570">${
+    appState.currentLevel
+  }</strong> van ${Math.ceil(
+    appState.originalWords.length / appState.flashcardSetSize
+  )}`;
+
+  appState.currentWordIndex++;
 }
 
 // Handle flashcard answer submission
 function submitFlashcardAnswer() {
-  const { currentWordIndex, words, oefenrichting } = appState;
-  const currentWord = words[currentWordIndex];
-  const [fromLang, toLang] = oefenrichting.split('-');
+  const currentWord = appState.currentWord;
+  const [fromLang, toLang] = appState.oefenrichting.split('-');
 
-  // Determine the correct answer based on the "to" language
   const correctAnswer =
     toLang === 'nl'
       ? currentWord.word // The answer should be in Dutch
@@ -1066,28 +1212,88 @@ function submitFlashcardAnswer() {
   const userAnswer = flashcardAnswerInputEl.value.trim().toLowerCase();
 
   if (userAnswer === correctAnswer.toLowerCase()) {
-    flashcardFeedbackEl.textContent = 'Correct!';
-    flashcardFeedbackEl.style.color = 'green';
+    flashcardEl.classList.add('correct-answer');
+    flashcardFeedbackEl.innerHTML = 'Goed!💯';
     appState.score++;
+    appState.levelScore++;
   } else {
-    flashcardFeedbackEl.textContent = `Incorrect. Correct answer: ${correctAnswer}`;
-    flashcardFeedbackEl.style.color = 'red';
+    flashcardEl.classList.add('incorrect-answer');
+    flashcardFeedbackEl.innerHTML = `<span>Jammer, het juiste antwoord was </span><span><strong>${correctAnswer}</strong></span>`;
     appState.foutenCount++;
+    appState.levelFoutenCount++;
     appState.errors.push(currentWord);
   }
 
-  appState.currentWordIndex++;
   setTimeout(() => {
+    flashcardEl.classList.remove('correct-answer', 'incorrect-answer');
     displayFlashcardQuestion();
-  }, 1000);
+  }, 1500);
+
+  // Update progress and score
+  updateFlashcardProgressBar();
+  updateFlashcardScoreDisplay();
 
   // Save progress
   saveProgress();
+}
+function checkIfFlashcardSetCompleted() {
+  if (appState.errors.length > 0) {
+    showFlashcardSetResult(false);
+  } else {
+    showFlashcardSetResult(true);
+  }
+}
+function showFlashcardSetResult(isSetCleared) {
+  flashcardEl.style.display = 'none';
+
+  resultEl.textContent = `Je hebt ${appState.levelScore} van de ${appState.words.length} goed!`;
+
+  if (isSetCleared) {
+    motivationalMessageEl.innerHTML = `Geweldig, je hebt dit level gehaald! 💯`;
+    repeatErrorsButtonEl.style.display = 'none';
+    nextLevelButtonEl.style.display = 'block';
+  } else {
+    motivationalMessageEl.innerHTML = `Laten we de fouten nog eens bekijken. 👊`;
+    repeatErrorsButtonEl.style.display = 'block';
+    nextLevelButtonEl.style.display = 'none';
+  }
+
+  controlsEl.style.display = 'flex';
 }
 
 // Show flashcard result
 function showFlashcardResult() {
   flashcardContainerEl.style.display = 'none';
-  resultEl.textContent = `You got ${appState.score} out of ${appState.originalWords.length} correct!`;
+  resultEl.textContent = `Je hebt ${appState.levelScore} van de ${appState.words.length} goed!`;
   controlsEl.style.display = 'flex';
+
+  const totalSets = Math.ceil(
+    appState.originalWords.length / appState.flashcardSetSize
+  );
+
+  if (appState.currentSetIndex + 1 < totalSets) {
+    // More sets are available
+    motivationalMessageEl.textContent = `Goed gedaan! Op naar het volgende level!`;
+    nextLevelButtonEl.style.display = 'block';
+    repeatErrorsButtonEl.style.display = 'none';
+  } else if (appState.errors.length > 0) {
+    // No more sets, but there are errors to review
+    motivationalMessageEl.textContent = `Laten we de fouten nog eens bekijken. 👊`;
+    repeatErrorsButtonEl.style.display = 'block';
+    nextLevelButtonEl.style.display = 'none';
+  } else {
+    // All sets completed, no errors
+    motivationalMessageEl.textContent = `Geweldig, je hebt alle levels gehaald! 🎉`;
+    nextLevelButtonEl.style.display = 'none';
+    repeatErrorsButtonEl.style.display = 'none';
+    //controlsEl.style.display = 'none';
+
+    // Clear saved progress
+    const sessionKey = generateSessionKey();
+    localStorage.removeItem(sessionKey);
+    console.log(`Cleared saved session: ${sessionKey}`);
+
+    // Refresh saved sessions
+    displaySavedSessions();
+  }
 }

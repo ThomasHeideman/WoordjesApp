@@ -25,9 +25,6 @@
   <body>
     <div id="app" class="app">
       <h1>Dante's TaalTrainer 🎓</h1>
-      <section class="highscore-container" id="highscore-container">
-        <p id="highscore">Highscore: 0</p>
-      </section>
       <section class="game-selection-container">
         <!-- Added Language Selection -->
         <div class="select-language">
@@ -91,7 +88,6 @@
           <div class="level-progress-info"></div>
           <div class="score-board">
             <p id="score" class="score">Goed: 0 | Fout: 0</p>
-            <p id="highscore" class="highscore">Highscore: 0</p>
           </div>
         </div>
         <div id="question-container" class="question-container">
@@ -106,22 +102,35 @@
       </section>
 
       <!-- Flashcards Container - for flashcards game-->
-      <section
-        id="flashcard-container"
-        class="flashcard-container"
-        style="display: none"
-      >
-        <div class="flashcard-question"></div>
-        <input
-          type="text"
-          id="flashcard-answer-input"
-          class="flashcard-answer-input"
-          placeholder="Typ hier je antwoord..."
-        />
-        <button id="flashcard-submit-btn" class="flashcard-btn btn">
-          controleer
-        </button>
-        <div class="flashcard-feedback"></div>
+      <section id="flashcard-game-container" class="flashcard-game-container" style="display: none">
+        <div id="flashcard-score-board" class="flashcard-score-board">
+          <div class="level-progress">
+            <div id="flashcard-level-progress-bar" class="level-progress-bar"></div>
+          </div>
+          <div id="flashcard-level-progress-info" class="level-progress-info"></div>
+          <div class="score-board">
+          <p id="flashcard-score" class="score">Goed: 0 | Fout: 0</p></div>
+        </div>
+        <div id="flashcard" class="flashcard">
+          <div class="flashcard-question"></div>
+          <div id="flashcard-answer-input-container" class="input-wrapper">
+            <input
+              type="text"
+              id="flashcard-answer-input"
+              class="flashcard-answer-input"
+              placeholder="Typ hier je antwoord..."
+            />
+          </div>
+          <div class="flashcard-feedback"></div>
+          <button id="flashcard-submit-btn" class="flashcard-btn btn">
+            controleer
+          </button>
+        </div>
+        <div class="flashcard-progress-container" >
+          <div id="flashcard-progress-info" class="progress-info"></div>
+          <div class="progress progress--flashcard">
+            <div id="flashcard-progress-bar" class="progress-bar"></div>
+          </div>
       </section>
 
       <div class="result"></div>
