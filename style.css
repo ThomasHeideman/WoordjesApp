@@ -32,8 +32,8 @@ body {
 /* App-container */
 .app {
   position: relative;
-  width: 640px;
-  max-width: 960px;
+  width: 100%;
+  max-width: 640px;
   margin: 0 auto;
   padding: 2rem;
   background-color: #fff;
@@ -366,16 +366,28 @@ button.back-btn:hover {
   left: -1rem;
 }
 
-.options button:hover {
+.options button:hover:not(:disabled) {
   background-color: #2694ac;
   color: #fff;
   border: 1px solid #2694ac;
 }
 
+/* Na een klik zijn alle antwoorden uitgeschakeld */
+.options button:disabled {
+  cursor: default;
+  pointer-events: none;
+  color: #2694ac;
+  background-color: #fff;
+  opacity: 0.6;
+}
+
 /* Kleurindicaties voor antwoorden */
-.options button.correct {
-  background-color: #16aba7 !important;
-  color: #fff !important;
+.options button.correct,
+.options button.correct:disabled {
+  background-color: #16aba7;
+  border-color: #16aba7;
+  color: #fff;
+  opacity: 1;
 }
 
 .options button.correct i,
@@ -383,20 +395,48 @@ button.back-btn:hover {
   color: #fff;
 }
 
-.options button.wrong {
-  background-color: #da3d5a !important;
-  color: #fff !important;
+.options button.wrong,
+.options button.wrong:disabled {
+  background-color: #da3d5a;
+  border-color: #da3d5a;
+  color: #fff;
+  opacity: 1;
 }
 
-.options button.correct-answer {
+.options button.correct-answer,
+.options button.correct-answer:disabled {
   background-color: #fff;
   border: 2px solid #16aba7;
   color: #16aba7;
+  opacity: 1;
 }
 
 .options button.correct-answer i {
   color: #16aba7;
   visibility: visible;
+}
+
+/* Hulpklassen voor tekst die eerst inline gestyled werd */
+.word-highlight {
+  color: #f24464;
+}
+
+.info-highlight {
+  color: #2f2570;
+}
+
+.score-good {
+  color: #16aba7;
+}
+
+.score-bad {
+  color: #da3d5a;
+}
+
+.progress-bar,
+.level-progress-bar,
+.set-progress-bar {
+  transition: width 300ms ease-in-out;
 }
 
 /* Voortgangsbalken */
@@ -533,15 +573,20 @@ button.back-btn:hover {
   background-color: #e98b9c;
 }
 
-.flashcard.correct-anwser .flashcard-feedback,
-.flashcard.incorrect-anwser .flashcard-feedback {
+.flashcard.correct-answer .flashcard-feedback,
+.flashcard.incorrect-answer .flashcard-feedback {
   display: block;
 }
 
 .flashcard.correct-answer .flashcard-question .what-is,
 .flashcard.incorrect-answer .flashcard-question .what-is,
-.flashcard.correct-anwser .flashcard-feedback,
-.flashcard.incorrect-anwser .flashcard-feedback {
+.flashcard.correct-answer .flashcard-feedback,
+.flashcard.incorrect-answer .flashcard-feedback {
+  color: #fff;
+}
+
+.flashcard.correct-answer .word-highlight,
+.flashcard.incorrect-answer .word-highlight {
   color: #fff;
 }
 .incorrect-answer .flashcard-answer-input {
@@ -558,12 +603,250 @@ button.back-btn:hover {
 .flashcard.correct-answer {
   background-color: #73cdca;
 }
-.flashcard.correct-anwser .flashcard-feedback {
-  color: #fff;
-}
-
 .flashcard.correct-answer .flashcard-answer-input {
   background-color: #b9e6e5;
   color: #45bcb9;
   border-color: #45bcb9;
+}
+
+.flashcard-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* =========================================================
+   Responsive: tablets en kleiner
+   ========================================================= */
+img,
+svg {
+  max-width: 100%;
+}
+
+@media (max-width: 600px) {
+  html {
+    font-size: 15px;
+  }
+
+  body {
+    /* top | left & right | bottom */
+    padding: 2rem 2rem 0.5rem;
+    justify-content: flex-start;
+  }
+
+  .app {
+    width: 100%;
+    max-width: 100%;
+    padding: 1rem;
+    border-radius: 0.375rem;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    margin: 0.25rem 0 1rem;
+  }
+
+  h2 {
+    font-size: 1.25rem;
+  }
+
+  .motivational-message {
+    font-size: 1.25rem;
+    margin: 0.75rem 0;
+  }
+
+  /* Selecties onder elkaar */
+  .select-language,
+  .select-list,
+  .select-direction,
+  .select-set-size {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.375rem;
+    font-size: 1rem;
+  }
+
+  .select-language select,
+  .select-list select,
+  .select-direction select,
+  .select-set-size select {
+    width: 100%;
+    min-height: 2.75rem;
+    font-size: 1rem;
+  }
+
+  /* Startknoppen onder elkaar */
+  .select-method-buttons {
+    flex-direction: column;
+    margin: 1.25rem 0;
+  }
+
+  .training-method-btn {
+    padding: 1.25rem 1rem;
+    justify-content: center;
+  }
+
+  .training-method-btn .btn-txt {
+    font-size: 1.125rem;
+  }
+
+  /* Opgeslagen sessies */
+  .saved-sessions-list li {
+    flex-wrap: wrap;
+    gap: 0;
+  }
+
+  .session-description {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 0 0.5rem;
+    font-size: 0.85rem;
+  }
+
+  .session-control-btn-container {
+    flex: 1 0 100%;
+    justify-content: flex-end;
+    border-top: 1px solid #e0e0e2;
+    padding: 0.375rem;
+  }
+
+  .session-control-btn-container .continue-btn,
+  .session-control-btn-container .delete-btn {
+    min-width: 3rem;
+    min-height: 2.25rem;
+  }
+
+  /* Controls onder elkaar, volle breedte */
+  .controls {
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+  }
+
+  .controls button,
+  button.back-btn {
+    width: 100%;
+    margin-left: 0;
+    min-height: 2.75rem;
+  }
+
+  button.back-btn {
+    order: 3;
+  }
+
+  /* Quiz */
+  .quiz-container,
+  .flashcard-game-container {
+    margin-top: 1rem;
+  }
+
+  .what-is {
+    font-size: 1rem;
+  }
+
+  .word {
+    font-size: 1.25rem;
+    overflow-wrap: anywhere;
+  }
+
+  .question {
+    margin: 1rem 0;
+  }
+
+  .options {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+    padding: 0.5rem;
+  }
+
+  .options button {
+    height: auto;
+    min-height: 3.5rem;
+    padding: 0.625rem 0.75rem;
+    font-size: 1rem;
+    overflow-wrap: anywhere;
+  }
+
+  /* Flashcards */
+  .flashcard {
+    height: auto;
+    min-height: 16rem;
+    padding: 1rem;
+  }
+
+  .flashcard-question {
+    margin-top: 0.5rem;
+    text-align: center;
+  }
+
+  .flashcard .input-wrapper,
+  .flashcard-answer-input {
+    width: 100%;
+  }
+
+  .flashcard-answer-input {
+    min-height: 2.75rem;
+    /* 16px voorkomt automatisch inzoomen op iOS */
+    font-size: 16px;
+  }
+
+  .flashcard-feedback {
+    height: auto;
+    min-height: 24px;
+    text-align: center;
+  }
+
+  .flashcard-btn {
+    width: 100%;
+    min-height: 2.75rem;
+  }
+
+  .special-char-toolbar {
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 0.5rem 0;
+    gap: 0.375rem;
+  }
+
+  .special-char-btn {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  /* Score en voortgang */
+  .score-board {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.25rem 0.75rem;
+  }
+
+  .score-container,
+  .progress-info,
+  .level-progress-info,
+  .result {
+    font-size: 0.9375rem;
+  }
+
+  .progress,
+  .set-progress,
+  .level-progress {
+    height: 0.625rem;
+  }
+}
+
+/* Zeer smalle schermen */
+@media (max-width: 360px) {
+  html {
+    font-size: 14px;
+  }
+
+  .app {
+    padding: 0.75rem;
+  }
+}
+
+/* Minder beweging indien gewenst */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
 }

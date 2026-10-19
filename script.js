@@ -3,6 +3,22 @@
 // Define current version
 const CURRENT_VERSION = '1.1';
 
+// Debug logging (set to true to see verbose logs in the console)
+const DEBUG = false;
+const log = (...args) => {
+  if (DEBUG) console.log(...args);
+};
+
+// Timing of the feedback shown after an answer (ms)
+const QUIZ_FEEDBACK_DELAY = 1000;
+const FLASHCARD_FEEDBACK_DELAY = 1500;
+
+// Pending feedback timers / locks (so answers can't be processed twice)
+let quizFeedbackTimeoutId = null;
+let flashcardFeedbackTimeoutId = null;
+let isAnswerLocked = false;
+let isFlashcardLocked = false;
+
 // Migration functions
 const migrations = {
   0.9: data => {
@@ -131,7 +147,7 @@ async function loadWords(filePath) {
       );
     }
     const data = await response.json();
-    console.log(`Loaded word list from ${filePath}:`, data);
+    log(`Loaded word list from ${filePath}:`, data);
     return data.words ?? [];
   } catch (error) {
     console.error('Error loading word list:', error);
@@ -163,23 +179,23 @@ async function loadProgress(sessionKey) {
   if (savedData) {
     try {
       let progressData = JSON.parse(savedData);
-      console.log(`Loaded progress data:`, progressData);
+      log(`Loaded progress data:`, progressData);
 
       // Check if version exists; if not, assume it's an old version
       if (!progressData.version) {
         progressData.version = '1.0'; // Assuming the old version is 1.0
-        console.log(`Assumed version 1.0 for saved data.`);
+        log(`Assumed version 1.0 for saved data.`);
       }
 
       // Migrate data step by step to the current version
       while (progressData.version !== CURRENT_VERSION) {
         const migrate = migrations[progressData.version];
         if (migrate) {
-          console.log(
+          log(
             `Migrating from version ${progressData.version} to next version`
           );
           progressData = migrate(progressData);
-          console.log(`Progress data after migration:`, progressData);
+          log(`Progress data after migration:`, progressData);
         } else {
           console.error(
             `No migration available for version ${progressData.version}`
@@ -226,7 +242,7 @@ async function loadProgress(sessionKey) {
         progressData.hasOwnProperty(prop)
       );
 
-      console.log(
+      log(
         `Checking for required properties: ${hasAllProps ? 'Passed' : 'Failed'}`
       );
 
@@ -242,7 +258,7 @@ async function loadProgress(sessionKey) {
         ...appState,
         ...progressData,
       };
-      console.log(`Updated appState:`, appState);
+      log(`Updated appState:`, appState);
 
       return true;
     } catch (error) {
@@ -250,7 +266,7 @@ async function loadProgress(sessionKey) {
       return false;
     }
   }
-  console.log(`No saved data found for sessionKey: ${sessionKey}`);
+  log(`No saved data found for sessionKey: ${sessionKey}`);
   return false;
 }
 
@@ -263,7 +279,7 @@ function saveProgress() {
   const sessionKey = generateSessionKey();
   try {
     localStorage.setItem(sessionKey, JSON.stringify(progressData));
-    console.log(`Progress saved for sessionKey: ${sessionKey}`, progressData);
+    log(`Progress saved for sessionKey: ${sessionKey}`, progressData);
   } catch (error) {
     console.error('Error saving progress:', error);
     alert('Er is een fout opgetreden bij het opslaan van je voortgang.');
@@ -285,18 +301,18 @@ function getAllSavedSessions() {
         console.error(`Error parsing session data for key ${key}:`, error);
         // Optionally, remove the corrupt session
         localStorage.removeItem(key);
-        console.log(`Removed corrupt session: ${key}`);
+        log(`Removed corrupt session: ${key}`);
       }
     }
   }
-  console.log(`Retrieved ${sessions.length} saved sessions.`);
+  log(`Retrieved ${sessions.length} saved sessions.`);
   return sessions;
 }
 function deleteSession(sessionKey) {
   //--// Delete a saved session
   try {
     localStorage.removeItem(sessionKey);
-    console.log(`Deleted session with key: ${sessionKey}`);
+    log(`Deleted session with key: ${sessionKey}`);
   } catch (error) {
     console.error(`Error deleting session ${sessionKey}:`, error);
     alert('Er is een fout opgetreden bij het verwijderen van de sessie.');
@@ -365,10 +381,18 @@ function updateFlashcardLevelProgressBar() {
   flashcardLevelProgressBarEl.style.width = `${progress}%`;
 }
 
+// Build the "Goed / Fout" score markup (styling lives in style.css)
+function buildScoreHtml(good, wrong) {
+  return `<span class="score-good"><span class="emoji emoji-small">✅</span> Goed: ${good}</span> <span class="score-bad"><span class="emoji emoji-small">❌</span> Fout: ${wrong}</span>`;
+}
+
 // Update score display for flashcards
 function updateFlashcardScoreDisplay() {
-  flashcardScoreEl.innerHTML = `<span style="color:#16aba7"><span class="emoji emoji-small">✅</span> Goed: ${appState.levelScore}</span>  <span style="color: #da3d5a"><span class="emoji emoji-small">❌</span> Fout: ${appState.levelFoutenCount}</span>`;
-  console.log(`Updated flashcard score display:`, flashcardScoreEl.innerHTML);
+  flashcardScoreEl.innerHTML = buildScoreHtml(
+    appState.levelScore,
+    appState.levelFoutenCount
+  );
+  log(`Updated flashcard score display:`, flashcardScoreEl.innerHTML);
 }
 
 // Event Listeners
@@ -408,7 +432,7 @@ async function loadLanguageData() {
       throw new Error(`Failed to load languages.json: ${response.statusText}`);
     }
     data = await response.json();
-    console.log('Loaded languages.json:', data);
+    log('Loaded languages.json:', data);
     populateLanguageSelect();
   } catch (error) {
     console.error('Error loading language data:', error);
@@ -436,7 +460,7 @@ function populateLanguageSelect() {
     languageSelectEl.appendChild(option);
   });
 
-  console.log('Populated language select:', languageSelectEl.innerHTML);
+  log('Populated language select:', languageSelectEl.innerHTML);
 }
 
 // Handle language selection
@@ -465,12 +489,12 @@ function onLanguageSelected() {
     flashcardsBtnEl.disabled = true;
     multipleChoiceBtnEl.disabled = true;
 
-    console.log('Language selected:', selectedLanguageCode);
+    log('Language selected:', selectedLanguageCode);
   } else {
     // If no language is selected, disable direction and list selects
     directionSelectEl.disabled = true;
     wordListSelectEl.disabled = true;
-    console.log('No language selected.');
+    log('No language selected.');
   }
 }
 
@@ -493,7 +517,7 @@ function populateDirectionSelect(directions) {
     directionSelectEl.appendChild(option);
   });
 
-  console.log('Populated direction select:', directionSelectEl.innerHTML);
+  log('Populated direction select:', directionSelectEl.innerHTML);
 }
 
 // Populate the word list select element
@@ -515,7 +539,7 @@ function populateWordListSelect(wordLists) {
     wordListSelectEl.appendChild(option);
   });
 
-  console.log('Populated word list select:', wordListSelectEl.innerHTML);
+  log('Populated word list select:', wordListSelectEl.innerHTML);
 }
 
 // Function to enable the start button when all selections are made
@@ -527,15 +551,26 @@ function checkStartButtonAvailability() {
   ) {
     multipleChoiceBtnEl.disabled = false;
     flashcardsBtnEl.disabled = false;
-    console.log('All selections made. Start button enabled.');
+    log('All selections made. Start button enabled.');
   } else {
     multipleChoiceBtnEl.disabled = true;
     flashcardsBtnEl.disabled = true;
-    console.log('Incomplete selections. Start button disabled.');
+    log('Incomplete selections. Start button disabled.');
   }
 }
 // Go back to the start screen
 function goToStartScreen() {
+  // Cancel any pending feedback timers so they can't fire on the reset state
+  clearTimeout(quizFeedbackTimeoutId);
+  clearTimeout(flashcardFeedbackTimeoutId);
+  quizFeedbackTimeoutId = null;
+  flashcardFeedbackTimeoutId = null;
+  isAnswerLocked = false;
+  isFlashcardLocked = false;
+  flashcardEl.classList.remove('correct-answer', 'incorrect-answer');
+  flashcardSubmitBtnEl.disabled = false;
+  flashcardAnswerInputEl.readOnly = false;
+
   // Hide quiz-related elements
   quizContainerEl.style.display = 'none';
   flashcardContainerEl.style.display = 'none';
@@ -566,7 +601,7 @@ function goToStartScreen() {
 
   // Reset the application state
   initializeAppState();
-  console.log('Returned to start screen. Reset appState:', appState);
+  log('Returned to start screen. Reset appState:', appState);
 
   // Refresh saved sessions
   displaySavedSessions();
@@ -636,10 +671,10 @@ function displaySavedSessions() {
 
       savedSessionsListEl.appendChild(listItem);
     });
-    console.log('Displayed all saved sessions.');
+    log('Displayed all saved sessions.');
   } else {
     savedSessionsContainerEl.style.display = 'none';
-    console.log('No saved sessions to display.');
+    log('No saved sessions to display.');
   }
 }
 // Continue a saved session
@@ -647,7 +682,7 @@ function continueSession(sessionKey) {
   loadProgress(sessionKey)
     .then(loaded => {
       if (loaded) {
-        console.log('Session loaded successfully.');
+        log('Session loaded successfully.');
 
         // Hide start screen elements
         selectMethodContainer.style.display = 'none';
@@ -719,10 +754,10 @@ async function startQuiz() {
 
   try {
     appState.originalWords = await loadWords(selectedWordList.file);
-    console.log('Loaded words:', appState.originalWords);
+    log('Loaded words:', appState.originalWords);
 
     appState.words = appState.originalWords.slice();
-    console.log('Reset appState for new quiz:', appState);
+    log('Reset appState for new quiz:', appState);
 
     // Hide start screen elements
     selectMethodContainer.style.display = 'none';
@@ -750,10 +785,10 @@ async function startQuiz() {
 function startNewSet() {
   const { currentSetIndex, words, setSize } = appState;
   const totalSets = Math.ceil(words.length / setSize);
-  console.log(`Starting set ${currentSetIndex + 1} of ${totalSets}`);
+  log(`Starting set ${currentSetIndex + 1} of ${totalSets}`);
 
   if (currentSetIndex >= totalSets) {
-    console.log('All sets completed. Showing results.');
+    log('All sets completed. Showing results.');
     showResult();
     return;
   }
@@ -763,11 +798,11 @@ function startNewSet() {
 
   // Extract words for the current level
   const currentLevelWords = words.slice(startIdx, endIdx);
-  console.log(`Current level words:`, currentLevelWords);
+  log(`Current level words:`, currentLevelWords);
 
   // Shuffle the words for the current level
   const shuffledLevelWords = shuffleArray(currentLevelWords);
-  console.log(`Shuffled level words:`, shuffledLevelWords);
+  log(`Shuffled level words:`, shuffledLevelWords);
 
   // Update the app state with the shuffled words for the current level
   appState.currentLevelWords = shuffledLevelWords;
@@ -776,7 +811,7 @@ function startNewSet() {
 
   motivationalMessageEl.textContent = `Laten we beginnen - Level ${appState.currentLevel}`;
   questionContainerEl.style.display = 'block';
-  console.log(
+  log(
     'Set questionContainerEl to display: block and updated motivational message'
   );
   displayQuestion();
@@ -784,18 +819,18 @@ function startNewSet() {
 // Display the current question
 function displayQuestion() {
   const { currentWordIndex, currentLevelWords } = appState;
-  console.log(
+  log(
     `Displaying question ${currentWordIndex + 1} of ${currentLevelWords.length}`
   );
 
   if (currentWordIndex >= currentLevelWords.length) {
-    console.log('All questions in the current set have been answered.');
+    log('All questions in the current set have been answered.');
     checkIfSetCompleted();
     return;
   }
 
   appState.currentWord = currentLevelWords[currentWordIndex];
-  console.log(`Current word:`, appState.currentWord);
+  log(`Current word:`, appState.currentWord);
 
   const [fromLang, toLang] = appState.oefenrichting.split('-');
   const vraag =
@@ -808,34 +843,44 @@ function displayQuestion() {
       ? appState.currentWord.word // Word in the foreign language
       : appState.currentWord.translation; // Word in Dutch
 
-  questionEl.innerHTML = `<div class="what-is">Wat is de vertaling van</div><div class='word' style='color: #F24464;'>'${vraag}'</div>`;
-  console.log(`Question set to: ${vraag}`);
+  questionEl.innerHTML = `<div class="what-is">Wat is de vertaling van</div><div class="word word-highlight">'${vraag}'</div>`;
+  log(`Question set to: ${vraag}`);
 
   const options = shuffleOptions(correctAntwoord);
-  console.log(`Options:`, options);
+  log(`Options:`, options);
 
+  // New question: unlock answering and rebuild the options
+  isAnswerLocked = false;
   optionsEl.innerHTML = '';
+  const fragment = document.createDocumentFragment();
   options.forEach((option, index) => {
     const button = document.createElement('button');
     button.className = `answer${index + 1}`;
-    button.innerHTML = `<i class="fa"></i> ${option}`;
+    button.dataset.option = option;
+
+    const icon = document.createElement('i');
+    icon.className = 'fa';
+    button.appendChild(icon);
+    button.appendChild(document.createTextNode(` ${option}`));
+
     button.addEventListener('click', () =>
       processAnswer(button, option, correctAntwoord)
     );
-    optionsEl.appendChild(button);
+    fragment.appendChild(button);
   });
+  optionsEl.appendChild(fragment);
 
   // Ensure the question container is visible
   questionContainerEl.style.display = 'block';
-  console.log('Set questionContainerEl to display: block');
+  log('Set questionContainerEl to display: block');
 
   updateProgressBar();
   updateLevelProgressBar();
 
-  progressInfoEl.innerHTML = `Vraag <strong style="color: #2f2570">${
+  progressInfoEl.innerHTML = `Vraag <strong class="info-highlight">${
     currentWordIndex + 1
   }</strong> van ${currentLevelWords.length}`;
-  levelProgressInfoEl.innerHTML = `Level <strong style="color: #2f2570">${
+  levelProgressInfoEl.innerHTML = `Level <strong class="info-highlight">${
     appState.currentLevel
   }</strong> van ${Math.ceil(
     appState.originalWords.length / appState.setSize
@@ -849,65 +894,74 @@ function shuffleOptions(correctAnswer) {
       ? appState.originalWords.map(word => word.word)
       : appState.originalWords.map(word => word.translation);
 
-  let options = [correctAnswer];
+  // Build a pool of unique distractors (no random retry loop, so this can
+  // never hang when the list has fewer than 4 distinct words)
+  const distractors = [
+    ...new Set(
+      allWords.filter(
+        word => word !== undefined && word !== null && word !== correctAnswer
+      )
+    ),
+  ];
+  shuffleArray(distractors);
 
-  while (options.length < 4) {
-    const randomWord = allWords[Math.floor(Math.random() * allWords.length)];
-    if (!options.includes(randomWord) && randomWord !== undefined) {
-      options.push(randomWord);
-    }
-  }
+  const options = [correctAnswer, ...distractors.slice(0, 3)];
   return shuffleArray(options);
 }
 // Process the user's answer
 function processAnswer(button, selectedOption, correctAnswer) {
+  // Ignore any further clicks while feedback is being shown
+  if (isAnswerLocked) return;
+  isAnswerLocked = true;
+
+  // Disable all answer buttons immediately (prevents double-click bugs)
+  const optionButtons = optionsEl.querySelectorAll('button');
+  optionButtons.forEach(optButton => {
+    optButton.disabled = true;
+  });
+
   const isCorrect = selectedOption === correctAnswer;
-  console.log(
+  log(
     `User selected: ${selectedOption} | Correct answer: ${correctAnswer} | Is correct: ${isCorrect}`
   );
 
   if (isCorrect) {
     button.classList.add('correct');
     button.querySelector('i').classList.add('fa-solid', 'fa-check');
-    // button.style.backgroundColor = '#61B68A';
-    // button.style.color = '#fff';
     appState.score++;
   } else {
     button.classList.add('wrong');
     button.querySelector('i').classList.add('fa-solid', 'fa-xmark');
-    // button.style.backgroundColor = '#A63841';
-    // button.style.color = '#fff';
     appState.foutenCount++;
     if (!appState.errors.includes(appState.currentWord)) {
       appState.errors.push(appState.currentWord);
-      console.log('Added to errors:', appState.currentWord);
+      log('Added to errors:', appState.currentWord);
     }
 
-    // Mark the correct answer
-    optionsEl.querySelectorAll('button').forEach(optButton => {
-      if (optButton.textContent.trim().includes(correctAnswer)) {
+    // Mark the correct answer (exact match, not a substring match)
+    optionButtons.forEach(optButton => {
+      if (optButton.dataset.option === correctAnswer) {
         optButton.classList.add('correct-answer');
         optButton.querySelector('i').classList.add('fa-solid', 'fa-check');
-        optButton.style.backgroundColor = '#fff';
-        optButton.style.border = '2px solid #16aba7';
-        optButton.style.color = '#16aba7';
-        console.log('Marked correct answer button.');
+        log('Marked correct answer button.');
       }
     });
   }
   appState.currentWordIndex++;
-  console.log(`Updated appState after answer:`, appState);
+  log(`Updated appState after answer:`, appState);
 
-  setTimeout(() => {
+  clearTimeout(quizFeedbackTimeoutId);
+  quizFeedbackTimeoutId = setTimeout(() => {
+    quizFeedbackTimeoutId = null;
     feedbackEl.textContent = '';
     displayQuestion();
-  }, 1000);
+  }, QUIZ_FEEDBACK_DELAY);
   updateScoreDisplay();
   saveProgress(); // Save progress after processing the answer
 }
 // Check if the set is completed
 function checkIfSetCompleted() {
-  console.log(`Set completed. Errors count: ${appState.errors.length}`);
+  log(`Set completed. Errors count: ${appState.errors.length}`);
   if (appState.errors.length > 0) {
     showSetResult(false);
   } else {
@@ -917,7 +971,7 @@ function checkIfSetCompleted() {
 // Show the result of the set
 function showSetResult(isSetCleared) {
   questionContainerEl.style.display = 'none';
-  console.log(`Set result: ${isSetCleared ? 'Cleared' : 'Errors present'}`);
+  log(`Set result: ${isSetCleared ? 'Cleared' : 'Errors present'}`);
   if (isSetCleared) {
     motivationalMessageEl.innerHTML = `Geweldig, je hebt dit level gehaald! 💯`;
     repeatErrorsButtonEl.style.display = 'none';
@@ -935,7 +989,7 @@ function startErrorReview() {
     proceedToNextLevel();
     return;
   }
-  console.log('Starting error review with errors:', appState.errors);
+  log('Starting error review with errors:', appState.errors);
   appState.currentLevelWords = shuffleArray(appState.errors.slice());
   appState.currentWordIndex = 0;
   appState.errors = [];
@@ -1013,7 +1067,7 @@ function showResult() {
   // Clear saved progress for this session
   const sessionKey = generateSessionKey();
   localStorage.removeItem(sessionKey);
-  console.log(`Cleared saved session: ${sessionKey}`);
+  log(`Cleared saved session: ${sessionKey}`);
   // Reset the application state
   initializeAppState();
   // Refresh saved sessions
@@ -1024,8 +1078,8 @@ function showResult() {
 
 // Update the score display
 function updateScoreDisplay() {
-  scoreEl.innerHTML = `<span style="color:#16aba7"><span class="emoji emoji-small">✅</span> Goed: ${appState.score}</span>  <span style="color: #da3d5a"><span class="emoji emoji-small">❌</span> Fout: ${appState.foutenCount}</span>`;
-  console.log(`Updated score display:`, scoreEl.innerHTML);
+  scoreEl.innerHTML = buildScoreHtml(appState.score, appState.foutenCount);
+  log(`Updated score display:`, scoreEl.innerHTML);
 }
 
 // Update the progress bar
@@ -1033,7 +1087,7 @@ function updateProgressBar() {
   const progress =
     (appState.currentWordIndex / appState.currentLevelWords.length) * 100;
   progressBarEl.style.width = `${progress}%`;
-  console.log(`Updated progress bar to ${progress}%`);
+  log(`Updated progress bar to ${progress}%`);
 }
 
 // Update the level progress bar
@@ -1043,7 +1097,7 @@ function updateLevelProgressBar() {
       Math.ceil(appState.originalWords.length / appState.setSize)) *
     100;
   levelProgressBarEl.style.width = `${progress}%`;
-  console.log(`Updated level progress bar to ${progress}%`);
+  log(`Updated level progress bar to ${progress}%`);
 }
 // Start the flashcard game
 async function startFlashcardGame() {
@@ -1144,9 +1198,9 @@ async function loadFlashcardWords() {
       appState.originalWords.length
     );
 
-    console.log(`flashcardSetSize: ${appState.flashcardSetSize}`);
-    console.log(`startIdx: ${startIdx}, endIdx: ${endIdx}`);
-    console.log(`Original words length: ${appState.originalWords.length}`);
+    log(`flashcardSetSize: ${appState.flashcardSetSize}`);
+    log(`startIdx: ${startIdx}, endIdx: ${endIdx}`);
+    log(`Original words length: ${appState.originalWords.length}`);
 
     appState.words = shuffleArray(
       appState.originalWords.slice(startIdx, endIdx)
@@ -1181,16 +1235,21 @@ function displayFlashcardQuestion() {
       ? currentWord.word // The word in Dutch
       : currentWord.translation; // The word in the foreign language
 
-  flashcardQuestionEl.innerHTML = `<div class="what-is">Wat is de vertaling van</div><div class='word' style='color: #F24464;'>'${question}'</div>`;
+  flashcardQuestionEl.innerHTML = `<div class="what-is">Wat is de vertaling van</div><div class="word word-highlight">'${question}'</div>`;
   flashcardAnswerInputEl.value = ''; // Clear input field
   flashcardFeedbackEl.textContent = ''; // Clear feedback
+
+  // New question: unlock answering
+  isFlashcardLocked = false;
+  flashcardSubmitBtnEl.disabled = false;
+  flashcardAnswerInputEl.readOnly = false;
 
   // Update progress and score
   updateFlashcardProgressBar();
   updateFlashcardScoreDisplay();
 
-  flashcardProgressInfoEl.innerHTML = `Vraag <strong style="color: #2f2570">${appState.currentWordIndex}</strong> van ${appState.words.length}`;
-  flashcardLevelProgressInfoEl.innerHTML = `Level <strong style="color: #2f2570">${
+  flashcardProgressInfoEl.innerHTML = `Vraag <strong class="info-highlight">${appState.currentWordIndex}</strong> van ${appState.words.length}`;
+  flashcardLevelProgressInfoEl.innerHTML = `Level <strong class="info-highlight">${
     appState.currentLevel
   }</strong> van ${Math.ceil(
     appState.originalWords.length / appState.flashcardSetSize
@@ -1201,6 +1260,12 @@ function displayFlashcardQuestion() {
 
 // Handle flashcard answer submission
 function submitFlashcardAnswer() {
+  // Ignore repeated submits (button click / Enter) while feedback is shown
+  if (isFlashcardLocked || !appState.currentWord) return;
+  isFlashcardLocked = true;
+  flashcardSubmitBtnEl.disabled = true;
+  flashcardAnswerInputEl.readOnly = true;
+
   const currentWord = appState.currentWord;
   const [fromLang, toLang] = appState.oefenrichting.split('-');
 
@@ -1224,10 +1289,12 @@ function submitFlashcardAnswer() {
     appState.errors.push(currentWord);
   }
 
-  setTimeout(() => {
+  clearTimeout(flashcardFeedbackTimeoutId);
+  flashcardFeedbackTimeoutId = setTimeout(() => {
+    flashcardFeedbackTimeoutId = null;
     flashcardEl.classList.remove('correct-answer', 'incorrect-answer');
     displayFlashcardQuestion();
-  }, 1500);
+  }, FLASHCARD_FEEDBACK_DELAY);
 
   // Update progress and score
   updateFlashcardProgressBar();
@@ -1291,7 +1358,7 @@ function showFlashcardResult() {
     // Clear saved progress
     const sessionKey = generateSessionKey();
     localStorage.removeItem(sessionKey);
-    console.log(`Cleared saved session: ${sessionKey}`);
+    log(`Cleared saved session: ${sessionKey}`);
 
     // Refresh saved sessions
     displaySavedSessions();
